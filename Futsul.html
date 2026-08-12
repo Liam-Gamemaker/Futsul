@@ -902,7 +902,7 @@
         dribbling: "69",
         shooting: "67",
         goalkeeping: "0",
-        technique: "24",
+        technique: "63",
         strengths: ["Good at soccer", "Happy"],
         weaknesses: ["Bad with woman", "Hairline"]
     },
@@ -941,8 +941,8 @@
     const rankingStats = [
       { key:"goals", label:"Goals" }, { key:"assists", label:"Assists" }, { key:"saves", label:"Saves" },
       { key:"cleanSheets", label:"Clean Sheets" }, { key:"fights", label:"Fights" }, { key:"overall", label:"Overall" },
-      { key:"speed", label:"Speed" }, { key:"strength", label:"Strength" }, { key:"technique", label:"Technique" },
-      { key:"kicking", label:"Kicking" }, { key:"goalie", label:"Keeper Rating" }
+      { key:"speed", label:"Speed" }, { key:"strength", label:"Strength" }, { key:"dribbling", label:"Dribbling" },
+      { key:"shooting", label:"Shooting" }, { key:"goalie", label:"Keeper Rating" }
     ];
     const attrOrder = ["overall","speed","strength","technique","kicking","goalie"];
     function attrLabel(key){ return key === "goalie" ? "Keeper Rating" : key.charAt(0).toUpperCase() + key.slice(1); }
