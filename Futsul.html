@@ -926,7 +926,23 @@
         weaknesses: ["", ""]
     }
 };
-    const DEFAULT_GAMES = [];
+    const DEFAULT_GAMES = [
+      {
+        id: "game-jerseys-4-3-shirts",
+        date: "2026-08-12",
+        note: "Jerseys win in full time · 2 fights",
+        scoreFor: 4,
+        scoreAgainst: 3,
+        contributions: [
+          { playerId: "playerD", stat: "goals", qty: 2 },
+          { playerId: "player11", stat: "goals", qty: 2 },
+          { playerId: "player10", stat: "assists", qty: 1 },
+          { playerId: "player9", stat: "assists", qty: 1 },
+          { playerId: "player4", stat: "goals", qty: 2 },
+          { playerId: "player8", stat: "goals", qty: 1 }
+        ]
+      }
+    ];
     const DEFAULT_LINEUP = { formation:"2-2", gk:null, slots:[null,null,null,null] };
 
     const FORMATIONS = {
@@ -941,8 +957,8 @@
     const rankingStats = [
       { key:"goals", label:"Goals" }, { key:"assists", label:"Assists" }, { key:"saves", label:"Saves" },
       { key:"cleanSheets", label:"Clean Sheets" }, { key:"fights", label:"Fights" }, { key:"overall", label:"Overall" },
-      { key:"speed", label:"Speed" }, { key:"strength", label:"Strength" }, { key:"dribbling", label:"Dribbling" },
-      { key:"shooting", label:"Shooting" }, { key:"goalie", label:"Keeper Rating" }
+      { key:"speed", label:"Speed" }, { key:"strength", label:"Strength" }, { key:"technique", label:"Technique" },
+      { key:"kicking", label:"Kicking" }, { key:"goalie", label:"Keeper Rating" }
     ];
     const attrOrder = ["overall","speed","strength","technique","kicking","goalie"];
     function attrLabel(key){ return key === "goalie" ? "Keeper Rating" : key.charAt(0).toUpperCase() + key.slice(1); }
