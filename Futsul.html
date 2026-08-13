@@ -147,21 +147,97 @@
   .leader-value{ font-family:var(--font-mono); font-size:1.8rem; font-weight:600; color:var(--ink); }
   .leader-unit{ font-size:.68rem; text-transform:uppercase; color:var(--muted); margin-left:6px; letter-spacing:.05em; }
 
+  /* ---------- All-time score ---------- */
+  .all-time-card{
+    display:flex; align-items:center; justify-content:center; gap:0;
+    background:linear-gradient(135deg, var(--bib-dark) 0%, #223229 52%, var(--bib-dark) 100%);
+    border-radius:14px; padding:30px 24px; margin-bottom:44px; position:relative; overflow:hidden;
+    border:1px solid var(--ink);
+  }
+  .all-time-card::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 20% 20%, rgba(193,147,47,.16), transparent 55%),
+               radial-gradient(circle at 80% 80%, rgba(193,147,47,.12), transparent 55%);
+    pointer-events:none;
+  }
+  .all-time-inner{ display:flex; align-items:center; gap:26px; position:relative; z-index:1; flex-wrap:wrap; justify-content:center; }
+  .all-time-kicker{
+    position:absolute; top:14px; left:50%; transform:translateX(-50%); z-index:1;
+    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.14em; font-size:.68rem;
+    color:var(--gold); font-weight:600;
+  }
+  .all-time-side{ display:flex; flex-direction:column; align-items:center; gap:6px; min-width:110px; }
+  .all-time-team{
+    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:600;
+  }
+  .all-time-side.shirts .all-time-team{ color:var(--bib-light); }
+  .all-time-side.jerseys .all-time-team{ color:var(--gold); }
+  .all-time-value{ font-family:var(--font-display); font-weight:700; font-size:clamp(2.6rem,7vw,4rem); color:#fff; line-height:1; }
+  .all-time-side.jerseys .all-time-value{ color:var(--gold); }
+  .all-time-sub{ font-family:var(--font-mono); font-size:.66rem; color:rgba(255,255,255,.55); letter-spacing:.05em; }
+  .all-time-sep{ font-family:var(--font-display); font-size:2rem; color:rgba(255,255,255,.35); font-weight:700; margin-top:14px; }
+
   /* ---------- Game log ---------- */
-  .game-log-panel{ display:flex; flex-direction:column; gap:12px; }
+  .game-log-panel{ display:flex; flex-direction:column; gap:14px; }
   .empty-state{ color:var(--muted); max-width:440px; margin:0 auto; line-height:1.7; }
   .game-log-panel .empty-state{ border:1px dashed var(--border); border-radius:10px; padding:44px 24px; text-align:center; margin:0; }
-  .log-entry{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
-  .log-entry-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-  .log-date{ font-family:var(--font-mono); font-weight:600; font-size:.85rem; }
-  .log-note{ color:var(--muted); font-size:.85rem; margin-left:10px; }
-  .log-score{ font-family:var(--font-mono); font-weight:700; font-size:1rem; }
-  .log-delete{ color:var(--red); font-size:1.15rem; line-height:1; }
-  .log-contribs{
-    list-style:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);
-    display:flex; flex-direction:column; gap:4px;
+
+  .log-entry{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+    box-shadow:0 1px 2px rgba(21,34,27,.04); transition:box-shadow .2s ease, border-color .2s ease;
   }
-  .log-contribs li{ font-size:.84rem; color:var(--ink-soft); }
+  .log-entry.win-jerseys{ border-left:5px solid var(--ink); }
+  .log-entry.win-shirts{ border-left:5px solid var(--gold); }
+  .log-entry.draw{ border-left:5px solid var(--muted); }
+  .log-entry:hover{ box-shadow:0 8px 20px rgba(21,34,27,.08); }
+
+  .log-summary{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:18px 20px; text-align:left; flex-wrap:wrap;
+  }
+  .log-summary-left{ display:flex; flex-direction:column; gap:5px; }
+  .log-date{ font-family:var(--font-mono); font-weight:600; font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .log-note{ color:var(--ink-soft); font-size:.9rem; font-weight:500; }
+  .log-badge{
+    display:inline-block; font-family:var(--font-mono); font-size:.64rem; text-transform:uppercase;
+    letter-spacing:.06em; font-weight:700; padding:3px 8px; border-radius:20px; margin-right:8px;
+  }
+  .log-badge.jerseys{ background:var(--bib-dark); color:var(--gold); }
+  .log-badge.shirts{ background:var(--surface-2); color:var(--ink); border:1px solid var(--border); }
+  .log-badge.draw{ background:var(--surface-2); color:var(--muted); border:1px solid var(--border); }
+
+  .log-score-wrap{ display:flex; align-items:center; gap:14px; }
+  .log-score-big{ display:flex; align-items:baseline; gap:8px; font-family:var(--font-display); font-weight:700; }
+  .log-score-big .num{ font-size:2.1rem; line-height:1; }
+  .log-score-big .num.shirts-score{ color:var(--ink); }
+  .log-score-big .num.jerseys-score{ color:var(--gold-ink); }
+  .log-score-big .sep{ font-size:1.2rem; color:var(--muted); }
+  .log-chevron{ font-size:1.1rem; color:var(--muted); transition:transform .25s ease; flex-shrink:0; }
+  .log-entry.expanded .log-chevron{ transform:rotate(180deg); }
+  .log-delete{ color:var(--red); font-size:1.15rem; line-height:1; padding:4px; }
+
+  .log-details{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    background:var(--surface-2); border-top:1px solid var(--border);
+  }
+  .log-entry.expanded .log-details{ max-height:600px; }
+  .log-details-inner{ padding:18px 20px 20px; }
+  .log-stat-groups{ display:flex; flex-direction:column; gap:14px; }
+  .log-stat-group-label{
+    font-family:var(--font-mono); text-transform:uppercase; font-size:.68rem; letter-spacing:.08em;
+    font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:6px;
+  }
+  .log-stat-group-label .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .log-chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .log-chip{
+    display:flex; align-items:center; gap:7px; background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:5px 12px 5px 6px; font-size:.82rem; font-weight:500; color:var(--ink-soft);
+  }
+  .log-chip .qty{
+    font-family:var(--font-mono); font-weight:700; font-size:.72rem; color:#fff;
+    width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .log-contribs{ list-style:none; }
 
   /* ---------- Avatars ---------- */
   .avatar{ position:relative; display:inline-flex; border-radius:50%; overflow:hidden; flex-shrink:0; }
@@ -374,6 +450,8 @@
 
     <!-- Home -->
     <section id="home" class="content-section active">
+      <div id="allTimeScore"></div>
+
       <div class="section-head">
         <span class="section-kicker">Leaderboard</span>
         <h2>This Season's Leaders</h2>
@@ -486,8 +564,8 @@
         <div class="edit-grid">
           <div><label for="g-date">Date</label><input type="date" id="g-date" required></div>
           <div><label for="g-note">Note / opponent</label><input type="text" id="g-note" placeholder="e.g. Tuesday night session"></div>
-          <div><label for="g-for">Score for</label><input type="number" min="0" id="g-for" value="0"></div>
-          <div><label for="g-against">Score against</label><input type="number" min="0" id="g-against" value="0"></div>
+          <div><label for="g-shirts">Shirts score</label><input type="number" min="0" id="g-shirts" value="0"></div>
+          <div><label for="g-jerseys">Jerseys score</label><input type="number" min="0" id="g-jerseys" value="0"></div>
         </div>
 
         <h3 style="margin:6px 0 10px;">Add a stat</h3>
@@ -928,11 +1006,33 @@
 };
     const DEFAULT_GAMES = [
       {
+        id: "game-jerseys-9-7-shirts",
+        date: "2026-08-13",
+        note: "Jerseys win · 2 fights",
+        shirtsScore: 7,
+        jerseysScore: 9,
+        contributions: [
+          { playerId: "player10", stat: "goals", qty: 2 },
+          { playerId: "player9", stat: "goals", qty: 2 },
+          { playerId: "player11", stat: "goals", qty: 2 },
+          { playerId: "playerD", stat: "goals", qty: 1 },
+          { playerId: "player12", stat: "goals", qty: 1 },
+          { playerId: "playerG", stat: "goals", qty: 1 },
+          { playerId: "player1", stat: "goals", qty: 5 },
+          { playerId: "player8", stat: "goals", qty: 2 },
+          { playerId: "player12", stat: "assists", qty: 1 },
+          { playerId: "player16", stat: "assists", qty: 1 },
+          { playerId: "player9", stat: "assists", qty: 1 },
+          { playerId: "player11", stat: "assists", qty: 1 },
+          { playerId: "playerA", stat: "assists", qty: 1 }
+        ]
+      },
+      {
         id: "game-jerseys-4-3-shirts",
         date: "2026-08-12",
         note: "Jerseys win in full time · 2 fights",
-        scoreFor: 4,
-        scoreAgainst: 3,
+        shirtsScore: 3,
+        jerseysScore: 4,
         contributions: [
           { playerId: "playerD", stat: "goals", qty: 2 },
           { playerId: "player11", stat: "goals", qty: 2 },
@@ -953,6 +1053,9 @@
     const GK_POS = { top:90, left:50 };
 
     const STAT_LABELS = { goals:"Goal", assists:"Assist", saves:"Save", cleanSheets:"Clean sheet", fights:"Fight" };
+    const STAT_LABELS_PLURAL = { goals:"Goals", assists:"Assists", saves:"Saves", cleanSheets:"Clean sheets", fights:"Fights" };
+    const STAT_COLORS = { goals:"#2F8F5B", assists:"#3E7BC4", saves:"#8A56C4", cleanSheets:"#1B8A8A", fights:"#A23B33" };
+    const STAT_ORDER = ["goals","assists","saves","cleanSheets","fights"];
 
     const rankingStats = [
       { key:"goals", label:"Goals" }, { key:"assists", label:"Assists" }, { key:"saves", label:"Saves" },
@@ -1002,8 +1105,18 @@
     function savePlayers(){ try{ localStorage.setItem(LS_KEYS.players, JSON.stringify(players)); }catch(e){} }
 
     function loadGames(){
-      try{ const raw = localStorage.getItem(LS_KEYS.games); return raw ? JSON.parse(raw) : structuredClone(DEFAULT_GAMES); }
-      catch(e){ return []; }
+      let list;
+      try{ const raw = localStorage.getItem(LS_KEYS.games); list = raw ? JSON.parse(raw) : structuredClone(DEFAULT_GAMES); }
+      catch(e){ list = []; }
+      // Migrate any older entries that used the generic scoreFor/scoreAgainst fields.
+      list = list.map(g => {
+        if (g.shirtsScore === undefined && g.scoreFor !== undefined){
+          return { ...g, shirtsScore: g.scoreAgainst || 0, jerseysScore: g.scoreFor || 0 };
+        }
+        return g;
+      });
+      list.sort((a, b) => b.date.localeCompare(a.date));
+      return list;
     }
     function saveGames(){ try{ localStorage.setItem(LS_KEYS.games, JSON.stringify(games)); }catch(e){} }
 
@@ -1137,6 +1250,47 @@
     function refreshRanking(){ showRanking(activeRankingKey); }
 
     // ---------------------------------------------------------------
+    // All-time score
+    // ---------------------------------------------------------------
+    function computeAllTime(){
+      let shirtsWins = 0, jerseysWins = 0, draws = 0;
+      games.forEach(g => {
+        if (g.jerseysScore > g.shirtsScore) jerseysWins++;
+        else if (g.shirtsScore > g.jerseysScore) shirtsWins++;
+        else draws++;
+      });
+      return { shirtsWins, jerseysWins, draws };
+    }
+
+    function renderAllTimeScore(){
+      const el = document.getElementById("allTimeScore");
+      if (games.length === 0){
+        el.innerHTML = "";
+        return;
+      }
+      const { shirtsWins, jerseysWins, draws } = computeAllTime();
+      el.innerHTML = `
+        <div class="all-time-card">
+          <span class="all-time-kicker">All-Time Score</span>
+          <div class="all-time-inner">
+            <div class="all-time-side shirts">
+              <span class="all-time-team">Shirts</span>
+              <span class="all-time-value">${shirtsWins}</span>
+              <span class="all-time-sub">win${shirtsWins === 1 ? "" : "s"}</span>
+            </div>
+            <span class="all-time-sep">–</span>
+            <div class="all-time-side jerseys">
+              <span class="all-time-team">Jerseys</span>
+              <span class="all-time-value">${jerseysWins}</span>
+              <span class="all-time-sub">win${jerseysWins === 1 ? "" : "s"}</span>
+            </div>
+          </div>
+        </div>
+        ${draws > 0 ? `<p style="text-align:center; margin:-32px 0 44px; color:var(--muted); font-size:.8rem; font-family:var(--font-mono);">${draws} draw${draws === 1 ? "" : "s"}</p>` : ""}
+      `;
+    }
+
+    // ---------------------------------------------------------------
     // Game log
     // ---------------------------------------------------------------
     function renderGameLog(){
@@ -1149,23 +1303,70 @@
         panel.innerHTML = `<p class="empty-state">No games logged yet. ${isAdmin ? "Use \u201cLog a game\u201d above to add the first one." : "Check back after the next session."}</p>`;
         return;
       }
-      panel.innerHTML = games.map(g => `
-        <div class="log-entry">
-          <div class="log-entry-head">
-            <div><span class="log-date">${formatDate(g.date)}</span>${g.note ? `<span class="log-note">${g.note}</span>` : ""}</div>
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span class="log-score">${g.scoreFor} – ${g.scoreAgainst}</span>
+
+      panel.innerHTML = games.map(g => {
+        const winner = g.jerseysScore > g.shirtsScore ? "jerseys" : g.shirtsScore > g.jerseysScore ? "shirts" : "draw";
+        const winClass = winner === "draw" ? "draw" : `win-${winner}`;
+        const badgeText = winner === "draw" ? "Draw" : winner === "jerseys" ? "Jerseys win" : "Shirts win";
+
+        const groups = STAT_ORDER.map(stat => {
+          const rows = g.contributions.filter(c => c.stat === stat);
+          if (!rows.length) return "";
+          const color = STAT_COLORS[stat];
+          return `
+            <div class="log-stat-group">
+              <span class="log-stat-group-label" style="color:${color};">
+                <span class="dot" style="background:${color};"></span>${STAT_LABELS_PLURAL[stat]}
+              </span>
+              <div class="log-chip-row">
+                ${rows.map(c => `
+                  <span class="log-chip">
+                    <span class="qty" style="background:${color};">${c.qty}</span>
+                    ${players[c.playerId] ? players[c.playerId].name : "Former player"}
+                  </span>
+                `).join("")}
+              </div>
+            </div>`;
+        }).join("");
+
+        return `
+        <div class="log-entry ${winClass}" data-id="${g.id}">
+          <button class="log-summary" type="button" aria-expanded="false">
+            <div class="log-summary-left">
+              <span class="log-date">${formatDate(g.date)}</span>
+              <span><span class="log-badge ${winner}">${badgeText}</span>${g.note ? `<span class="log-note">${g.note}</span>` : ""}</span>
+            </div>
+            <div class="log-score-wrap">
+              <div class="log-score-big">
+                <span class="num shirts-score">${g.shirtsScore}</span>
+                <span class="sep">–</span>
+                <span class="num jerseys-score">${g.jerseysScore}</span>
+              </div>
               ${isAdmin ? `<button class="log-delete" data-id="${g.id}" aria-label="Delete game">&times;</button>` : ""}
+              <span class="log-chevron">&#9662;</span>
+            </div>
+          </button>
+          <div class="log-details">
+            <div class="log-details-inner">
+              ${groups ? `<div class="log-stat-groups">${groups}</div>` : `<p class="empty-state" style="padding:0; border:none; margin:0; text-align:left;">No individual stats logged for this game.</p>`}
             </div>
           </div>
-          ${g.contributions.length ? `<ul class="log-contribs">${g.contributions.map(c =>
-            `<li>${c.qty > 1 ? c.qty + "\u00d7 " : ""}${STAT_LABELS[c.stat]} — ${players[c.playerId] ? players[c.playerId].name : "Former player"}</li>`
-          ).join("")}</ul>` : ""}
-        </div>
-      `).join("");
+        </div>`;
+      }).join("");
 
+      panel.querySelectorAll(".log-summary").forEach(btn => {
+        btn.addEventListener("click", e => {
+          if (e.target.closest(".log-delete")) return;
+          const entry = btn.closest(".log-entry");
+          const expanded = entry.classList.toggle("expanded");
+          btn.setAttribute("aria-expanded", String(expanded));
+        });
+      });
       if (isAdmin){
-        panel.querySelectorAll(".log-delete").forEach(b => b.addEventListener("click", () => deleteGame(b.dataset.id)));
+        panel.querySelectorAll(".log-delete").forEach(b => b.addEventListener("click", e => {
+          e.stopPropagation();
+          deleteGame(b.dataset.id);
+        }));
       }
     }
 
@@ -1207,15 +1408,15 @@
       e.preventDefault();
       const date = document.getElementById("g-date").value || new Date().toISOString().slice(0, 10);
       const note = document.getElementById("g-note").value.trim();
-      const scoreFor = parseInt(document.getElementById("g-for").value) || 0;
-      const scoreAgainst = parseInt(document.getElementById("g-against").value) || 0;
+      const shirtsScore = parseInt(document.getElementById("g-shirts").value) || 0;
+      const jerseysScore = parseInt(document.getElementById("g-jerseys").value) || 0;
 
       pendingContributions.forEach(c => {
         const p = players[c.playerId];
         if (p) p[c.stat] = String((parseInt(p[c.stat]) || 0) + c.qty);
       });
 
-      games.push({ id: uid(), date, note, scoreFor, scoreAgainst, contributions: pendingContributions.slice() });
+      games.push({ id: uid(), date, note, shirtsScore, jerseysScore, contributions: pendingContributions.slice() });
       games.sort((a, b) => b.date.localeCompare(a.date));
 
       savePlayers(); saveGames();
@@ -1522,6 +1723,7 @@
       renderRoster("shirts-grid", "shirts");
       renderRoster("jerseys-grid", "jerseys");
       renderRosterActions();
+      renderAllTimeScore();
       renderLeaders();
       refreshRanking();
       renderGameLog();
