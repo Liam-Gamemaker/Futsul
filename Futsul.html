@@ -502,7 +502,7 @@
   </main>
 
   <footer class="site-footer">
-    Stats save to this browser automatically. To publish changes for everyone, an admin needs to update the file hosted on GitHub — see the note at the end of the players script.
+    Stats save to this browser automatically. To publish changes for everyone, an admin needs to use "Publish to GitHub" from the admin bar so the change is committed to the live file.
   </footer>
 
   <!-- Player Profile Modal -->
@@ -569,15 +569,49 @@
     </div>
   </div>
 
+  <!-- Publish to GitHub Modal -->
+  <div id="publishModal" class="profile-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="profile-content wide">
+      <button class="close-btn" onclick="closePublish()" aria-label="Close">&times;</button>
+      <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Publish to GitHub</h2>
+      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">
+        Your edits are live in this browser only. Publishing commits them straight into Futsul.html on GitHub so
+        everyone sees the update once Pages rebuilds (usually a minute or two).
+      </p>
+      <form id="publishForm">
+        <div class="edit-grid">
+          <div><label for="pub-owner">Repo owner</label><input type="text" id="pub-owner" value="Experimentalplayer" required></div>
+          <div><label for="pub-repo">Repo name</label><input type="text" id="pub-repo" value="SFX-Futsul" required></div>
+          <div><label for="pub-path">File path</label><input type="text" id="pub-path" value="Futsul.html" required></div>
+          <div><label for="pub-branch">Branch</label><input type="text" id="pub-branch" value="main" required></div>
+        </div>
+        <label for="pub-token">GitHub token</label>
+        <input type="password" id="pub-token" autocomplete="off" placeholder="Paste a fine-grained token with Contents: Read and write" required>
+        <p style="color:var(--muted); font-size:.78rem; margin:-8px 0 14px;">
+          Never stored — only kept in memory for this publish, and cleared as soon as you close this panel.
+        </p>
+        <p id="publishStatus" class="form-error" hidden></p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
+          <button type="submit" class="btn btn-primary" id="publishNowBtn">Publish now</button>
+          <button type="button" class="btn" id="copyDataBtn">Copy data instead</button>
+          <button type="button" class="btn" id="cancelPublishBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     // ---------------------------------------------------------------
     // PLAYER DATA — this is the version that ships to everyone who
     // visits the site. Admin edits are saved to each visitor's own
     // browser (localStorage) so the UI updates instantly for them.
-    // To make an edit permanent for ALL visitors, copy the updated
-    // object (Admin panel has no auto-export yet — see the note at
-    // the bottom of this script) into this file and push to GitHub.
+    // To make an edit permanent for ALL visitors, use the "Publish to
+    // GitHub" button in the admin bar (see the Publish section near
+    // the bottom of this script) — it rewrites the blocks between the
+    // DATA:...:START / DATA:...:END markers below and commits Futsul.html
+    // straight to the repo, which makes GitHub Pages rebuild the site.
     // ---------------------------------------------------------------
+    // ===== DATA:PLAYERS:START =====
     const DEFAULT_PLAYERS = {
     player1: {
         name: "William McCracken",
@@ -980,6 +1014,9 @@
         weaknesses: ["", ""]
     }
 };
+    // ===== DATA:PLAYERS:END =====
+
+    // ===== DATA:GAMES:START =====
     const DEFAULT_GAMES = [
       {
         id: "game-shirts-4-4-jerseys-pens",
@@ -1043,6 +1080,7 @@
         ]
       }
     ];
+    // ===== DATA:GAMES:END =====
 
     // ---------------------------------------------------------------
     // NEWS — recent headlines shown on the News page. Each story can
@@ -1653,10 +1691,14 @@
     function renderNavAdmin(){
       const el = document.getElementById("navAdmin");
       el.innerHTML = isAdmin
-        ? `<span class="admin-tag">Admin: LiamSawade</span><button class="btn btn-small" id="logoutBtn">Log out</button>`
+        ? `<span class="admin-tag">Admin: LiamSawade</span><button class="btn btn-small" id="publishBtnNav">Publish to GitHub</button><button class="btn btn-small" id="logoutBtn">Log out</button>`
         : `<button class="btn btn-small" id="loginBtnNav">Admin</button>`;
-      if (isAdmin) document.getElementById("logoutBtn").addEventListener("click", logout);
-      else document.getElementById("loginBtnNav").addEventListener("click", openLogin);
+      if (isAdmin){
+        document.getElementById("logoutBtn").addEventListener("click", logout);
+        document.getElementById("publishBtnNav").addEventListener("click", openPublish);
+      } else {
+        document.getElementById("loginBtnNav").addEventListener("click", openLogin);
+      }
     }
 
     function openLogin(){
@@ -1696,6 +1738,158 @@
       }
     }
 
+    // ---------------------------------------------------------------
+    // Publish to GitHub
+    //
+    // Admin edits only ever touch this browser's localStorage. To make
+    // them permanent for every visitor, this panel rewrites the two
+    // data blocks below (between the DATA:...:START / DATA:...:END
+    // markers) with the current in-memory players/games, then commits
+    // the whole file straight to the repo via the GitHub Contents API.
+    // If that fails (bad token, offline, etc.) "Copy data instead"
+    // builds the same replacement text and puts it on the clipboard so
+    // it can be pasted over the markers manually in GitHub's web editor.
+    // ---------------------------------------------------------------
+    function jsLiteral(value, indent){
+      // Pretty-printed JS object/array literal (not JSON) so the file
+      // keeps reading the same way it did by hand — quoted keys are
+      // avoided where safe, strings use double quotes.
+      const pad = "  ".repeat(indent);
+      const padIn = "  ".repeat(indent + 1);
+      if (Array.isArray(value)){
+        if (value.length === 0) return "[]";
+        const items = value.map(v => padIn + jsLiteral(v, indent + 1)).join(",\n");
+        return `[\n${items}\n${pad}]`;
+      }
+      if (value && typeof value === "object"){
+        const keys = Object.keys(value);
+        if (keys.length === 0) return "{}";
+        const items = keys.map(k => {
+          const safeKey = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k);
+          return `${padIn}${safeKey}: ${jsLiteral(value[k], indent + 1)}`;
+        }).join(",\n");
+        return `{\n${items}\n${pad}}`;
+      }
+      return JSON.stringify(value);
+    }
+
+    function buildDataBlock(){
+      const playersLiteral = jsLiteral(players, 2);
+      const gamesLiteral = jsLiteral(games, 2);
+      return (
+`    // ===== DATA:PLAYERS:START =====
+    const DEFAULT_PLAYERS = ${playersLiteral};
+    // ===== DATA:PLAYERS:END =====
+
+    // ===== DATA:GAMES:START =====
+    const DEFAULT_GAMES = ${gamesLiteral};
+    // ===== DATA:GAMES:END =====`
+      );
+    }
+
+    function replaceDataMarkers(fileText){
+      const block = buildDataBlock();
+      const playersRe = /\/\/ ===== DATA:PLAYERS:START =====[\s\S]*?\/\/ ===== DATA:PLAYERS:END =====/;
+      const gamesRe = /\/\/ ===== DATA:GAMES:START =====[\s\S]*?\/\/ ===== DATA:GAMES:END =====/;
+      const playersBlock = block.slice(0, block.indexOf("// ===== DATA:GAMES:START ====="));
+      const gamesBlock = block.slice(block.indexOf("// ===== DATA:GAMES:START ====="));
+      if (!playersRe.test(fileText) || !gamesRe.test(fileText)){
+        throw new Error("Couldn't find the DATA:...:START / DATA:...:END markers in Futsul.html — has the file been edited outside this panel?");
+      }
+      return fileText.replace(playersRe, playersBlock.trimEnd()).replace(gamesRe, gamesBlock.trimEnd());
+    }
+
+    function utf8ToBase64(str){
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+    function base64ToUtf8(b64){
+      return decodeURIComponent(escape(atob(b64.replace(/\n/g, ""))));
+    }
+
+    function openPublish(){
+      document.getElementById("publishStatus").hidden = true;
+      document.getElementById("publishForm").reset();
+      document.getElementById("pub-owner").value = "Experimentalplayer";
+      document.getElementById("pub-repo").value = "SFX-Futsul";
+      document.getElementById("pub-path").value = "Futsul.html";
+      document.getElementById("pub-branch").value = "main";
+      openModal("publishModal");
+      document.getElementById("pub-token").focus();
+    }
+
+    function setPublishStatus(msg, isError){
+      const el = document.getElementById("publishStatus");
+      el.textContent = msg;
+      el.style.color = isError ? "var(--red)" : "var(--turf)";
+      el.hidden = false;
+    }
+
+    async function submitPublish(e){
+      e.preventDefault();
+      const owner = document.getElementById("pub-owner").value.trim();
+      const repo = document.getElementById("pub-repo").value.trim();
+      const path = document.getElementById("pub-path").value.trim().replace(/^\/+/, "");
+      const branch = document.getElementById("pub-branch").value.trim();
+      const token = document.getElementById("pub-token").value.trim();
+      const btn = document.getElementById("publishNowBtn");
+
+      btn.disabled = true;
+      setPublishStatus("Publishing… fetching the current file…", false);
+      try{
+        const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+        const headers = {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/vnd.github+json"
+        };
+
+        const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, { headers });
+        if (!getRes.ok){
+          throw new Error(`Couldn't read the current file (${getRes.status}). Check the repo/path/branch and that the token has Contents: Read and write on this repo.`);
+        }
+        const getData = await getRes.json();
+        const currentText = base64ToUtf8(getData.content);
+
+        setPublishStatus("Publishing… updating stats and committing…", false);
+        const newText = replaceDataMarkers(currentText);
+
+        const putRes = await fetch(apiBase, {
+          method: "PUT",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: `Publish stats update — ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
+            content: utf8ToBase64(newText),
+            sha: getData.sha,
+            branch
+          })
+        });
+        if (!putRes.ok){
+          const errBody = await putRes.json().catch(() => ({}));
+          throw new Error(`GitHub rejected the commit (${putRes.status}): ${errBody.message || "unknown error"}`);
+        }
+
+        setPublishStatus("Published! GitHub Pages will rebuild the live site in a minute or two.", false);
+        document.getElementById("pub-token").value = "";
+      } catch(err){
+        setPublishStatus(err.message || "Publish failed — try 'Copy data instead' and paste the update in manually.", true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function copyDataInstead(){
+      try{
+        await navigator.clipboard.writeText(buildDataBlock());
+        setPublishStatus("Copied! In GitHub's web editor, replace everything from \"// ===== DATA:PLAYERS:START =====\" through \"// ===== DATA:GAMES:END =====\" with what you just copied, then commit.", false);
+      } catch(err){
+        setPublishStatus("Couldn't access the clipboard in this browser — try publishing directly instead.", true);
+      }
+    }
+
+    function closePublish(){
+      document.getElementById("pub-token").value = "";
+      closeModal("publishModal");
+    }
+
     function refreshAll(){
       renderRoster("shirts-grid", "shirts");
       renderRoster("jerseys-grid", "jerseys");
@@ -1718,10 +1912,10 @@
     }
     window.addEventListener("keydown", e => {
       if (e.key !== "Escape") return;
-      ["profileModal","loginModal","gameModal"].forEach(id => { if (document.getElementById(id).style.display === "flex") closeModal(id); });
+      ["profileModal","loginModal","gameModal","publishModal"].forEach(id => { if (document.getElementById(id).style.display === "flex") closeModal(id); });
     });
     window.addEventListener("click", e => {
-      ["profileModal","loginModal","gameModal"].forEach(id => { if (e.target === document.getElementById(id)) closeModal(id); });
+      ["profileModal","loginModal","gameModal","publishModal"].forEach(id => { if (e.target === document.getElementById(id)) closeModal(id); });
     });
 
     // ---------------------------------------------------------------
@@ -1738,6 +1932,9 @@
       document.getElementById("gameForm").addEventListener("submit", submitGame);
       document.getElementById("addStatBtn").addEventListener("click", addPendingStat);
       document.getElementById("cancelGameBtn").addEventListener("click", () => closeModal("gameModal"));
+      document.getElementById("publishForm").addEventListener("submit", submitPublish);
+      document.getElementById("copyDataBtn").addEventListener("click", copyDataInstead);
+      document.getElementById("cancelPublishBtn").addEventListener("click", closePublish);
 
       renderRankingTabs();
       refreshAll();
