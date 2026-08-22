@@ -607,7 +607,7 @@
         name: "William McCracken",
         picture: "insert profile picture here",
         team: "shirts",
-        goals: "5",
+        goals: "7",
         assists: "1",
         fights: "0",
         saves: "0",
@@ -628,7 +628,7 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "4",
+        fights: "6",
         saves: "0",
         passing: "79",
         defending: "84",
@@ -665,7 +665,7 @@
         picture: "Seb.png",
         team: "shirts",
         goals: "2",
-        assists: "0",
+        assists: "1",
         fights: "0",
         saves: "0",
         passing: "93",
@@ -683,7 +683,7 @@
         name: "Darcy Brown",
         picture: "DB",
         team: "shirts",
-        goals: "-1",
+        goals: "-3",
         assists: "0",
         fights: "4",
         saves: "0",
@@ -704,7 +704,7 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "0",
+        fights: "3",
         saves: "0",
         passing: "73",
         defending: "83",
@@ -723,7 +723,7 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "3",
+        fights: "5",
         saves: "0",
         passing: "72",
         defending: "78",
@@ -778,8 +778,8 @@
         name: "Jack Rollenston",
         picture: "JackR.png",
         team: "shirts",
-        goals: "3",
-        assists: "0",
+        goals: "5",
+        assists: "1",
         fights: "0",
         saves: "0",
         passing: "84",
@@ -797,7 +797,7 @@
         name: "Liam Molloy",
         picture: "LiamM.JPG",
         team: "jerseys",
-        goals: "1",
+        goals: "2",
         assists: "2",
         fights: "3",
         saves: "0",
@@ -816,9 +816,9 @@
         name: "Lucas D'macio",
         picture: "Lucas.jpg",
         team: "jerseys",
-        goals: "2",
+        goals: "3",
         assists: "1",
-        fights: "4",
+        fights: "6",
         saves: "0",
         passing: "89",
         defending: "87",
@@ -912,7 +912,7 @@
         picture: "Anthony.JPG",
         team: "jerseys",
         goals: "0",
-        assists: "1",
+        assists: "2",
         fights: "2",
         saves: "0",
         passing: "90",
@@ -932,7 +932,7 @@
         team: "jerseys",
         goals: "1",
         assists: "0",
-        fights: "4",
+        fights: "6",
         saves: "0",
         passing: "79",
         defending: "82",
@@ -989,7 +989,7 @@
         picture: "insert profile picture here",
         team: "jerseys",
         goals: "0",
-        assists: "0",
+        assists: "1",
         fights: "0",
         saves: "0",
         passing: "82",
@@ -1005,6 +1005,30 @@
     }
 };
     const DEFAULT_GAMES = [
+      {
+        id: "game-shirts-4-4-jerseys-pens",
+        date: "2026-08-21",
+        note: "Shirts win 4-4 on penalties",
+        shirtsScore: 4,
+        jerseysScore: 4,
+        shootoutWinner: "shirts",
+        contributions: [
+          { playerId: "player8", stat: "goals", qty: 2 },
+          { playerId: "player1", stat: "goals", qty: 2 },
+          { playerId: "player5", stat: "goals", qty: -2 },
+          { playerId: "player4", stat: "assists", qty: 1 },
+          { playerId: "player8", stat: "assists", qty: 1 },
+          { playerId: "player13", stat: "assists", qty: 1 },
+          { playerId: "player10", stat: "goals", qty: 1 },
+          { playerId: "player9", stat: "goals", qty: 1 },
+          { playerId: "player16", stat: "assists", qty: 1 },
+          { playerId: "player6", stat: "fights", qty: 3 },
+          { playerId: "playerG", stat: "fights", qty: 2 },
+          { playerId: "player2", stat: "fights", qty: 2 },
+          { playerId: "player7", stat: "fights", qty: 2 },
+          { playerId: "player10", stat: "fights", qty: 2 }
+        ]
+      },
       {
         id: "game-jerseys-9-7-shirts",
         date: "2026-08-13",
@@ -1139,6 +1163,15 @@
       return d.toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
     }
 
+    // Resolve the "real" result of a game, accounting for penalty shootouts.
+    // A shootoutWinner field on the game overrides a tied scoreline.
+    function gameWinner(g){
+      if (g.shirtsScore === g.jerseysScore && g.shootoutWinner){ return g.shootoutWinner; }
+      if (g.jerseysScore > g.shirtsScore) return "jerseys";
+      if (g.shirtsScore > g.jerseysScore) return "shirts";
+      return "draw";
+    }
+
     function avatarMarkup(player, sizeClass){
       const isShirts = player.team === "shirts";
       const bg = isShirts ? "var(--bib-light)" : "var(--bib-dark)";
@@ -1255,8 +1288,9 @@
     function computeAllTime(){
       let shirtsWins = 0, jerseysWins = 0, draws = 0;
       games.forEach(g => {
-        if (g.jerseysScore > g.shirtsScore) jerseysWins++;
-        else if (g.shirtsScore > g.jerseysScore) shirtsWins++;
+        const w = gameWinner(g);
+        if (w === "jerseys") jerseysWins++;
+        else if (w === "shirts") shirtsWins++;
         else draws++;
       });
       return { shirtsWins, jerseysWins, draws };
@@ -1305,9 +1339,10 @@
       }
 
       panel.innerHTML = games.map(g => {
-        const winner = g.jerseysScore > g.shirtsScore ? "jerseys" : g.shirtsScore > g.jerseysScore ? "shirts" : "draw";
+        const winner = gameWinner(g);
         const winClass = winner === "draw" ? "draw" : `win-${winner}`;
-        const badgeText = winner === "draw" ? "Draw" : winner === "jerseys" ? "Jerseys win" : "Shirts win";
+        const onPens = g.shirtsScore === g.jerseysScore && g.shootoutWinner;
+        const badgeText = winner === "draw" ? "Draw" : (winner === "jerseys" ? "Jerseys win" : "Shirts win") + (onPens ? " (pens)" : "");
 
         const groups = STAT_ORDER.map(stat => {
           const rows = g.contributions.filter(c => c.stat === stat);
