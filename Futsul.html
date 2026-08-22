@@ -584,12 +584,9 @@
           <div><label for="pub-repo">Repo name</label><input type="text" id="pub-repo" value="Futsul" required></div>
           <div><label for="pub-path">File path</label><input type="text" id="pub-path" value="Futsul.html" required></div>
           <div><label for="pub-branch">Branch</label><input type="text" id="pub-branch" value="main" required></div>
+          <div><label for="pub-token">Token</label><input type="text" id="pub-token" value="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" required></div>
         </div>
-        <label for="pub-token">GitHub token</label>
-        <input type="password" id="pub-token" autocomplete="off" placeholder="Paste a fine-grained token with Contents: Read and write" required>
-        <p style="color:var(--muted); font-size:.78rem; margin:-8px 0 14px;">
-          Never stored — only kept in memory for this publish, and cleared as soon as you close this panel.
-        </p>
+        
         <p id="publishStatus" class="form-error" hidden></p>
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
           <button type="submit" class="btn btn-primary" id="publishNowBtn">Publish now</button>
@@ -2111,8 +2108,8 @@
       document.getElementById("pub-repo").value = "Futsul";
       document.getElementById("pub-path").value = "Futsul.html";
       document.getElementById("pub-branch").value = "main";
+      document.getElementById("pub-token").value = "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";
       openModal("publishModal");
-      document.getElementById("pub-token").focus();
     }
 
     function setPublishStatus(msg, isError){
