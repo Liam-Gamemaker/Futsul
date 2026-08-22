@@ -584,9 +584,12 @@
           <div><label for="pub-repo">Repo name</label><input type="text" id="pub-repo" value="Futsul" required></div>
           <div><label for="pub-path">File path</label><input type="text" id="pub-path" value="Futsul.html" required></div>
           <div><label for="pub-branch">Branch</label><input type="text" id="pub-branch" value="main" required></div>
-          <div><label for="pub-token">Token</label><input type="text" id="pub-token" value="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" required></div>
         </div>
-        
+        <label for="pub-token">GitHub token</label>
+        <input type="password" id="pub-token" autocomplete="off" placeholder="Paste a fine-grained token with Contents: Read and write" required>
+        <p style="color:var(--muted); font-size:.78rem; margin:-8px 0 14px;">
+          Never stored — only kept in memory for this publish, and cleared as soon as you close this panel.
+        </p>
         <p id="publishStatus" class="form-error" hidden></p>
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
           <button type="submit" class="btn btn-primary" id="publishNowBtn">Publish now</button>
@@ -608,9 +611,9 @@
     // DATA:...:START / DATA:...:END markers below and commits Futsul.html
     // straight to the repo, which makes GitHub Pages rebuild the site.
     // ---------------------------------------------------------------
-        // ===== DATA:PLAYERS:START =====
+    // ===== DATA:PLAYERS:START =====
     const DEFAULT_PLAYERS = {
-      player1: {
+    player1: {
         name: "William McCracken",
         picture: "insert profile picture here",
         team: "shirts",
@@ -626,16 +629,10 @@
         dribbling: "89",
         shooting: "95",
         goalkeeping: "0",
-        strengths: [
-          "Shooting",
-          "Good at soccer"
-        ],
-        weaknesses: [
-          "Great Hair",
-          "2nd thing here"
-        ]
-      },
-      player2: {
+        strengths: ["Shooting", "Good at soccer"],
+        weaknesses: ["Great Hair", "2nd thing here"]
+    },
+    player2: {
         name: "Billy Moffit",
         picture: "Billy.JPG",
         team: "shirts",
@@ -651,16 +648,10 @@
         dribbling: "73",
         shooting: "80",
         goalkeeping: "0",
-        strengths: [
-          "Fast",
-          "Knows the rules"
-        ],
-        weaknesses: [
-          "Doesn't Play Futsal",
-          "The Ball"
-        ]
-      },
-      player3: {
+        strengths: ["Fast", "Knows the rules"],
+        weaknesses: ["Doesn't Play Futsal", "The Ball"]
+    },
+    player3: {
         name: "Leo Braybon",
         picture: "Leo.JPG",
         team: "shirts",
@@ -676,16 +667,10 @@
         dribbling: "85",
         shooting: "86",
         goalkeeping: "92",
-        strengths: [
-          "Top Goalie",
-          "Hell of a kick"
-        ],
-        weaknesses: [
-          "Z",
-          "Scary"
-        ]
-      },
-      player4: {
+        strengths: ["Top Goalie", "Hell of a kick"],
+        weaknesses: ["Z", "Scary"]
+    },
+    player4: {
         name: "Seb Munoz",
         picture: "Seb.png",
         team: "shirts",
@@ -701,16 +686,10 @@
         dribbling: "95",
         shooting: "94",
         goalkeeping: "0",
-        strengths: [
-          "Great Passer",
-          "Tecky"
-        ],
-        weaknesses: [
-          "Food",
-          "Lips"
-        ]
-      },
-      player5: {
+        strengths: ["Great Passer", "Tecky"],
+        weaknesses: ["Food", "Lips"]
+    },
+    player5: {
         name: "Darcy Brown",
         picture: "DB",
         team: "shirts",
@@ -726,16 +705,10 @@
         dribbling: "72",
         shooting: "82",
         goalkeeping: "80",
-        strengths: [
-          "Temper",
-          "Really good when he plays against his own team"
-        ],
-        weaknesses: [
-          "Public Enemy No.1",
-          "Always in fights"
-        ]
-      },
-      player6: {
+        strengths: ["Temper", "Really good when he plays against his own team"],
+        weaknesses: ["Public Enemy No.1", "Always in fights"]
+    },
+    player6: {
         name: "Tommy Wills",
         picture: "Tommy.JPG",
         team: "shirts",
@@ -751,16 +724,10 @@
         dribbling: "71",
         shooting: "79",
         goalkeeping: "0",
-        strengths: [
-          "Strong",
-          "Really aggressive"
-        ],
-        weaknesses: [
-          "Too strong",
-          "Always getting red cards"
-        ]
-      },
-      player7: {
+        strengths: ["Strong", "Really aggressive"],
+        weaknesses: ["Too strong", "Always getting red cards"]
+    },
+    player7: {
         name: "Liam Sawade",
         picture: "LiamS.JPG",
         team: "shirts",
@@ -770,26 +737,16 @@
         saves: "0",
         passing: "72",
         defending: "78",
-        overall: "78",
+        overall: "77",
         speed: "91",
         strength: "90",
         dribbling: "66",
         shooting: "63",
         goalkeeping: "0",
-        strengths: [
-          "Curly Hair",
-          "40 inch vert"
-        ],
-        weaknesses: [
-          "Doesn't know how to play",
-          "Vert doesn't really help"
-        ],
-        cleanSheets: "0",
-        technique: "0",
-        kicking: "0",
-        goalie: "0"
-      },
-      playerB: {
+        strengths: ["Curly Hair", "40 inch vert"],
+        weaknesses: ["Doesn't know how to play", "Vert doesn't really help"]
+    },
+    playerB: {
         name: "Tapi Gotchy",
         picture: "Tapi.JPG",
         team: "shirts",
@@ -805,16 +762,10 @@
         dribbling: "73",
         shooting: "75",
         goalkeeping: "0",
-        strengths: [
-          "Black",
-          "Fast"
-        ],
-        weaknesses: [
-          "Doesn't Play Futsal",
-          "Bad with Woman"
-        ]
-      },
-      playerA: {
+        strengths: ["Black", "Fast"],
+        weaknesses: ["Doesn't Play Futsal", "Bad with Woman"]
+    },
+    playerA: {
         name: "Tom Griffin",
         picture: "Tom.JPG",
         team: "shirts",
@@ -830,16 +781,10 @@
         dribbling: "83",
         shooting: "85",
         goalkeeping: "0",
-        strengths: [
-          "Popular",
-          "best celebrations in the game"
-        ],
-        weaknesses: [
-          "Doesn't play",
-          "Too nice"
-        ]
-      },
-      player8: {
+        strengths: ["Popular", "best celebrations in the game"],
+        weaknesses: ["Doesn't play", "Too nice"]
+    },
+    player8: {
         name: "Jack Rollenston",
         picture: "JackR.png",
         team: "shirts",
@@ -855,16 +800,10 @@
         dribbling: "81",
         shooting: "85",
         goalkeeping: "84",
-        strengths: [
-          "Fast with ball",
-          "Tecky"
-        ],
-        weaknesses: [
-          "Volley Ball Player",
-          "Idk"
-        ]
-      },
-      player9: {
+        strengths: ["Fast with ball", "Tecky"],
+        weaknesses: ["Volley Ball Player", "Idk"]
+    },
+    player9: {
         name: "Liam Molloy",
         picture: "LiamM.JPG",
         team: "jerseys",
@@ -880,16 +819,10 @@
         dribbling: "91",
         shooting: "92",
         goalkeeping: "0",
-        strengths: [
-          "Plays soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player10: {
+        strengths: ["Plays soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player10: {
         name: "Lucas D'macio",
         picture: "Lucas.jpg",
         team: "jerseys",
@@ -905,16 +838,10 @@
         dribbling: "86",
         shooting: "87",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Fast"
-        ],
-        weaknesses: [
-          "Loud",
-          "Doesn't know futsal rules"
-        ]
-      },
-      player11: {
+        strengths: ["Good at soccer", "Fast"],
+        weaknesses: ["Loud", "Doesn't know futsal rules"]
+    },
+    player11: {
         name: "Aditya",
         picture: "Aditya.jpeg",
         team: "jerseys",
@@ -930,16 +857,10 @@
         dribbling: "60",
         shooting: "55",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerC: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerC: {
         name: "William Hunt",
         picture: "WillH.JPG",
         team: "jerseys",
@@ -955,16 +876,10 @@
         dribbling: "81",
         shooting: "81",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerD: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerD: {
         name: "Harry Behnke",
         picture: "Harry.jpg",
         team: "jerseys",
@@ -980,16 +895,10 @@
         dribbling: "94",
         shooting: "94",
         goalkeeping: "80",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerE: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerE: {
         name: "Luka Seckar",
         picture: "Luka.jpg",
         team: "jerseys",
@@ -1005,16 +914,10 @@
         dribbling: "91",
         shooting: "93",
         goalkeeping: "93",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player16: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player16: {
         name: "Anthony Miniutti",
         picture: "Anthony.JPG",
         team: "jerseys",
@@ -1030,16 +933,10 @@
         dribbling: "89",
         shooting: "92",
         goalkeeping: "85",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerG: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerG: {
         name: "Rory Netting",
         picture: "Rory.JPG",
         team: "jerseys",
@@ -1055,16 +952,10 @@
         dribbling: "77",
         shooting: "79",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerH: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerH: {
         name: "AJ",
         picture: "AJ.JPG",
         team: "jerseys",
@@ -1080,16 +971,10 @@
         dribbling: "90",
         shooting: "88",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player12: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player12: {
         name: "Riley Mcauliffe",
         picture: "Riley.JPG",
         team: "jerseys",
@@ -1106,16 +991,10 @@
         shooting: "67",
         goalkeeping: "0",
         technique: "63",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player13: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player13: {
         name: "Jigme Chopel",
         picture: "insert profile picture here",
         team: "jerseys",
@@ -1131,16 +1010,10 @@
         dribbling: "85",
         shooting: "84",
         goalkeeping: "75",
-        strengths: [
-          "",
-          ""
-        ],
-        weaknesses: [
-          "",
-          ""
-        ]
-      }
-    };
+        strengths: ["", ""],
+        weaknesses: ["", ""]
+    }
+};
     // ===== DATA:PLAYERS:END =====
 
     // ===== DATA:GAMES:START =====
@@ -1153,76 +1026,20 @@
         jerseysScore: 4,
         shootoutWinner: "shirts",
         contributions: [
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player5",
-            stat: "goals",
-            qty: -2
-          },
-          {
-            playerId: "player4",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player8",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player13",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player6",
-            stat: "fights",
-            qty: 3
-          },
-          {
-            playerId: "playerG",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player2",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player7",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player10",
-            stat: "fights",
-            qty: 2
-          }
+          { playerId: "player8", stat: "goals", qty: 2 },
+          { playerId: "player1", stat: "goals", qty: 2 },
+          { playerId: "player5", stat: "goals", qty: -2 },
+          { playerId: "player4", stat: "assists", qty: 1 },
+          { playerId: "player8", stat: "assists", qty: 1 },
+          { playerId: "player13", stat: "assists", qty: 1 },
+          { playerId: "player10", stat: "goals", qty: 1 },
+          { playerId: "player9", stat: "goals", qty: 1 },
+          { playerId: "player16", stat: "assists", qty: 1 },
+          { playerId: "player6", stat: "fights", qty: 3 },
+          { playerId: "playerG", stat: "fights", qty: 2 },
+          { playerId: "player2", stat: "fights", qty: 2 },
+          { playerId: "player7", stat: "fights", qty: 2 },
+          { playerId: "player10", stat: "fights", qty: 2 }
         ]
       },
       {
@@ -1232,71 +1049,19 @@
         shirtsScore: 7,
         jerseysScore: 9,
         contributions: [
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "playerD",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player12",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "playerG",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 5
-          },
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player12",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player11",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "playerA",
-            stat: "assists",
-            qty: 1
-          }
+          { playerId: "player10", stat: "goals", qty: 2 },
+          { playerId: "player9", stat: "goals", qty: 2 },
+          { playerId: "player11", stat: "goals", qty: 2 },
+          { playerId: "playerD", stat: "goals", qty: 1 },
+          { playerId: "player12", stat: "goals", qty: 1 },
+          { playerId: "playerG", stat: "goals", qty: 1 },
+          { playerId: "player1", stat: "goals", qty: 5 },
+          { playerId: "player8", stat: "goals", qty: 2 },
+          { playerId: "player12", stat: "assists", qty: 1 },
+          { playerId: "player16", stat: "assists", qty: 1 },
+          { playerId: "player9", stat: "assists", qty: 1 },
+          { playerId: "player11", stat: "assists", qty: 1 },
+          { playerId: "playerA", stat: "assists", qty: 1 }
         ]
       },
       {
@@ -1306,36 +1071,12 @@
         shirtsScore: 3,
         jerseysScore: 4,
         contributions: [
-          {
-            playerId: "playerD",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player10",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player4",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 1
-          }
+          { playerId: "playerD", stat: "goals", qty: 2 },
+          { playerId: "player11", stat: "goals", qty: 2 },
+          { playerId: "player10", stat: "assists", qty: 1 },
+          { playerId: "player9", stat: "assists", qty: 1 },
+          { playerId: "player4", stat: "goals", qty: 2 },
+          { playerId: "player8", stat: "goals", qty: 1 }
         ]
       }
     ];
@@ -2072,7 +1813,6 @@
       document.getElementById("pub-repo").value = "Futsul";
       document.getElementById("pub-path").value = "Futsul.html";
       document.getElementById("pub-branch").value = "main";
-      document.getElementById("pub-token").value = "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";
       openModal("publishModal");
       document.getElementById("pub-token").focus();
     }
