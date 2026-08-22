@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft Versus · SFX Futsal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #0B0B0C;
+    --surface: #17181A;
+    --surface-2: #1E1F22;
+    --card-line: #2C2D30;
+    --ink: #FFFFFF;
+    --ink-soft: #C9CBCE;
+    --muted: #86888C;
+    --gold: #E3B23C;
+    --gold-ink: #F4CE6B;
+    --win: #33D17A;
+
+    --p1: #E2483C;       /* Team A / Player 1 — red */
+    --p1-soft: #FF8377;
+    --p2: #2E3AA8;       /* Team B / Player 2 — navy/blue */
+    --p2-soft: #7C8CFF;
+
+    --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family: var(--font-body); background: var(--paper); color: var(--ink);
+    line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+  button{ font-family:inherit; background:none; border:none; cursor:pointer; color:inherit; }
+  input{ font-family:inherit; }
+  :focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .wrap{ max-width:1040px; margin:0 auto; padding:36px 24px 80px; }
+
+  .masthead{ text-align:center; margin-bottom:30px; }
+  .eyebrow{
+    display:block; font-family:var(--font-mono); text-transform:uppercase;
+    letter-spacing:.24em; font-size:.7rem; color:var(--gold); font-weight:600; margin-bottom:12px;
+  }
+  .masthead h1{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(2.1rem,6vw,3.2rem);
+    letter-spacing:-.01em; text-transform:uppercase;
+  }
+  .masthead h1 .accent{ color:var(--p1); }
+  .masthead p{ color:var(--muted); margin-top:10px; max-width:52ch; margin-left:auto; margin-right:auto; }
+
+  .screen{ display:none; animation:fadeIn .35s ease; }
+  .screen.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .card-panel{
+    background:var(--surface); border:1px solid var(--card-line); border-radius:20px;
+    padding:36px; box-shadow:0 20px 50px rgba(0,0,0,.4);
+  }
+
+  /* ---------- Setup ---------- */
+  .setup-grid{ display:grid; grid-template-columns:1fr auto 1fr; gap:22px; align-items:center; margin-bottom:30px; }
+  .setup-side{ text-align:center; }
+  .setup-side label{
+    display:block; font-family:var(--font-mono); text-transform:uppercase; font-size:.68rem;
+    letter-spacing:.1em; color:var(--muted); margin-bottom:10px;
+  }
+  .setup-vs{ font-family:var(--font-display); font-weight:800; font-size:1.5rem; color:var(--card-line); }
+  .name-input{
+    width:100%; text-align:center; padding:14px; border:2px solid var(--card-line); border-radius:12px;
+    font-family:var(--font-display); font-weight:700; font-size:1.1rem; background:var(--surface-2); color:var(--ink);
+  }
+  .name-input:focus{ background:var(--surface); }
+  .setup-side.p1 .name-input:focus{ border-color:var(--p1); }
+  .setup-side.p2 .name-input:focus{ border-color:var(--p2-soft); }
+  .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; }
+
+  .rules-list{ list-style:none; display:flex; flex-direction:column; gap:12px; margin:24px 0 30px; }
+  .rules-list li{ display:flex; gap:14px; font-size:.9rem; color:var(--ink-soft); align-items:flex-start; }
+  .rules-list .num{
+    font-family:var(--font-mono); font-weight:700; font-size:.7rem; color:#171717;
+    background:var(--gold); border-radius:50%;
+    width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:16px 26px; border-radius:12px;
+    font-family:var(--font-display); font-weight:700; font-size:1rem; letter-spacing:.01em;
+    border:none; background:var(--gold); color:#171717; transition:all .18s ease; width:100%;
+  }
+  .btn:hover{ background:var(--gold-ink); transform:translateY(-1px); }
+
+  /* ---------- Team reveal ---------- */
+  .reveal-stage{ text-align:center; padding:44px 20px; }
+  .coin{
+    width:150px; height:150px; margin:0 auto 28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:1.15rem; text-transform:uppercase; letter-spacing:.06em;
+    border:3px solid var(--card-line); transition:background .15s ease, color .15s ease;
+    background:var(--surface-2); color:var(--muted);
+  }
+  .coin.spinning{ animation:spin .12s linear infinite; }
+  @keyframes spin{ from{ transform:rotateY(0deg);} to{ transform:rotateY(360deg);} }
+  .coin.settled{ background:var(--gold); color:#171717; border-color:var(--gold); font-size:2.2rem; font-weight:800; }
+  .reveal-caption{ font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.14em; font-size:.75rem; color:var(--muted); margin-bottom:8px; }
+  .reveal-headline{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; margin-bottom:24px; min-height:1.9rem; }
+  .roster-preview{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:30px; }
+  .mini-chip{
+    display:flex; align-items:center; gap:6px; background:var(--surface-2); border:1px solid var(--card-line);
+    border-radius:20px; padding:5px 12px 5px 6px; font-size:.78rem; font-weight:500; opacity:0; transform:translateY(4px);
+    animation:chipIn .3s ease forwards; color:var(--ink-soft);
+  }
+  @keyframes chipIn{ to{ opacity:1; transform:translateY(0); } }
+  .mini-avatar{
+    width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:.6rem; flex-shrink:0;
+  }
+
+  /* ---------- Draft screen ---------- */
+  .draft-top{
+    display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+    margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--card-line);
+  }
+  .round-info{ display:flex; flex-direction:column; gap:6px; }
+  .round-label{ font-family:var(--font-mono); text-transform:uppercase; font-size:.7rem; letter-spacing:.12em; color:var(--muted); }
+  .category-pill{
+    display:inline-flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800;
+    font-size:1.7rem; color:var(--ink); letter-spacing:-.01em; text-transform:uppercase;
+  }
+  .category-swatch{ width:15px; height:15px; border-radius:5px; display:inline-block; }
+  .turn-banner{
+    padding:11px 22px; border-radius:30px; font-family:var(--font-display);
+    font-weight:800; font-size:.9rem; text-transform:uppercase; letter-spacing:.04em; color:#fff;
+  }
+
+  .auto-notice{
+    display:none; align-items:center; gap:8px; background:rgba(226,72,60,.14); border:1px solid var(--p1);
+    color:var(--p1-soft); font-size:.82rem; font-weight:500; padding:11px 16px; border-radius:10px; margin-bottom:18px;
+  }
+
+  .timer-row{ display:flex; align-items:center; gap:14px; margin-bottom:22px; }
+  .timer-track{ flex:1; height:6px; border-radius:4px; background:var(--card-line); overflow:hidden; }
+  .timer-fill{ height:100%; width:100%; background:var(--gold); transition:width 1s linear, background .3s ease; }
+  .timer-fill.urgent{ background:var(--p1); }
+  .timer-value{ font-family:var(--font-mono); font-weight:700; font-size:.82rem; color:var(--ink-soft); min-width:34px; text-align:right; }
+  .timer-value.urgent{ color:var(--p1-soft); }
+
+  .progress-track{ display:flex; gap:6px; margin-bottom:30px; }
+  .progress-seg{ flex:1; height:5px; border-radius:3px; background:var(--card-line); }
+  .progress-seg.done{ background:var(--gold); }
+  .progress-seg.current{ background:var(--ink); }
+
+  /* ---- mystery draft-pool cards ---- */
+  .pool-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:16px; margin-bottom:40px; }
+  .pool-card{
+    background:linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
+    border:1px solid var(--card-line); border-radius:16px; padding:22px 16px 18px;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px;
+    transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease; position:relative; overflow:hidden;
+  }
+  .pool-card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent, var(--gold));
+  }
+  .pool-card:hover{ transform:translateY(-5px); border-color:var(--accent, var(--gold)); box-shadow:0 16px 32px rgba(0,0,0,.4); }
+
+  .pool-avatar{
+    width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:1rem; flex-shrink:0; border:3px solid var(--surface);
+    box-shadow:0 4px 10px rgba(0,0,0,.3);
+  }
+  .pool-name{ font-family:var(--font-display); font-weight:700; font-size:.98rem; line-height:1.2; text-transform:uppercase; }
+
+  .pool-featured{ display:flex; flex-direction:column; align-items:center; gap:2px; width:100%; }
+  .pool-featured .fl{ font-family:var(--font-mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
+  .fv.mystery{ font-family:var(--font-display); font-weight:800; font-size:2.1rem; color:var(--card-line); line-height:1; }
+  .pool-card:hover .fv.mystery{ color:var(--accent, var(--gold)); }
+  .pool-hint{ font-family:var(--font-mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:2px; }
+
+  /* ---- shared position-bar rows (draft roster + results) — NBA-card style ---- */
+  .rosters{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  .roster-col{ border-radius:16px; overflow:visible; background:transparent; }
+  .roster-col-head{
+    padding:12px 18px; font-family:var(--font-display); font-weight:800; font-size:1rem;
+    color:#fff; text-transform:uppercase; letter-spacing:.03em; border-radius:12px; margin-bottom:12px;
+    text-align:center;
+  }
+  .roster-slots{ display:flex; flex-direction:column; gap:9px; }
+
+  .slot-row{ display:flex; align-items:stretch; border-radius:9px; overflow:hidden; height:66px; }
+  .slot-badge{
+    width:54px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:800; font-size:.72rem; letter-spacing:.02em; color:#fff;
+  }
+  .slot-bar{ flex:1; display:flex; align-items:center; gap:12px; padding:0 16px; min-width:0; }
+  .slot-bar.empty{ background:var(--surface-2) !important; }
+  .slot-avatar{
+    width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.16); display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:.66rem; color:#fff; flex-shrink:0; border:2px solid rgba(255,255,255,.3);
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+  .slot-name{
+    flex:1; display:flex; flex-direction:column; justify-content:center; gap:1px; min-width:0;
+  }
+  .slot-name-first{
+    font-family:var(--font-display); font-weight:600; font-size:.74rem; color:rgba(255,255,255,.82);
+    text-transform:uppercase; letter-spacing:.03em; line-height:1.1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .slot-name-last{
+    font-family:var(--font-display); font-weight:800; font-size:1.05rem; color:#fff;
+    text-transform:uppercase; letter-spacing:.01em; line-height:1.1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .slot-row.empty .slot-name-first{ display:none; }
+  .slot-row.empty .slot-name-last{ color:var(--muted); font-weight:500; text-transform:none; font-style:italic; font-size:.85rem; }
+  .slot-stat{ text-align:right; flex-shrink:0; }
+  .slot-stat b{ display:block; font-family:var(--font-mono); font-weight:800; font-size:1.15rem; color:#fff; line-height:1; }
+  .slot-stat small{ display:block; font-family:var(--font-mono); font-size:.56rem; color:rgba(255,255,255,.72); letter-spacing:.06em; text-transform:uppercase; margin-top:4px; }
+
+  /* ---------- Results ---------- */
+  .vs-title{
+    text-align:center; font-family:var(--font-display); font-weight:800; text-transform:uppercase;
+    font-size:clamp(1.9rem,5.2vw,2.8rem); letter-spacing:.01em; margin-bottom:18px;
+  }
+  .vs-title .light{ color:var(--ink); }
+  .vs-title .accent{ color:var(--p1); }
+
+  .winner-line{
+    text-align:center; font-family:var(--font-display); font-weight:800; font-size:1.25rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--win); text-shadow:0 0 18px rgba(51,209,122,.55); margin-bottom:12px;
+  }
+  .winner-line.tie{ color:var(--gold); text-shadow:0 0 18px rgba(227,178,60,.5); }
+
+  .team-labels{ display:flex; justify-content:center; gap:36px; margin-bottom:30px; flex-wrap:wrap; }
+  .team-label{ font-family:var(--font-mono); font-weight:700; font-size:.92rem; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); }
+  .team-label b{ color:var(--ink); font-size:1.05rem; }
+  .team-label.p1{ color:var(--p1-soft); }
+  .team-label.p2{ color:var(--p2-soft); }
+  .team-label.winner{ text-shadow:0 0 10px currentColor; }
+
+  .results-columns{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:36px; }
+  .results-col{ display:flex; flex-direction:column; gap:10px; }
+  .results-col.winner .slot-row{ box-shadow:0 0 0 2px var(--win); }
+
+  .result-actions{ display:flex; justify-content:center; }
+  .btn-restart{
+    display:inline-flex; align-items:center; justify-content:center; padding:16px 44px; border-radius:30px;
+    font-family:var(--font-display); font-weight:800; font-size:.92rem; letter-spacing:.07em; text-transform:uppercase;
+    background:linear-gradient(180deg, #FF7A6B, var(--p1)); color:#fff; border:none;
+    box-shadow:0 10px 24px rgba(226,72,60,.35); transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-restart:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(226,72,60,.45); }
+
+  @media (max-width:640px){
+    .setup-grid{ grid-template-columns:1fr; }
+    .setup-vs{ display:none; }
+    .rosters{ grid-template-columns:1fr; }
+    .results-columns{ grid-template-columns:1fr; }
+    .pool-grid{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+    .slot-row{ height:60px; }
+    .slot-badge{ width:44px; font-size:.62rem; }
+    .slot-name-last{ font-size:.92rem; }
+    .slot-stat b{ font-size:1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <span class="eyebrow">SFX Futsal · Draft Mode</span>
+    <h1>Draft <span class="accent">Versus</span></h1>
+    <p>A fresh squad is shuffled together every game. Snake-draft teammates onto your card, category by category — but their rating stays hidden until you commit. Best average wins.</p>
+  </div>
+
+  <!-- SETUP -->
+  <section id="screen-setup" class="screen active">
+    <div class="card-panel">
+      <div class="setup-grid">
+        <div class="setup-side p1">
+          <label><span class="dot" style="background:var(--p1);"></span>Player 1</label>
+          <input class="name-input" id="p1Name" maxlength="16" value="Player 1">
+        </div>
+        <span class="setup-vs">VS</span>
+        <div class="setup-side p2">
+          <label><span class="dot" style="background:var(--p2-soft);"></span>Player 2</label>
+          <input class="name-input" id="p2Name" maxlength="16" value="Player 2">
+        </div>
+      </div>
+
+      <ul class="rules-list">
+        <li><span class="num">1</span>A random 12-player squad is shuffled together from the whole club before every draft — never the same pool twice.</li>
+        <li><span class="num">2</span>5 rounds, 5 random categories (Speed, Shooting, Strength, whatever comes up). One category revealed per round.</li>
+        <li><span class="num">3</span>Snake draft: you alternate who picks first each round. Once a player's taken, they're off the board for both of you.</li>
+        <li><span class="num">4</span>A player's rating in the round's category stays hidden until after you draft them — no scanning for the highest number.</li>
+        <li><span class="num">5</span>20 seconds per pick. Run out the clock and we'll auto-pick a player for you.</li>
+        <li><span class="num">6</span>Your score for a round is that player's rating in that round's category. Add up all 5, divide by 5 — highest average wins.</li>
+      </ul>
+
+      <button class="btn" id="startDraftBtn">Shuffle the squad &amp; start the draft</button>
+    </div>
+  </section>
+
+  <!-- TEAM REVEAL -->
+  <section id="screen-reveal" class="screen">
+    <div class="card-panel reveal-stage">
+      <div class="coin" id="coin">?</div>
+      <div class="reveal-caption">Tonight's draft pool</div>
+      <div class="reveal-headline" id="revealHeadline">Shuffling&hellip;</div>
+      <div class="roster-preview" id="rosterPreview"></div>
+      <button class="btn" id="beginDraftBtn" style="display:none; max-width:280px; margin:0 auto;">Begin Round 1</button>
+    </div>
+  </section>
+
+  <!-- DRAFT -->
+  <section id="screen-draft" class="screen">
+    <div class="draft-top">
+      <div class="round-info">
+        <span class="round-label" id="roundLabel">Round 1 of 5</span>
+        <span class="category-pill"><span class="category-swatch" id="catSwatch"></span><span id="catLabel">—</span></span>
+      </div>
+      <div class="turn-banner" id="turnBanner"></div>
+    </div>
+
+    <div class="auto-notice" id="autoNotice"></div>
+
+    <div class="timer-row">
+      <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+      <span class="timer-value" id="timerValue">20s</span>
+    </div>
+
+    <div class="progress-track" id="progressTrack"></div>
+
+    <div class="pool-grid" id="poolGrid"></div>
+
+    <div class="rosters">
+      <div class="roster-col">
+        <div class="roster-col-head" id="p1Head"></div>
+        <div class="roster-slots" id="p1Slots"></div>
+      </div>
+      <div class="roster-col">
+        <div class="roster-col-head" id="p2Head"></div>
+        <div class="roster-slots" id="p2Slots"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-results" class="screen">
+    <div class="vs-title"><span class="light">Draft</span> <span class="accent">Versus</span></div>
+    <div class="winner-line" id="winnerLine">🏆 Winner</div>
+    <div class="team-labels">
+      <div class="team-label p1" id="p1Label">Player 1 : <b>0.0</b> avg</div>
+      <div class="team-label p2" id="p2Label">Player 2 : <b>0.0</b> avg</div>
+    </div>
+
+    <div class="results-columns">
+      <div class="results-col" id="p1ResultsCol"></div>
+      <div class="results-col" id="p2ResultsCol"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-restart" id="playAgainBtn">Restart Game</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // Roster snapshot — mirrors the current SFX Futsal stat sheet.
+  // Only the 8 attribute fields present on every player are used
+  // as draftable categories, so every card is comparable.
+  // ---------------------------------------------------------------
+  const ROSTER = [
+    { id:"player1", name:"William McCracken", team:"shirts", overall:90, speed:92, strength:88, dribbling:89, shooting:95, passing:85, defending:70, goalkeeping:0 },
+    { id:"player2", name:"Billy Moffit", team:"shirts", overall:81, speed:91, strength:83, dribbling:73, shooting:80, passing:79, defending:84, goalkeeping:0 },
+    { id:"player3", name:"Leo Braybon", team:"shirts", overall:86, speed:86, strength:91, dribbling:85, shooting:86, passing:83, defending:85, goalkeeping:92 },
+    { id:"player4", name:"Seb Munoz", team:"shirts", overall:94, speed:80, strength:87, dribbling:95, shooting:94, passing:93, defending:86, goalkeeping:0 },
+    { id:"player5", name:"Darcy Brown", team:"shirts", overall:81, speed:83, strength:86, dribbling:72, shooting:82, passing:79, defending:84, goalkeeping:80 },
+    { id:"player6", name:"Tommy Wills", team:"shirts", overall:81, speed:92, strength:95, dribbling:71, shooting:79, passing:73, defending:83, goalkeeping:0 },
+    { id:"player7", name:"Liam Sawade", team:"shirts", overall:77, speed:91, strength:90, dribbling:66, shooting:63, passing:72, defending:78, goalkeeping:0 },
+    { id:"playerB", name:"Tapi Gotchy", team:"shirts", overall:75, speed:87, strength:91, dribbling:73, shooting:75, passing:74, defending:78, goalkeeping:0 },
+    { id:"playerA", name:"Tom Griffin", team:"shirts", overall:85, speed:83, strength:86, dribbling:83, shooting:85, passing:80, defending:82, goalkeeping:0 },
+    { id:"player8", name:"Jack Rollenston", team:"shirts", overall:86, speed:93, strength:90, dribbling:81, shooting:85, passing:84, defending:83, goalkeeping:84 },
+    { id:"player9", name:"Liam Molloy", team:"jerseys", overall:93, speed:91, strength:90, dribbling:91, shooting:92, passing:90, defending:90, goalkeeping:0 },
+    { id:"player10", name:"Lucas D'macio", team:"jerseys", overall:89, speed:87, strength:88, dribbling:86, shooting:87, passing:89, defending:87, goalkeeping:0 },
+    { id:"player11", name:"Aditya", team:"jerseys", overall:66, speed:71, strength:74, dribbling:60, shooting:55, passing:63, defending:61, goalkeeping:0 },
+    { id:"playerC", name:"William Hunt", team:"jerseys", overall:82, speed:86, strength:89, dribbling:81, shooting:81, passing:83, defending:85, goalkeeping:0 },
+    { id:"playerD", name:"Harry Behnke", team:"jerseys", overall:94, speed:90, strength:85, dribbling:94, shooting:94, passing:93, defending:87, goalkeeping:80 },
+    { id:"playerE", name:"Luka Seckar", team:"jerseys", overall:93, speed:93, strength:90, dribbling:91, shooting:93, passing:91, defending:93, goalkeeping:93 },
+    { id:"player16", name:"Anthony Miniutti", team:"jerseys", overall:92, speed:90, strength:92, dribbling:89, shooting:92, passing:90, defending:94, goalkeeping:0 },
+    { id:"playerG", name:"Rory Netting", team:"jerseys", overall:81, speed:85, strength:86, dribbling:77, shooting:79, passing:79, defending:82, goalkeeping:0 },
+    { id:"playerH", name:"AJ", team:"jerseys", overall:91, speed:88, strength:91, dribbling:90, shooting:88, passing:87, defending:91, goalkeeping:0 },
+    { id:"player12", name:"Riley Mcauliffe", team:"jerseys", overall:73, speed:82, strength:82, dribbling:69, shooting:67, passing:70, defending:68, goalkeeping:0 },
+    { id:"player13", name:"Jigme Chopel", team:"jerseys", overall:85, speed:83, strength:86, dribbling:85, shooting:84, passing:82, defending:83, goalkeeping:0 }
+  ];
+
+  const CATEGORIES = [
+    { key:"overall",     label:"Overall",     abbr:"OVR", color:"#E3B23C", dark:"#8A6A22" },
+    { key:"speed",       label:"Speed",       abbr:"SPD", color:"#4C93E8", dark:"#234B7A" },
+    { key:"strength",    label:"Strength",    abbr:"STR", color:"#E0574C", dark:"#7A2A22" },
+    { key:"dribbling",   label:"Dribbling",   abbr:"DRI", color:"#A374E8", dark:"#4B2E7A" },
+    { key:"shooting",    label:"Shooting",    abbr:"SHO", color:"#4FC17E", dark:"#1F6B45" },
+    { key:"passing",     label:"Passing",     abbr:"PAS", color:"#3FBEBE", dark:"#1F6B6B" },
+    { key:"defending",   label:"Defending",   abbr:"DEF", color:"#E08A3F", dark:"#7A4A1F" },
+    { key:"goalkeeping", label:"Goalkeeping", abbr:"GK",  color:"#5D7DD6", dark:"#2A3A70" }
+  ];
+  const ROUNDS = 5;
+  const POOL_SIZE = 12;      // random squad size, drawn from the whole club
+  const TURN_SECONDS = 20;   // seconds allowed per pick before auto-pick
+
+  let state = null;
+
+  function initials(name){ return name.split(" ").filter(Boolean).map(w => w[0]).slice(0,2).join("").toUpperCase(); }
+  function nameLines(name){
+    const parts = name.split(" ").filter(Boolean);
+    if (parts.length < 2) return { first:"", last: parts[0] || name };
+    const last = parts.pop();
+    return { first: parts.join(" "), last };
+  }
+  function shuffle(arr){ const a = arr.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function showScreen(id){ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); document.getElementById(id).classList.add("active"); }
+  function byId(id){ return ROSTER.find(p => p.id === id); }
+
+  // Shared "position bar" row used in both the live roster panel and the results screen.
+  function slotRowHTML(cat, pid, teamColorVar){
+    if (!pid){
+      return `
+        <div class="slot-row empty">
+          <span class="slot-badge" style="background:${teamColorVar};">${cat.abbr}</span>
+          <div class="slot-bar empty">
+            <span class="slot-avatar">?</span>
+            <div class="slot-name"><span class="slot-name-last">Not drafted yet</span></div>
+          </div>
+        </div>`;
+    }
+    const p = byId(pid);
+    const nl = nameLines(p.name);
+    return `
+      <div class="slot-row">
+        <span class="slot-badge" style="background:${teamColorVar};">${cat.abbr}</span>
+        <div class="slot-bar" style="background:linear-gradient(120deg, ${cat.dark} 0%, ${cat.color} 100%);">
+          <span class="slot-avatar">${initials(p.name)}</span>
+          <div class="slot-name">
+            ${nl.first ? `<span class="slot-name-first">${nl.first}</span>` : ``}
+            <span class="slot-name-last">${nl.last}</span>
+          </div>
+          <span class="slot-stat"><b>${p[cat.key]}</b><small>${cat.label}</small></span>
+        </div>
+      </div>`;
+  }
+
+  // ---------------------------------------------------------------
+  // Setup -> team reveal
+  // ---------------------------------------------------------------
+  document.getElementById("startDraftBtn").addEventListener("click", () => {
+    const p1Name = document.getElementById("p1Name").value.trim() || "Player 1";
+    const p2Name = document.getElementById("p2Name").value.trim() || "Player 2";
+
+    // 1) Randomly assemble tonight's squad from the whole club...
+    const pool = shuffle(ROSTER).slice(0, POOL_SIZE).map(p => p.id);
+    // 2) ...then pick the categories for the rounds.
+    const categories = shuffle(CATEGORIES).slice(0, ROUNDS);
+
+    state = {
+      p1Name, p2Name, pool, poolSize: pool.length, categories,
+      round: 0, pickInRound: 0,
+      rosters: { p1: {}, p2: {} },
+      timerId: null, timeLeft: TURN_SECONDS, lastAutoPick: null
+    };
+
+    runReveal();
+  });
+
+  function runReveal(){
+    showScreen("screen-reveal");
+    const coin = document.getElementById("coin");
+    const headline = document.getElementById("revealHeadline");
+    const preview = document.getElementById("rosterPreview");
+    const beginBtn = document.getElementById("beginDraftBtn");
+    coin.className = "coin spinning"; coin.textContent = "?";
+    headline.textContent = "Shuffling the squad\u2026";
+    preview.innerHTML = ""; beginBtn.style.display = "none";
+
+    const shuffled = shuffle(ROSTER);
+    let ticks = 0;
+    const spin = setInterval(() => {
+      const p = shuffled[ticks % shuffled.length];
+      coin.textContent = initials(p.name);
+      ticks++;
+      if (ticks > 14){
+        clearInterval(spin);
+        coin.className = "coin settled";
+        coin.textContent = state.poolSize;
+        headline.textContent = `${state.poolSize} players drafted into tonight's pool`;
+        state.pool.map(byId).forEach((p, i) => {
+          const chip = document.createElement("span");
+          chip.className = "mini-chip";
+          chip.style.animationDelay = (i * 0.05) + "s";
+          const avBg = p.team === "shirts" ? "#3A4A3F" : "#0C130F";
+          const avFg = p.team === "shirts" ? "#F3F5EF" : "#E3B23C";
+          chip.innerHTML = `<span class="mini-avatar" style="background:${avBg}; color:${avFg};">${initials(p.name)}</span>${p.name}`;
+          preview.appendChild(chip);
+        });
+        beginBtn.style.display = "inline-flex";
+      }
+    }, 90);
+  }
+
+  document.getElementById("beginDraftBtn").addEventListener("click", () => {
+    renderDraft();
+    showScreen("screen-draft");
+  });
+
+  // ---------------------------------------------------------------
+  // Draft
+  // ---------------------------------------------------------------
+  function currentCategory(){ return state.categories[state.round]; }
+  function pickOrder(){ return state.round % 2 === 0 ? ["p1","p2"] : ["p2","p1"]; }
+  function currentPicker(){ return pickOrder()[state.pickInRound]; }
+
+  function clearTimer(){
+    if (state && state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+  }
+
+  function startTimer(){
+    clearTimer();
+    state.timeLeft = TURN_SECONDS;
+    updateTimerUI();
+    state.timerId = setInterval(() => {
+      state.timeLeft--;
+      updateTimerUI();
+      if (state.timeLeft <= 0){
+        clearTimer();
+        autoPick();
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI(){
+    const fill = document.getElementById("timerFill");
+    const val = document.getElementById("timerValue");
+    if (!fill || !val) return;
+    const pct = Math.max(0, (state.timeLeft / TURN_SECONDS) * 100);
+    fill.style.width = pct + "%";
+    val.textContent = Math.max(0, state.timeLeft) + "s";
+    const urgent = state.timeLeft <= 5;
+    fill.classList.toggle("urgent", urgent);
+    val.classList.toggle("urgent", urgent);
+  }
+
+  function autoPick(){
+    if (!state) return;
+    const picker = currentPicker();
+    const pickerName = picker === "p1" ? state.p1Name : state.p2Name;
+    const randomId = state.pool[Math.floor(Math.random() * state.pool.length)];
+    state.lastAutoPick = { pickerName, playerName: byId(randomId).name };
+    makePick(randomId);
+  }
+
+  function renderDraft(){
+    const cat = currentCategory();
+    document.getElementById("roundLabel").textContent = `Round ${state.round + 1} of ${ROUNDS}`;
+    document.getElementById("catSwatch").style.background = cat.color;
+    document.getElementById("catLabel").textContent = cat.label;
+
+    const picker = currentPicker();
+    const pickerName = picker === "p1" ? state.p1Name : state.p2Name;
+    const pickerColor = picker === "p1" ? "var(--p1)" : "var(--p2)";
+    const banner = document.getElementById("turnBanner");
+    banner.style.background = pickerColor;
+    banner.textContent = `${pickerName}'s pick`;
+
+    const notice = document.getElementById("autoNotice");
+    if (state.lastAutoPick){
+      notice.style.display = "flex";
+      notice.textContent = `\u23F1\uFE0F Time's up! Auto-picked ${state.lastAutoPick.playerName} for ${state.lastAutoPick.pickerName}.`;
+      state.lastAutoPick = null;
+    } else {
+      notice.style.display = "none";
+    }
+
+    const track = document.getElementById("progressTrack");
+    track.innerHTML = "";
+    for (let i = 0; i < ROUNDS; i++){
+      const seg = document.createElement("span");
+      seg.className = "progress-seg" + (i < state.round ? " done" : i === state.round ? " current" : "");
+      track.appendChild(seg);
+    }
+
+    const grid = document.getElementById("poolGrid");
+    grid.innerHTML = "";
+    state.pool.forEach(pid => {
+      const p = byId(pid);
+      const card = document.createElement("button");
+      card.className = "pool-card";
+      card.style.setProperty("--accent", cat.color);
+      const avBg = p.team === "shirts" ? "#3A4A3F" : "#0C130F";
+      const avFg = p.team === "shirts" ? "#F3F5EF" : "#E3B23C";
+      card.innerHTML = `
+        <div class="pool-avatar" style="background:${avBg}; color:${avFg};">${initials(p.name)}</div>
+        <div class="pool-name">${p.name}</div>
+        <div class="pool-featured">
+          <span class="fl">${cat.label}</span>
+          <span class="fv mystery" title="Hidden until drafted">?</span>
+          <span class="pool-hint">Tap to draft</span>
+        </div>`;
+      card.addEventListener("click", () => makePick(pid));
+      grid.appendChild(card);
+    });
+
+    renderRosterCol("p1", state.p1Name);
+    renderRosterCol("p2", state.p2Name);
+
+    startTimer();
+  }
+
+  function renderRosterCol(who, name){
+    const teamColor = who === "p1" ? "var(--p1)" : "var(--p2)";
+    const headEl = document.getElementById(who + "Head");
+    headEl.textContent = name;
+    headEl.style.background = teamColor;
+    document.getElementById(who + "Slots").innerHTML =
+      state.categories.map(cat => slotRowHTML(cat, state.rosters[who][cat.key], teamColor)).join("");
+  }
+
+  function makePick(playerId){
+    clearTimer();
+    const picker = currentPicker();
+    const cat = currentCategory();
+    state.rosters[picker][cat.key] = playerId;
+    state.pool = state.pool.filter(id => id !== playerId);
+    state.pickInRound++;
+
+    if (state.pickInRound >= 2){
+      state.pickInRound = 0;
+      state.round++;
+    }
+
+    if (state.round >= ROUNDS){
+      renderResults();
+      showScreen("screen-results");
+    } else {
+      renderDraft();
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Results
+  // ---------------------------------------------------------------
+  function renderResults(){
+    clearTimer();
+
+    let p1Total = 0, p2Total = 0;
+    state.categories.forEach(cat => {
+      p1Total += byId(state.rosters.p1[cat.key])[cat.key];
+      p2Total += byId(state.rosters.p2[cat.key])[cat.key];
+    });
+    const p1Avg = p1Total / ROUNDS;
+    const p2Avg = p2Total / ROUNDS;
+
+    const winnerLine = document.getElementById("winnerLine");
+    const p1LabelEl = document.getElementById("p1Label");
+    const p2LabelEl = document.getElementById("p2Label");
+    const p1ColEl = document.getElementById("p1ResultsCol");
+    const p2ColEl = document.getElementById("p2ResultsCol");
+
+    p1LabelEl.innerHTML = `${state.p1Name} : <b>${p1Avg.toFixed(1)}</b> avg`;
+    p2LabelEl.innerHTML = `${state.p2Name} : <b>${p2Avg.toFixed(1)}</b> avg`;
+    p1LabelEl.classList.remove("winner"); p2LabelEl.classList.remove("winner");
+    p1ColEl.classList.remove("winner"); p2ColEl.classList.remove("winner");
+
+    if (p1Avg === p2Avg){
+      winnerLine.textContent = "\u{1F91D} Tie Game";
+      winnerLine.classList.add("tie");
+    } else {
+      winnerLine.classList.remove("tie");
+      winnerLine.textContent = "\u{1F3C6} Winner";
+      if (p1Avg > p2Avg){ p1LabelEl.classList.add("winner"); p1ColEl.classList.add("winner"); }
+      else { p2LabelEl.classList.add("winner"); p2ColEl.classList.add("winner"); }
+    }
+
+    p1ColEl.innerHTML = state.categories.map(cat => slotRowHTML(cat, state.rosters.p1[cat.key], "var(--p1)")).join("");
+    p2ColEl.innerHTML = state.categories.map(cat => slotRowHTML(cat, state.rosters.p2[cat.key], "var(--p2)")).join("");
+  }
+
+  document.getElementById("playAgainBtn").addEventListener("click", () => {
+    clearTimer();
+    showScreen("screen-setup");
+  });
+</script>
+</body>
+</html>
