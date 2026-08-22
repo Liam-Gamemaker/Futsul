@@ -299,48 +299,35 @@
   .value-cell{ font-family:var(--font-mono); font-weight:600; }
   .player-info{ display:flex; align-items:center; gap:10px; }
 
-  /* ---------- Lineup ---------- */
-  .lineup-controls{ display:flex; align-items:center; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
-  .lineup-controls label{ margin:0; }
-  .lineup-controls select{ width:auto; margin:0; padding:8px 10px; }
-  .pitch-wrap{ margin-bottom:32px; }
-  .pitch{
-    position:relative; width:100%; max-width:400px; aspect-ratio:3/4; margin:0 auto;
-    background:var(--turf); border-radius:8px; overflow:hidden; border:1px solid var(--ink);
+  /* ---------- News ---------- */
+  .news-grid{ display:flex; flex-direction:column; gap:22px; }
+  .news-card{
+    display:flex; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    overflow:hidden; box-shadow:0 1px 2px rgba(21,34,27,.04); transition:box-shadow .2s ease, transform .2s ease;
+    position:relative;
   }
-  .pitch::before{ content:''; position:absolute; left:0; right:0; top:50%; height:2px; background:var(--turf-line); }
-  .pitch::after{
-    content:''; position:absolute; left:50%; top:50%; width:70px; height:70px;
-    margin:-35px 0 0 -35px; border:2px solid var(--turf-line); border-radius:50%;
+  .news-card:hover{ box-shadow:0 10px 26px rgba(21,34,27,.09); transform:translateY(-2px); }
+  .news-card-bar{ width:6px; flex-shrink:0; }
+  .news-card-body{ padding:22px 24px; display:flex; flex-direction:column; gap:12px; flex:1; min-width:0; }
+  .news-card-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .news-tag{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); text-transform:uppercase;
+    font-size:.66rem; letter-spacing:.08em; font-weight:700; padding:4px 10px; border-radius:20px;
   }
-  .pitch-box-top, .pitch-box-bottom{
-    position:absolute; left:50%; width:55%; height:14%; border:2px solid var(--turf-line); transform:translateX(-50%);
+  .news-date{ font-family:var(--font-mono); font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+  .news-headline{ font-family:var(--font-display); font-size:1.28rem; font-weight:700; color:var(--ink); line-height:1.3; }
+  .news-body{ color:var(--ink-soft); font-size:.94rem; line-height:1.65; max-width:64ch; }
+  .news-players{ display:flex; flex-wrap:wrap; gap:14px; margin-top:4px; }
+  .news-player-chip{
+    display:flex; align-items:center; gap:9px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:24px; padding:6px 14px 6px 6px;
   }
-  .pitch-box-top{ top:0; border-top:none; border-radius:0 0 10px 10px; }
-  .pitch-box-bottom{ bottom:0; border-bottom:none; border-radius:10px 10px 0 0; }
-  .pitch-slots{ position:absolute; inset:0; }
-  .pitch-slot{ position:absolute; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:4px; width:70px; }
-  .slot-token{
-    width:40px; height:40px; border-radius:50%; background:var(--surface); border:2px solid var(--ink);
-    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono);
-    font-weight:700; font-size:.82rem; cursor:default;
+  .news-player-chip .name{ font-size:.82rem; font-weight:600; color:var(--ink); }
+  .news-player-chip .sub{ display:block; font-size:.64rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:500; }
+  @media (max-width:520px){
+    .news-card-body{ padding:18px; }
+    .news-headline{ font-size:1.1rem; }
   }
-  body.is-admin .slot-token{ cursor:pointer; }
-  .slot-token.empty{ background:rgba(255,255,255,.14); border-style:dashed; border-color:var(--turf-line); color:var(--turf-line); }
-  .slot-token.selected{ outline:3px solid var(--gold); outline-offset:2px; }
-  .slot-name{
-    font-size:.66rem; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.5); text-align:center;
-    font-weight:600; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-  }
-  .bench-wrap{ margin-bottom:8px; }
-  .bench{
-    display:flex; flex-wrap:wrap; gap:14px; padding:18px; border:1px solid var(--border);
-    border-radius:10px; background:var(--surface); min-height:76px;
-  }
-  .bench-token{ display:flex; flex-direction:column; align-items:center; gap:4px; width:56px; }
-  .bench-token .slot-token{ width:36px; height:36px; font-size:.72rem; background:var(--surface-2); border-color:var(--border); color:var(--ink); }
-  .bench-token .slot-token.selected{ border-color:var(--gold); }
-  .bench-name{ font-size:.62rem; color:var(--muted); text-align:center; max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   /* ---------- Modals ---------- */
   .profile-modal{
@@ -442,7 +429,7 @@
     <button class="nav-link" data-section="team-shirts">Shirts</button>
     <button class="nav-link" data-section="team-jerseys">Jerseys</button>
     <button class="nav-link" data-section="rankings">Rankings</button>
-    <button class="nav-link" data-section="lineup">Lineup</button>
+    <button class="nav-link" data-section="news">News</button>
     <div class="nav-admin" id="navAdmin"></div>
   </nav>
 
@@ -502,25 +489,14 @@
       </div>
     </section>
 
-    <!-- Lineup -->
-    <section id="lineup" class="content-section">
+    <!-- News -->
+    <section id="news" class="content-section">
       <div class="section-head">
-        <span class="section-kicker">Matchday</span>
-        <h2>Lineup</h2>
-        <p id="lineupHint">Tap a player, then tap a position to place them. Admins can also drag and drop.</p>
+        <span class="section-kicker">Off the pitch</span>
+        <h2>Club News</h2>
+        <p>The latest headlines from around SFX Futsal — results, rumours and everything in between.</p>
       </div>
-      <div id="lineupControls"></div>
-      <div class="pitch-wrap">
-        <div class="pitch" id="pitch">
-          <div class="pitch-box-top"></div>
-          <div class="pitch-box-bottom"></div>
-          <div class="pitch-slots" id="pitchSlots"></div>
-        </div>
-      </div>
-      <div class="bench-wrap">
-        <span class="section-kicker" style="display:block; margin-bottom:10px;">Bench</span>
-        <div class="bench" id="bench"></div>
-      </div>
+      <div class="news-grid" id="news-grid"></div>
     </section>
 
   </main>
@@ -542,7 +518,7 @@
     <div class="profile-content" style="max-width:360px;">
       <button class="close-btn" onclick="closeModal('loginModal')" aria-label="Close">&times;</button>
       <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Admin Login</h2>
-      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">Sign in to edit stats, profiles and the lineup.</p>
+      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">Sign in to edit stats, profiles and news.</p>
       <form id="loginForm">
         <label for="loginUser">Username</label>
         <input type="text" id="loginUser" autocomplete="username" required>
@@ -1067,14 +1043,48 @@
         ]
       }
     ];
-    const DEFAULT_LINEUP = { formation:"2-2", gk:null, slots:[null,null,null,null] };
 
-    const FORMATIONS = {
-      "2-2":   [ {label:"DEF", top:68, left:28}, {label:"DEF", top:68, left:72}, {label:"ATT", top:26, left:28}, {label:"ATT", top:26, left:72} ],
-      "1-2-1": [ {label:"DEF", top:72, left:50}, {label:"MID", top:46, left:24}, {label:"MID", top:46, left:76}, {label:"ATT", top:20, left:50} ],
-      "3-1":   [ {label:"DEF", top:66, left:18}, {label:"DEF", top:66, left:50}, {label:"DEF", top:66, left:82}, {label:"ATT", top:20, left:50} ]
-    };
-    const GK_POS = { top:90, left:50 };
+    // ---------------------------------------------------------------
+    // NEWS — recent headlines shown on the News page. Each story can
+    // reference one or more existing player IDs (playerIds) so their
+    // photo/avatar shows next to the story, or a freeform name for
+    // people who aren't in the roster (e.g. a new signing).
+    // ---------------------------------------------------------------
+    const NEWS_STORIES = [
+      {
+        tag: "Match Report",
+        color: "#2F8F5B",
+        date: "2026-08-21",
+        headline: "Shirts take their first win of the season with a paper scissors rock decider",
+        body: "After eight goals and a share of the spoils at 4-4, Shirts finally got their first result of the campaign on the board — settling it the only fair way anyone could agree on: best-of-three paper scissors rock. Jerseys will point to the scoreline and argue the better team lost.",
+        playerIds: []
+      },
+      {
+        tag: "Transfer Talk",
+        color: "#8A56C4",
+        date: "2026-08-19",
+        headline: "Trade talks have emerged between sending Darcy Brown to team Jerseys",
+        body: "Sources close to the dressing room suggest Shirts are open to offers for their most combustible defender, with Jerseys reportedly circling. Darcy Brown has racked up more fights than goals this season, and some reckon a change of bib might be exactly what both sides need.",
+        playerIds: ["player5"]
+      },
+      {
+        tag: "Free Agency",
+        color: "#3E7BC4",
+        date: "2026-08-16",
+        headline: "Alex Bunter signed to free agency",
+        body: "SFX Futsal has confirmed the signing of free agent Alex Bunter, who becomes available for selection immediately. Details on which bib he'll be wearing are still to be finalised, but early word from the sideline is optimistic.",
+        playerIds: [],
+        freeAgents: ["Alex Bunter"]
+      },
+      {
+        tag: "Talking Point",
+        color: "#A23B33",
+        date: "2026-08-13",
+        headline: "Fans question whether Aditya's absence was the reason for Jerseys' first loss of the season",
+        body: "Jerseys' unbeaten start came to an end in a 9-7 thriller, and more than a few fans on the sideline were quick to point the finger at one missing face. Aditya has been a key attacking outlet all season, and his absence left a gap that Shirts were happy to exploit.",
+        playerIds: ["player11"]
+      }
+    ];
 
     const STAT_LABELS = { goals:"Goal", assists:"Assist", saves:"Save", cleanSheets:"Clean sheet", fights:"Fight" };
     const STAT_LABELS_PLURAL = { goals:"Goals", assists:"Assists", saves:"Saves", cleanSheets:"Clean sheets", fights:"Fights" };
@@ -1111,7 +1121,6 @@
     }
 
     let isAdmin = sessionStorage.getItem("sfx_admin") === "1";
-    let selection = null;
     let lastFocused = null;
     let currentProfileId = null;
     let activeRankingKey = "goals";
@@ -1120,7 +1129,7 @@
     // ---------------------------------------------------------------
     // Storage
     // ---------------------------------------------------------------
-    const LS_KEYS = { players:"sfx_players_v1", games:"sfx_games_v1", lineup:"sfx_lineup_v1" };
+    const LS_KEYS = { players:"sfx_players_v1", games:"sfx_games_v1" };
 
     function loadPlayers(){
       try{ const raw = localStorage.getItem(LS_KEYS.players); return raw ? JSON.parse(raw) : structuredClone(DEFAULT_PLAYERS); }
@@ -1144,15 +1153,8 @@
     }
     function saveGames(){ try{ localStorage.setItem(LS_KEYS.games, JSON.stringify(games)); }catch(e){} }
 
-    function loadLineup(){
-      try{ const raw = localStorage.getItem(LS_KEYS.lineup); return raw ? JSON.parse(raw) : structuredClone(DEFAULT_LINEUP); }
-      catch(e){ return structuredClone(DEFAULT_LINEUP); }
-    }
-    function saveLineup(){ try{ localStorage.setItem(LS_KEYS.lineup, JSON.stringify(lineup)); }catch(e){} }
-
     let players = loadPlayers();
     let games = loadGames();
-    let lineup = loadLineup();
 
     function uid(){ return crypto.randomUUID ? crypto.randomUUID() : "g_" + Date.now() + "_" + Math.random().toString(36).slice(2); }
     function initials(name){ return name.split(" ").filter(Boolean).map(w => w[0]).slice(0,2).join("").toUpperCase(); }
@@ -1473,108 +1475,49 @@
     }
 
     // ---------------------------------------------------------------
-    // Lineup
+    // News
     // ---------------------------------------------------------------
-    function renderLineupControls(){
-      const el = document.getElementById("lineupControls");
-      if (!isAdmin){ el.innerHTML = ""; return; }
-      el.innerHTML = `
-        <div class="lineup-controls">
-          <div><label for="formationSelect">Formation</label>
-            <select id="formationSelect">${Object.keys(FORMATIONS).map(f => `<option value="${f}" ${lineup.formation === f ? "selected" : ""}>${f}</option>`).join("")}</select>
+    function newsAvatar(name){
+      // For people not (yet) in the roster — e.g. a new free-agent signing.
+      return `<span class="avatar avatar-sm">
+        <span class="avatar-fallback" style="display:flex; background:var(--surface-2); color:var(--ink-soft); border:1px dashed var(--border);">${initials(name)}</span>
+      </span>`;
+    }
+
+    function renderNews(){
+      const grid = document.getElementById("news-grid");
+      if (!grid) return;
+      grid.innerHTML = NEWS_STORIES.map(story => {
+        const rosterChips = (story.playerIds || [])
+          .filter(id => players[id])
+          .map(id => {
+            const p = players[id];
+            return `<span class="news-player-chip">
+              ${avatarMarkup(p, "avatar-sm")}
+              <span><span class="name">${p.name}</span><span class="sub">${p.team === "shirts" ? "Shirts" : "Jerseys"}</span></span>
+            </span>`;
+          }).join("");
+        const freeAgentChips = (story.freeAgents || [])
+          .map(name => `<span class="news-player-chip">
+            ${newsAvatar(name)}
+            <span><span class="name">${name}</span><span class="sub">Free agent</span></span>
+          </span>`).join("");
+        const chips = rosterChips + freeAgentChips;
+
+        return `
+        <article class="news-card">
+          <div class="news-card-bar" style="background:${story.color};"></div>
+          <div class="news-card-body">
+            <div class="news-card-top">
+              <span class="news-tag" style="background:${story.color}1a; color:${story.color};">${story.tag}</span>
+              <span class="news-date">${formatDate(story.date)}</span>
+            </div>
+            <h3 class="news-headline">${story.headline}</h3>
+            <p class="news-body">${story.body}</p>
+            ${chips ? `<div class="news-players">${chips}</div>` : ""}
           </div>
-          <button class="btn btn-small" id="clearLineupBtn">Clear lineup</button>
-        </div>`;
-      document.getElementById("formationSelect").addEventListener("change", e => {
-        lineup.formation = e.target.value; saveLineup(); renderPitch();
-      });
-      document.getElementById("clearLineupBtn").addEventListener("click", () => {
-        lineup.gk = null; lineup.slots = lineup.slots.map(() => null);
-        selection = null; saveLineup(); renderPitch(); renderBench();
-      });
-    }
-
-    function slotHTML(slotKey, pos, playerId, fallbackLabel){
-      const player = playerId ? players[playerId] : null;
-      const tokenClass = [player ? "" : "empty", selection && player && selection.id === playerId ? "selected" : ""].join(" ").trim();
-      const label = player ? initials(player.name) : fallbackLabel;
-      const nameText = player ? player.name.split(" ")[0] : "";
-      return `<div class="pitch-slot" style="top:${pos.top}%; left:${pos.left}%;">
-        <div class="slot-token ${tokenClass}" data-slot="${slotKey}">${label}</div>
-        <span class="slot-name">${nameText}</span>
-      </div>`;
-    }
-
-    function renderPitch(){
-      const wrap = document.getElementById("pitchSlots");
-      const formation = FORMATIONS[lineup.formation] || FORMATIONS["2-2"];
-      let html = slotHTML("gk", GK_POS, lineup.gk, "GK");
-      formation.forEach((pos, i) => { html += slotHTML(String(i), pos, lineup.slots[i], pos.label); });
-      wrap.innerHTML = html;
-
-      wrap.querySelectorAll(".slot-token").forEach(el => {
-        el.addEventListener("click", () => onSlotClick(el.dataset.slot));
-        if (isAdmin){
-          const occupantId = el.dataset.slot === "gk" ? lineup.gk : lineup.slots[Number(el.dataset.slot)];
-          if (occupantId){
-            el.setAttribute("draggable", "true");
-            el.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", occupantId));
-          }
-          el.addEventListener("dragover", e => e.preventDefault());
-          el.addEventListener("drop", e => {
-            e.preventDefault();
-            const playerId = e.dataTransfer.getData("text/plain");
-            if (playerId && players[playerId]) placeInSlot(playerId, el.dataset.slot);
-          });
-        }
-      });
-    }
-
-    function renderBench(){
-      const assigned = new Set([lineup.gk, ...lineup.slots].filter(Boolean));
-      const benchPlayers = Object.entries(players).filter(([id]) => !assigned.has(id));
-      const el = document.getElementById("bench");
-      el.innerHTML = benchPlayers.map(([id, p]) => `
-        <div class="bench-token" data-id="${id}">
-          <div class="slot-token ${selection && selection.id === id ? "selected" : ""}">${initials(p.name)}</div>
-          <span class="bench-name">${p.name.split(" ")[0]}</span>
-        </div>
-      `).join("") || `<p class="empty-state" style="padding:0; border:none;">Everyone's on the pitch.</p>`;
-
-      el.querySelectorAll(".bench-token").forEach(t => {
-        t.addEventListener("click", () => onBenchTokenClick(t.dataset.id));
-        if (isAdmin){
-          t.setAttribute("draggable", "true");
-          t.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", t.dataset.id));
-        }
-      });
-    }
-
-    function placeInSlot(playerId, slotKey){
-      if (!players[playerId]) return;
-      removePlayerFromLineup(playerId);
-      if (slotKey === "gk") lineup.gk = playerId; else lineup.slots[Number(slotKey)] = playerId;
-      selection = null; saveLineup(); renderPitch(); renderBench();
-    }
-    function returnToBench(playerId){
-      removePlayerFromLineup(playerId);
-      selection = null; saveLineup(); renderPitch(); renderBench();
-    }
-    function removePlayerFromLineup(playerId){
-      if (lineup.gk === playerId) lineup.gk = null;
-      lineup.slots = lineup.slots.map(s => s === playerId ? null : s);
-    }
-    function onSlotClick(slotKey){
-      if (!isAdmin) return;
-      const current = slotKey === "gk" ? lineup.gk : lineup.slots[Number(slotKey)];
-      if (selection && current && selection.id === current){ selection = null; renderPitch(); renderBench(); return; }
-      if (selection){ placeInSlot(selection.id, slotKey); }
-      else if (current){ selection = { id: current }; renderPitch(); renderBench(); }
-    }
-    function onBenchTokenClick(playerId){
-      if (!isAdmin) return;
-      selection = (selection && selection.id === playerId) ? null : { id: playerId };
-      renderPitch(); renderBench();
+        </article>`;
+      }).join("");
     }
 
     // ---------------------------------------------------------------
@@ -1747,7 +1690,6 @@
       isAdmin = false;
       sessionStorage.removeItem("sfx_admin");
       document.body.classList.remove("is-admin");
-      selection = null;
       refreshAll();
       if (document.getElementById("profileModal").style.display === "flex" && currentProfileId){
         renderProfileView(currentProfileId);
@@ -1762,9 +1704,7 @@
       renderLeaders();
       refreshRanking();
       renderGameLog();
-      renderLineupControls();
-      renderPitch();
-      renderBench();
+      renderNews();
       renderNavAdmin();
     }
 
