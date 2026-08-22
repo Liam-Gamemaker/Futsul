@@ -329,6 +329,48 @@
     .news-headline{ font-size:1.1rem; }
   }
 
+  /* ---------- Games / Pickem CTA ---------- */
+  .games-cta{
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:22px;
+    padding:56px 28px; border-radius:18px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg, var(--bib-dark) 0%, #223229 55%, var(--bib-dark) 100%);
+    border:1px solid var(--ink);
+  }
+  .games-cta::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 15% 20%, rgba(193,147,47,.2), transparent 55%),
+               radial-gradient(circle at 85% 80%, rgba(62,123,196,.18), transparent 55%);
+    pointer-events:none;
+  }
+  .games-cta-kicker{
+    position:relative; z-index:1; font-family:var(--font-mono); text-transform:uppercase;
+    letter-spacing:.14em; font-size:.7rem; color:var(--gold); font-weight:600;
+  }
+  .games-cta h3{
+    position:relative; z-index:1; font-family:var(--font-display); font-weight:700; color:#fff;
+    font-size:clamp(1.5rem,4vw,2.1rem);
+  }
+  .games-cta p{
+    position:relative; z-index:1; color:rgba(255,255,255,.72); max-width:52ch; font-size:.95rem;
+  }
+  .pickem-btn{
+    position:relative; z-index:1; display:inline-flex; align-items:center; gap:10px;
+    padding:16px 34px; border-radius:40px; font-family:var(--font-display); font-weight:800;
+    font-size:1.02rem; letter-spacing:.03em; text-transform:uppercase; color:#fff; text-decoration:none;
+    background:linear-gradient(90deg, #E0574C 0%, #C1932F 35%, #3E7BC4 68%, #8A56C4 100%);
+    background-size:220% 220%; animation:pickemGradient 6s ease infinite;
+    box-shadow:0 14px 34px rgba(0,0,0,.4); transition:transform .18s ease, box-shadow .18s ease;
+    border:none; cursor:pointer;
+  }
+  .pickem-btn:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 18px 40px rgba(0,0,0,.5); }
+  .pickem-btn .arrow{ transition:transform .18s ease; }
+  .pickem-btn:hover .arrow{ transform:translateX(4px); }
+  @keyframes pickemGradient{
+    0%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+  }
+
   /* ---------- Modals ---------- */
   .profile-modal{
     display:none; position:fixed; inset:0; background:rgba(21,34,27,.55);
@@ -430,6 +472,7 @@
     <button class="nav-link" data-section="team-jerseys">Jerseys</button>
     <button class="nav-link" data-section="rankings">Rankings</button>
     <button class="nav-link" data-section="news">News</button>
+    <button class="nav-link" data-section="games">Games</button>
     <div class="nav-admin" id="navAdmin"></div>
   </nav>
 
@@ -497,6 +540,24 @@
         <p>The latest headlines from around SFX Futsal — results, rumours and everything in between.</p>
       </div>
       <div class="news-grid" id="news-grid"></div>
+    </section>
+
+    <!-- Games -->
+    <section id="games" class="content-section">
+      <div class="section-head">
+        <span class="section-kicker">Play</span>
+        <h2>Games</h2>
+        <p>Fancy testing your knowledge of the squad? Head over to the Draft Versus game and go head-to-head against a mate.</p>
+      </div>
+      <div class="games-cta">
+        <span class="games-cta-kicker">SFX Futsal · Mini Game</span>
+        <h3>Draft Versus</h3>
+        <p>Shuffle a random squad, snake-draft your team category by category, and see whose average comes out on top.</p>
+        <a class="pickem-btn" href="Pickem.html">
+          <span>Play the game</span>
+          <span class="arrow">&rarr;</span>
+        </a>
+      </div>
     </section>
 
   </main>
