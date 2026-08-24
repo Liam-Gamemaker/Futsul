@@ -299,77 +299,48 @@
   .value-cell{ font-family:var(--font-mono); font-weight:600; }
   .player-info{ display:flex; align-items:center; gap:10px; }
 
-  /* ---------- News ---------- */
-  .news-grid{ display:flex; flex-direction:column; gap:22px; }
-  .news-card{
-    display:flex; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:14px;
-    overflow:hidden; box-shadow:0 1px 2px rgba(21,34,27,.04); transition:box-shadow .2s ease, transform .2s ease;
-    position:relative;
+  /* ---------- Lineup ---------- */
+  .lineup-controls{ display:flex; align-items:center; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .lineup-controls label{ margin:0; }
+  .lineup-controls select{ width:auto; margin:0; padding:8px 10px; }
+  .pitch-wrap{ margin-bottom:32px; }
+  .pitch{
+    position:relative; width:100%; max-width:400px; aspect-ratio:3/4; margin:0 auto;
+    background:var(--turf); border-radius:8px; overflow:hidden; border:1px solid var(--ink);
   }
-  .news-card:hover{ box-shadow:0 10px 26px rgba(21,34,27,.09); transform:translateY(-2px); }
-  .news-card-bar{ width:6px; flex-shrink:0; }
-  .news-card-body{ padding:22px 24px; display:flex; flex-direction:column; gap:12px; flex:1; min-width:0; }
-  .news-card-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  .news-tag{
-    display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); text-transform:uppercase;
-    font-size:.66rem; letter-spacing:.08em; font-weight:700; padding:4px 10px; border-radius:20px;
+  .pitch::before{ content:''; position:absolute; left:0; right:0; top:50%; height:2px; background:var(--turf-line); }
+  .pitch::after{
+    content:''; position:absolute; left:50%; top:50%; width:70px; height:70px;
+    margin:-35px 0 0 -35px; border:2px solid var(--turf-line); border-radius:50%;
   }
-  .news-date{ font-family:var(--font-mono); font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
-  .news-headline{ font-family:var(--font-display); font-size:1.28rem; font-weight:700; color:var(--ink); line-height:1.3; }
-  .news-body{ color:var(--ink-soft); font-size:.94rem; line-height:1.65; max-width:64ch; }
-  .news-players{ display:flex; flex-wrap:wrap; gap:14px; margin-top:4px; }
-  .news-player-chip{
-    display:flex; align-items:center; gap:9px; background:var(--surface-2); border:1px solid var(--border);
-    border-radius:24px; padding:6px 14px 6px 6px;
+  .pitch-box-top, .pitch-box-bottom{
+    position:absolute; left:50%; width:55%; height:14%; border:2px solid var(--turf-line); transform:translateX(-50%);
   }
-  .news-player-chip .name{ font-size:.82rem; font-weight:600; color:var(--ink); }
-  .news-player-chip .sub{ display:block; font-size:.64rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:500; }
-  @media (max-width:520px){
-    .news-card-body{ padding:18px; }
-    .news-headline{ font-size:1.1rem; }
+  .pitch-box-top{ top:0; border-top:none; border-radius:0 0 10px 10px; }
+  .pitch-box-bottom{ bottom:0; border-bottom:none; border-radius:10px 10px 0 0; }
+  .pitch-slots{ position:absolute; inset:0; }
+  .pitch-slot{ position:absolute; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:4px; width:70px; }
+  .slot-token{
+    width:40px; height:40px; border-radius:50%; background:var(--surface); border:2px solid var(--ink);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono);
+    font-weight:700; font-size:.82rem; cursor:default;
   }
-
-  /* ---------- Games / Pickem CTA ---------- */
-  .games-cta{
-    display:flex; flex-direction:column; align-items:center; text-align:center; gap:22px;
-    padding:56px 28px; border-radius:18px; position:relative; overflow:hidden;
-    background:linear-gradient(135deg, var(--bib-dark) 0%, #223229 55%, var(--bib-dark) 100%);
-    border:1px solid var(--ink);
+  body.is-admin .slot-token{ cursor:pointer; }
+  .slot-token.empty{ background:rgba(255,255,255,.14); border-style:dashed; border-color:var(--turf-line); color:var(--turf-line); }
+  .slot-token.selected{ outline:3px solid var(--gold); outline-offset:2px; }
+  .slot-name{
+    font-size:.66rem; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.5); text-align:center;
+    font-weight:600; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
-  .games-cta::before{
-    content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 15% 20%, rgba(193,147,47,.2), transparent 55%),
-               radial-gradient(circle at 85% 80%, rgba(62,123,196,.18), transparent 55%);
-    pointer-events:none;
+  .bench-wrap{ margin-bottom:8px; }
+  .bench{
+    display:flex; flex-wrap:wrap; gap:14px; padding:18px; border:1px solid var(--border);
+    border-radius:10px; background:var(--surface); min-height:76px;
   }
-  .games-cta-kicker{
-    position:relative; z-index:1; font-family:var(--font-mono); text-transform:uppercase;
-    letter-spacing:.14em; font-size:.7rem; color:var(--gold); font-weight:600;
-  }
-  .games-cta h3{
-    position:relative; z-index:1; font-family:var(--font-display); font-weight:700; color:#fff;
-    font-size:clamp(1.5rem,4vw,2.1rem);
-  }
-  .games-cta p{
-    position:relative; z-index:1; color:rgba(255,255,255,.72); max-width:52ch; font-size:.95rem;
-  }
-  .pickem-btn{
-    position:relative; z-index:1; display:inline-flex; align-items:center; gap:10px;
-    padding:16px 34px; border-radius:40px; font-family:var(--font-display); font-weight:800;
-    font-size:1.02rem; letter-spacing:.03em; text-transform:uppercase; color:#fff; text-decoration:none;
-    background:linear-gradient(90deg, #E0574C 0%, #C1932F 35%, #3E7BC4 68%, #8A56C4 100%);
-    background-size:220% 220%; animation:pickemGradient 6s ease infinite;
-    box-shadow:0 14px 34px rgba(0,0,0,.4); transition:transform .18s ease, box-shadow .18s ease;
-    border:none; cursor:pointer;
-  }
-  .pickem-btn:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 18px 40px rgba(0,0,0,.5); }
-  .pickem-btn .arrow{ transition:transform .18s ease; }
-  .pickem-btn:hover .arrow{ transform:translateX(4px); }
-  @keyframes pickemGradient{
-    0%{ background-position:0% 50%; }
-    50%{ background-position:100% 50%; }
-    100%{ background-position:0% 50%; }
-  }
+  .bench-token{ display:flex; flex-direction:column; align-items:center; gap:4px; width:56px; }
+  .bench-token .slot-token{ width:36px; height:36px; font-size:.72rem; background:var(--surface-2); border-color:var(--border); color:var(--ink); }
+  .bench-token .slot-token.selected{ border-color:var(--gold); }
+  .bench-name{ font-size:.62rem; color:var(--muted); text-align:center; max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   /* ---------- Modals ---------- */
   .profile-modal{
@@ -471,8 +442,7 @@
     <button class="nav-link" data-section="team-shirts">Shirts</button>
     <button class="nav-link" data-section="team-jerseys">Jerseys</button>
     <button class="nav-link" data-section="rankings">Rankings</button>
-    <button class="nav-link" data-section="news">News</button>
-    <button class="nav-link" data-section="games">Games</button>
+    <button class="nav-link" data-section="lineup">Lineup</button>
     <div class="nav-admin" id="navAdmin"></div>
   </nav>
 
@@ -532,38 +502,31 @@
       </div>
     </section>
 
-    <!-- News -->
-    <section id="news" class="content-section">
+    <!-- Lineup -->
+    <section id="lineup" class="content-section">
       <div class="section-head">
-        <span class="section-kicker">Off the pitch</span>
-        <h2>Club News</h2>
-        <p>The latest headlines from around SFX Futsal — results, rumours and everything in between.</p>
+        <span class="section-kicker">Matchday</span>
+        <h2>Lineup</h2>
+        <p id="lineupHint">Tap a player, then tap a position to place them. Admins can also drag and drop.</p>
       </div>
-      <div class="news-grid" id="news-grid"></div>
-    </section>
-
-    <!-- Games -->
-    <section id="games" class="content-section">
-      <div class="section-head">
-        <span class="section-kicker">Play</span>
-        <h2>Games</h2>
-        <p>Fancy testing your knowledge of the squad? Head over to the Draft Versus game and go head-to-head against a mate.</p>
+      <div id="lineupControls"></div>
+      <div class="pitch-wrap">
+        <div class="pitch" id="pitch">
+          <div class="pitch-box-top"></div>
+          <div class="pitch-box-bottom"></div>
+          <div class="pitch-slots" id="pitchSlots"></div>
+        </div>
       </div>
-      <div class="games-cta">
-        <span class="games-cta-kicker">SFX Futsal · Mini Game</span>
-        <h3>Draft Versus</h3>
-        <p>Shuffle a random squad, snake-draft your team category by category, and see whose average comes out on top.</p>
-        <a class="pickem-btn" href="Pickem.html">
-          <span>Play the game</span>
-          <span class="arrow">&rarr;</span>
-        </a>
+      <div class="bench-wrap">
+        <span class="section-kicker" style="display:block; margin-bottom:10px;">Bench</span>
+        <div class="bench" id="bench"></div>
       </div>
     </section>
 
   </main>
 
   <footer class="site-footer">
-    Stats save to this browser automatically. To publish changes for everyone, an admin needs to use "Publish to GitHub" from the admin bar so the change is committed to the live file.
+    Stats save to this browser automatically. To publish changes for everyone, an admin needs to update the file hosted on GitHub — see the note at the end of the players script.
   </footer>
 
   <!-- Player Profile Modal -->
@@ -579,7 +542,7 @@
     <div class="profile-content" style="max-width:360px;">
       <button class="close-btn" onclick="closeModal('loginModal')" aria-label="Close">&times;</button>
       <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Admin Login</h2>
-      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">Sign in to edit stats, profiles and news.</p>
+      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">Sign in to edit stats, profiles and the lineup.</p>
       <form id="loginForm">
         <label for="loginUser">Username</label>
         <input type="text" id="loginUser" autocomplete="username" required>
@@ -630,55 +593,21 @@
     </div>
   </div>
 
-  <!-- Publish to GitHub Modal -->
-  <div id="publishModal" class="profile-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="profile-content wide">
-      <button class="close-btn" onclick="closePublish()" aria-label="Close">&times;</button>
-      <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Publish to GitHub</h2>
-      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">
-        Your edits are live in this browser only. Publishing commits them straight into Futsul.html on GitHub so
-        everyone sees the update once Pages rebuilds (usually a minute or two).
-      </p>
-      <form id="publishForm">
-        <div class="edit-grid">
-          <div><label for="pub-owner">Repo owner</label><input type="text" id="pub-owner" value="Experimentalplayer" required></div>
-          <div><label for="pub-repo">Repo name</label><input type="text" id="pub-repo" value="Futsul" required></div>
-          <div><label for="pub-path">File path</label><input type="text" id="pub-path" value="Futsul.html" required></div>
-          <div><label for="pub-branch">Branch</label><input type="text" id="pub-branch" value="main" required></div>
-        </div>
-        <label for="pub-token">GitHub token</label>
-        <input type="password" id="pub-token" autocomplete="off" placeholder="Paste a fine-grained token with Contents: Read and write" required>
-        <p style="color:var(--muted); font-size:.78rem; margin:-8px 0 14px;">
-          Never stored — only kept in memory for this publish, and cleared as soon as you close this panel.
-        </p>
-        <p id="publishStatus" class="form-error" hidden></p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
-          <button type="submit" class="btn btn-primary" id="publishNowBtn">Publish now</button>
-          <button type="button" class="btn" id="copyDataBtn">Copy data instead</button>
-          <button type="button" class="btn" id="cancelPublishBtn">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <script>
     // ---------------------------------------------------------------
     // PLAYER DATA — this is the version that ships to everyone who
     // visits the site. Admin edits are saved to each visitor's own
     // browser (localStorage) so the UI updates instantly for them.
-    // To make an edit permanent for ALL visitors, use the "Publish to
-    // GitHub" button in the admin bar (see the Publish section near
-    // the bottom of this script) — it rewrites the blocks between the
-    // DATA:...:START / DATA:...:END markers below and commits Futsul.html
-    // straight to the repo, which makes GitHub Pages rebuild the site.
+    // To make an edit permanent for ALL visitors, copy the updated
+    // object (Admin panel has no auto-export yet — see the note at
+    // the bottom of this script) into this file and push to GitHub.
     // ---------------------------------------------------------------
-                        // ===== DATA:PLAYERS:START =====
     const DEFAULT_PLAYERS = {
-      player1: {
+    player1: {
         name: "William McCracken",
         picture: "insert profile picture here",
         team: "shirts",
-        goals: "1",
+        goals: "7",
         assists: "1",
         fights: "0",
         saves: "0",
@@ -690,26 +619,16 @@
         dribbling: "89",
         shooting: "95",
         goalkeeping: "0",
-        strengths: [
-          "Shooting",
-          "Good at soccer"
-        ],
-        weaknesses: [
-          "Great Hair",
-          "2nd thing here"
-        ],
-        cleanSheets: "0",
-        technique: "90",
-        kicking: "89",
-        goalie: "60"
-      },
-      player2: {
+        strengths: ["Shooting", "Good at soccer"],
+        weaknesses: ["Great Hair", "2nd thing here"]
+    },
+    player2: {
         name: "Billy Moffit",
         picture: "Billy.JPG",
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "2",
+        fights: "6",
         saves: "0",
         passing: "79",
         defending: "84",
@@ -719,20 +638,10 @@
         dribbling: "73",
         shooting: "80",
         goalkeeping: "0",
-        strengths: [
-          "Fast",
-          "Knows the rules"
-        ],
-        weaknesses: [
-          "Doesn't Play Futsal",
-          "The Ball"
-        ],
-        cleanSheets: "0",
-        technique: "80",
-        kicking: "80",
-        goalie: "60"
-      },
-      player3: {
+        strengths: ["Fast", "Knows the rules"],
+        weaknesses: ["Doesn't Play Futsal", "The Ball"]
+    },
+    player3: {
         name: "Leo Braybon",
         picture: "Leo.JPG",
         team: "shirts",
@@ -748,25 +657,15 @@
         dribbling: "85",
         shooting: "86",
         goalkeeping: "92",
-        strengths: [
-          "Top Goalie",
-          "Hell of a kick"
-        ],
-        weaknesses: [
-          "Z",
-          "Scary"
-        ],
-        cleanSheets: "0",
-        technique: "89",
-        kicking: "90",
-        goalie: "93"
-      },
-      player4: {
+        strengths: ["Top Goalie", "Hell of a kick"],
+        weaknesses: ["Z", "Scary"]
+    },
+    player4: {
         name: "Seb Munoz",
         picture: "Seb.png",
         team: "shirts",
         goals: "2",
-        assists: "0",
+        assists: "1",
         fights: "0",
         saves: "0",
         passing: "93",
@@ -777,26 +676,16 @@
         dribbling: "95",
         shooting: "94",
         goalkeeping: "0",
-        strengths: [
-          "Great Passer",
-          "Tecky"
-        ],
-        weaknesses: [
-          "Food",
-          "Lips"
-        ],
-        cleanSheets: "0",
-        technique: "90",
-        kicking: "89",
-        goalie: "60"
-      },
-      player5: {
+        strengths: ["Great Passer", "Tecky"],
+        weaknesses: ["Food", "Lips"]
+    },
+    player5: {
         name: "Darcy Brown",
         picture: "DB",
         team: "shirts",
-        goals: "0",
+        goals: "-3",
         assists: "0",
-        fights: "2",
+        fights: "4",
         saves: "0",
         passing: "79",
         defending: "84",
@@ -805,27 +694,17 @@
         strength: "86",
         dribbling: "72",
         shooting: "82",
-        goalkeeping: "0",
-        strengths: [
-          "Temper",
-          "Really good when he plays against his own team"
-        ],
-        weaknesses: [
-          "Public Enemy No.1",
-          "Always in fights"
-        ],
-        cleanSheets: "0",
-        technique: "78",
-        kicking: "79",
-        goalie: "79"
-      },
-      player6: {
+        goalkeeping: "80",
+        strengths: ["Temper", "Really good when he plays against his own team"],
+        weaknesses: ["Public Enemy No.1", "Always in fights"]
+    },
+    player6: {
         name: "Tommy Wills",
         picture: "Tommy.JPG",
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "0",
+        fights: "3",
         saves: "0",
         passing: "73",
         defending: "83",
@@ -835,22 +714,16 @@
         dribbling: "71",
         shooting: "79",
         goalkeeping: "0",
-        strengths: [
-          "Strong",
-          "Really aggressive"
-        ],
-        weaknesses: [
-          "Too strong",
-          "Always getting red cards"
-        ]
-      },
-      player7: {
+        strengths: ["Strong", "Really aggressive"],
+        weaknesses: ["Too strong", "Always getting red cards"]
+    },
+    player7: {
         name: "Liam Sawade",
         picture: "LiamS.JPG",
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "2",
+        fights: "5",
         saves: "0",
         passing: "72",
         defending: "78",
@@ -860,22 +733,16 @@
         dribbling: "66",
         shooting: "63",
         goalkeeping: "0",
-        strengths: [
-          "Curly Hair",
-          "40 inch vert"
-        ],
-        weaknesses: [
-          "Doesn't know how to play",
-          "Vert doesn't really help"
-        ]
-      },
-      playerB: {
+        strengths: ["Curly Hair", "40 inch vert"],
+        weaknesses: ["Doesn't know how to play", "Vert doesn't really help"]
+    },
+    playerB: {
         name: "Tapi Gotchy",
         picture: "Tapi.JPG",
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "0",
+        fights: "1",
         saves: "0",
         passing: "74",
         defending: "78",
@@ -885,22 +752,16 @@
         dribbling: "73",
         shooting: "75",
         goalkeeping: "0",
-        strengths: [
-          "Black",
-          "Fast"
-        ],
-        weaknesses: [
-          "Doesn't Play Futsal",
-          "Bad with Woman"
-        ]
-      },
-      playerA: {
+        strengths: ["Black", "Fast"],
+        weaknesses: ["Doesn't Play Futsal", "Bad with Woman"]
+    },
+    playerA: {
         name: "Tom Griffin",
         picture: "Tom.JPG",
         team: "shirts",
         goals: "0",
-        assists: "0",
-        fights: "1",
+        assists: "1",
+        fights: "2",
         saves: "0",
         passing: "80",
         defending: "82",
@@ -910,21 +771,15 @@
         dribbling: "83",
         shooting: "85",
         goalkeeping: "0",
-        strengths: [
-          "Popular",
-          "best celebrations in the game"
-        ],
-        weaknesses: [
-          "Doesn't play",
-          "Too nice"
-        ]
-      },
-      player8: {
+        strengths: ["Popular", "best celebrations in the game"],
+        weaknesses: ["Doesn't play", "Too nice"]
+    },
+    player8: {
         name: "Jack Rollenston",
         picture: "JackR.png",
         team: "shirts",
-        goals: "1",
-        assists: "0",
+        goals: "5",
+        assists: "1",
         fights: "0",
         saves: "0",
         passing: "84",
@@ -934,23 +789,17 @@
         strength: "90",
         dribbling: "81",
         shooting: "85",
-        goalkeeping: "0",
-        strengths: [
-          "Fast with ball",
-          "Tecky"
-        ],
-        weaknesses: [
-          "Volley Ball Player",
-          "Idk"
-        ]
-      },
-      player9: {
+        goalkeeping: "84",
+        strengths: ["Fast with ball", "Tecky"],
+        weaknesses: ["Volley Ball Player", "Idk"]
+    },
+    player9: {
         name: "Liam Molloy",
         picture: "LiamM.JPG",
         team: "jerseys",
-        goals: "0",
-        assists: "1",
-        fights: "1",
+        goals: "2",
+        assists: "2",
+        fights: "3",
         saves: "0",
         passing: "90",
         defending: "90",
@@ -960,22 +809,16 @@
         dribbling: "91",
         shooting: "92",
         goalkeeping: "0",
-        strengths: [
-          "Plays soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player10: {
+        strengths: ["Plays soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player10: {
         name: "Lucas D'macio",
         picture: "Lucas.jpg",
         team: "jerseys",
-        goals: "0",
+        goals: "3",
         assists: "1",
-        fights: "2",
+        fights: "6",
         saves: "0",
         passing: "89",
         defending: "87",
@@ -985,41 +828,29 @@
         dribbling: "86",
         shooting: "87",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Fast"
-        ],
-        weaknesses: [
-          "Loud",
-          "Doesn't know futsal rules"
-        ]
-      },
-      player11: {
+        strengths: ["Good at soccer", "Fast"],
+        weaknesses: ["Loud", "Doesn't know futsal rules"]
+    },
+    player11: {
         name: "Aditya",
-        picture: "",
+        picture: "Aditya.jpeg",
         team: "jerseys",
-        goals: "2",
+        goals: "4",
         assists: "1",
-        fights: "1",
+        fights: "2",
         saves: "0",
         passing: "63",
         defending: "61",
-        overall: "64",
+        overall: "66",
         speed: "71",
         strength: "74",
         dribbling: "60",
         shooting: "55",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerC: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerC: {
         name: "William Hunt",
         picture: "WillH.JPG",
         team: "jerseys",
@@ -1035,22 +866,16 @@
         dribbling: "81",
         shooting: "81",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerD: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerD: {
         name: "Harry Behnke",
         picture: "Harry.jpg",
         team: "jerseys",
         goals: "2",
         assists: "0",
-        fights: "0",
+        fights: "1",
         saves: "0",
         passing: "93",
         defending: "87",
@@ -1060,27 +885,17 @@
         dribbling: "94",
         shooting: "94",
         goalkeeping: "80",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "90",
-        kicking: "89",
-        goalie: "94"
-      },
-      playerE: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerE: {
         name: "Luka Seckar",
         picture: "Luka.jpg",
         team: "jerseys",
         goals: "0",
         assists: "0",
         fights: "0",
-        saves: "6",
+        saves: "10",
         passing: "91",
         defending: "93",
         overall: "93",
@@ -1089,22 +904,16 @@
         dribbling: "91",
         shooting: "93",
         goalkeeping: "93",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player16: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player16: {
         name: "Anthony Miniutti",
         picture: "Anthony.JPG",
         team: "jerseys",
         goals: "0",
-        assists: "0",
-        fights: "1",
+        assists: "2",
+        fights: "2",
         saves: "0",
         passing: "90",
         defending: "94",
@@ -1114,22 +923,16 @@
         dribbling: "89",
         shooting: "92",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerG: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerG: {
         name: "Rory Netting",
         picture: "Rory.JPG",
         team: "jerseys",
-        goals: "0",
+        goals: "1",
         assists: "0",
-        fights: "2",
+        fights: "6",
         saves: "0",
         passing: "79",
         defending: "82",
@@ -1139,16 +942,10 @@
         dribbling: "77",
         shooting: "79",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      playerH: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    playerH: {
         name: "AJ",
         picture: "AJ.JPG",
         team: "jerseys",
@@ -1164,21 +961,15 @@
         dribbling: "90",
         shooting: "88",
         goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player12: {
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player12: {
         name: "Riley Mcauliffe",
         picture: "Riley.JPG",
         team: "jerseys",
-        goals: "0",
-        assists: "0",
+        goals: "1",
+        assists: "1",
         fights: "1",
         saves: "0",
         passing: "70",
@@ -1189,22 +980,16 @@
         dribbling: "69",
         shooting: "67",
         goalkeeping: "0",
-        technique: "24",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ]
-      },
-      player13: {
+        technique: "63",
+        strengths: ["Good at soccer", "Happy"],
+        weaknesses: ["Bad with woman", "Hairline"]
+    },
+    player13: {
         name: "Jigme Chopel",
         picture: "insert profile picture here",
         team: "jerseys",
         goals: "0",
-        assists: "0",
+        assists: "1",
         fights: "0",
         saves: "0",
         passing: "82",
@@ -1215,19 +1000,10 @@
         dribbling: "85",
         shooting: "84",
         goalkeeping: "0",
-        strengths: [
-          "",
-          ""
-        ],
-        weaknesses: [
-          "",
-          ""
-        ]
-      }
-    };
-    // ===== DATA:PLAYERS:END =====
-
-    // ===== DATA:GAMES:START =====
+        strengths: ["", ""],
+        weaknesses: ["", ""]
+    }
+};
     const DEFAULT_GAMES = [
       {
         id: "game-shirts-4-4-jerseys-pens",
@@ -1237,76 +1013,20 @@
         jerseysScore: 4,
         shootoutWinner: "shirts",
         contributions: [
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player5",
-            stat: "goals",
-            qty: -2
-          },
-          {
-            playerId: "player4",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player8",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player13",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player6",
-            stat: "fights",
-            qty: 3
-          },
-          {
-            playerId: "playerG",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player2",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player7",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player10",
-            stat: "fights",
-            qty: 2
-          }
+          { playerId: "player8", stat: "goals", qty: 2 },
+          { playerId: "player1", stat: "goals", qty: 2 },
+          { playerId: "player5", stat: "goals", qty: -2 },
+          { playerId: "player4", stat: "assists", qty: 1 },
+          { playerId: "player8", stat: "assists", qty: 1 },
+          { playerId: "player13", stat: "assists", qty: 1 },
+          { playerId: "player10", stat: "goals", qty: 1 },
+          { playerId: "player9", stat: "goals", qty: 1 },
+          { playerId: "player16", stat: "assists", qty: 1 },
+          { playerId: "player6", stat: "fights", qty: 3 },
+          { playerId: "playerG", stat: "fights", qty: 2 },
+          { playerId: "player2", stat: "fights", qty: 2 },
+          { playerId: "player7", stat: "fights", qty: 2 },
+          { playerId: "player10", stat: "fights", qty: 2 }
         ]
       },
       {
@@ -1316,71 +1036,19 @@
         shirtsScore: 7,
         jerseysScore: 9,
         contributions: [
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "playerD",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player12",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "playerG",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 5
-          },
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player12",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player11",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "playerA",
-            stat: "assists",
-            qty: 1
-          }
+          { playerId: "player10", stat: "goals", qty: 2 },
+          { playerId: "player9", stat: "goals", qty: 2 },
+          { playerId: "player11", stat: "goals", qty: 2 },
+          { playerId: "playerD", stat: "goals", qty: 1 },
+          { playerId: "player12", stat: "goals", qty: 1 },
+          { playerId: "playerG", stat: "goals", qty: 1 },
+          { playerId: "player1", stat: "goals", qty: 5 },
+          { playerId: "player8", stat: "goals", qty: 2 },
+          { playerId: "player12", stat: "assists", qty: 1 },
+          { playerId: "player16", stat: "assists", qty: 1 },
+          { playerId: "player9", stat: "assists", qty: 1 },
+          { playerId: "player11", stat: "assists", qty: 1 },
+          { playerId: "playerA", stat: "assists", qty: 1 }
         ]
       },
       {
@@ -1390,82 +1058,23 @@
         shirtsScore: 3,
         jerseysScore: 4,
         contributions: [
-          {
-            playerId: "playerD",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player10",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player4",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 1
-          }
+          { playerId: "playerD", stat: "goals", qty: 2 },
+          { playerId: "player11", stat: "goals", qty: 2 },
+          { playerId: "player10", stat: "assists", qty: 1 },
+          { playerId: "player9", stat: "assists", qty: 1 },
+          { playerId: "player4", stat: "goals", qty: 2 },
+          { playerId: "player8", stat: "goals", qty: 1 }
         ]
       }
     ];
-    // ===== DATA:GAMES:END =====
+    const DEFAULT_LINEUP = { formation:"2-2", gk:null, slots:[null,null,null,null] };
 
-    // ---------------------------------------------------------------
-    // NEWS — recent headlines shown on the News page. Each story can
-    // reference one or more existing player IDs (playerIds) so their
-    // photo/avatar shows next to the story, or a freeform name for
-    // people who aren't in the roster (e.g. a new signing).
-    // ---------------------------------------------------------------
-    const NEWS_STORIES = [
-      {
-        tag: "Match Report",
-        color: "#2F8F5B",
-        date: "2026-08-21",
-        headline: "Shirts take their first win of the season with a paper scissors rock decider",
-        body: "After eight goals and a share of the spoils at 4-4, Shirts finally got their first result of the campaign on the board — settling it the only fair way anyone could agree on: best-of-three paper scissors rock. Jerseys will point to the scoreline and argue the better team lost.",
-        playerIds: []
-      },
-      {
-        tag: "Transfer Talk",
-        color: "#8A56C4",
-        date: "2026-08-19",
-        headline: "Trade talks have emerged between sending Darcy Brown to team Jerseys",
-        body: "Sources close to the dressing room suggest Shirts are open to offers for their most combustible defender, with Jerseys reportedly circling. Darcy Brown has racked up more fights than goals this season, and some reckon a change of bib might be exactly what both sides need.",
-        playerIds: ["player5"]
-      },
-      {
-        tag: "Free Agency",
-        color: "#3E7BC4",
-        date: "2026-08-16",
-        headline: "Alex Bunter signed to free agency",
-        body: "SFX Futsal has confirmed the signing of free agent Alex Bunter, who becomes available for selection immediately. Details on which bib he'll be wearing are still to be finalised, but early word from the sideline is optimistic.",
-        playerIds: [],
-        freeAgents: ["Alex Bunter"]
-      },
-      {
-        tag: "Talking Point",
-        color: "#A23B33",
-        date: "2026-08-21",
-        headline: "Fans question whether Aditya's absence was the reason for Jerseys' first loss of the season",
-        body: "Jerseys' unbeaten start came to an end in a 4-4 thriller, and more than a few fans on the sideline were quick to point the finger at one missing face. Aditya has been a key attacking outlet all season, and his absence left a gap that Shirts were happy to exploit.",
-        playerIds: ["player11"]
-      }
-    ];
+    const FORMATIONS = {
+      "2-2":   [ {label:"DEF", top:68, left:28}, {label:"DEF", top:68, left:72}, {label:"ATT", top:26, left:28}, {label:"ATT", top:26, left:72} ],
+      "1-2-1": [ {label:"DEF", top:72, left:50}, {label:"MID", top:46, left:24}, {label:"MID", top:46, left:76}, {label:"ATT", top:20, left:50} ],
+      "3-1":   [ {label:"DEF", top:66, left:18}, {label:"DEF", top:66, left:50}, {label:"DEF", top:66, left:82}, {label:"ATT", top:20, left:50} ]
+    };
+    const GK_POS = { top:90, left:50 };
 
     const STAT_LABELS = { goals:"Goal", assists:"Assist", saves:"Save", cleanSheets:"Clean sheet", fights:"Fight" };
     const STAT_LABELS_PLURAL = { goals:"Goals", assists:"Assists", saves:"Saves", cleanSheets:"Clean sheets", fights:"Fights" };
@@ -1502,6 +1111,7 @@
     }
 
     let isAdmin = sessionStorage.getItem("sfx_admin") === "1";
+    let selection = null;
     let lastFocused = null;
     let currentProfileId = null;
     let activeRankingKey = "goals";
@@ -1510,7 +1120,7 @@
     // ---------------------------------------------------------------
     // Storage
     // ---------------------------------------------------------------
-    const LS_KEYS = { players:"sfx_players_v1", games:"sfx_games_v1" };
+    const LS_KEYS = { players:"sfx_players_v1", games:"sfx_games_v1", lineup:"sfx_lineup_v1" };
 
     function loadPlayers(){
       try{ const raw = localStorage.getItem(LS_KEYS.players); return raw ? JSON.parse(raw) : structuredClone(DEFAULT_PLAYERS); }
@@ -1534,8 +1144,15 @@
     }
     function saveGames(){ try{ localStorage.setItem(LS_KEYS.games, JSON.stringify(games)); }catch(e){} }
 
+    function loadLineup(){
+      try{ const raw = localStorage.getItem(LS_KEYS.lineup); return raw ? JSON.parse(raw) : structuredClone(DEFAULT_LINEUP); }
+      catch(e){ return structuredClone(DEFAULT_LINEUP); }
+    }
+    function saveLineup(){ try{ localStorage.setItem(LS_KEYS.lineup, JSON.stringify(lineup)); }catch(e){} }
+
     let players = loadPlayers();
     let games = loadGames();
+    let lineup = loadLineup();
 
     function uid(){ return crypto.randomUUID ? crypto.randomUUID() : "g_" + Date.now() + "_" + Math.random().toString(36).slice(2); }
     function initials(name){ return name.split(" ").filter(Boolean).map(w => w[0]).slice(0,2).join("").toUpperCase(); }
@@ -1856,49 +1473,108 @@
     }
 
     // ---------------------------------------------------------------
-    // News
+    // Lineup
     // ---------------------------------------------------------------
-    function newsAvatar(name){
-      // For people not (yet) in the roster — e.g. a new free-agent signing.
-      return `<span class="avatar avatar-sm">
-        <span class="avatar-fallback" style="display:flex; background:var(--surface-2); color:var(--ink-soft); border:1px dashed var(--border);">${initials(name)}</span>
-      </span>`;
+    function renderLineupControls(){
+      const el = document.getElementById("lineupControls");
+      if (!isAdmin){ el.innerHTML = ""; return; }
+      el.innerHTML = `
+        <div class="lineup-controls">
+          <div><label for="formationSelect">Formation</label>
+            <select id="formationSelect">${Object.keys(FORMATIONS).map(f => `<option value="${f}" ${lineup.formation === f ? "selected" : ""}>${f}</option>`).join("")}</select>
+          </div>
+          <button class="btn btn-small" id="clearLineupBtn">Clear lineup</button>
+        </div>`;
+      document.getElementById("formationSelect").addEventListener("change", e => {
+        lineup.formation = e.target.value; saveLineup(); renderPitch();
+      });
+      document.getElementById("clearLineupBtn").addEventListener("click", () => {
+        lineup.gk = null; lineup.slots = lineup.slots.map(() => null);
+        selection = null; saveLineup(); renderPitch(); renderBench();
+      });
     }
 
-    function renderNews(){
-      const grid = document.getElementById("news-grid");
-      if (!grid) return;
-      grid.innerHTML = NEWS_STORIES.map(story => {
-        const rosterChips = (story.playerIds || [])
-          .filter(id => players[id])
-          .map(id => {
-            const p = players[id];
-            return `<span class="news-player-chip">
-              ${avatarMarkup(p, "avatar-sm")}
-              <span><span class="name">${p.name}</span><span class="sub">${p.team === "shirts" ? "Shirts" : "Jerseys"}</span></span>
-            </span>`;
-          }).join("");
-        const freeAgentChips = (story.freeAgents || [])
-          .map(name => `<span class="news-player-chip">
-            ${newsAvatar(name)}
-            <span><span class="name">${name}</span><span class="sub">Free agent</span></span>
-          </span>`).join("");
-        const chips = rosterChips + freeAgentChips;
+    function slotHTML(slotKey, pos, playerId, fallbackLabel){
+      const player = playerId ? players[playerId] : null;
+      const tokenClass = [player ? "" : "empty", selection && player && selection.id === playerId ? "selected" : ""].join(" ").trim();
+      const label = player ? initials(player.name) : fallbackLabel;
+      const nameText = player ? player.name.split(" ")[0] : "";
+      return `<div class="pitch-slot" style="top:${pos.top}%; left:${pos.left}%;">
+        <div class="slot-token ${tokenClass}" data-slot="${slotKey}">${label}</div>
+        <span class="slot-name">${nameText}</span>
+      </div>`;
+    }
 
-        return `
-        <article class="news-card">
-          <div class="news-card-bar" style="background:${story.color};"></div>
-          <div class="news-card-body">
-            <div class="news-card-top">
-              <span class="news-tag" style="background:${story.color}1a; color:${story.color};">${story.tag}</span>
-              <span class="news-date">${formatDate(story.date)}</span>
-            </div>
-            <h3 class="news-headline">${story.headline}</h3>
-            <p class="news-body">${story.body}</p>
-            ${chips ? `<div class="news-players">${chips}</div>` : ""}
-          </div>
-        </article>`;
-      }).join("");
+    function renderPitch(){
+      const wrap = document.getElementById("pitchSlots");
+      const formation = FORMATIONS[lineup.formation] || FORMATIONS["2-2"];
+      let html = slotHTML("gk", GK_POS, lineup.gk, "GK");
+      formation.forEach((pos, i) => { html += slotHTML(String(i), pos, lineup.slots[i], pos.label); });
+      wrap.innerHTML = html;
+
+      wrap.querySelectorAll(".slot-token").forEach(el => {
+        el.addEventListener("click", () => onSlotClick(el.dataset.slot));
+        if (isAdmin){
+          const occupantId = el.dataset.slot === "gk" ? lineup.gk : lineup.slots[Number(el.dataset.slot)];
+          if (occupantId){
+            el.setAttribute("draggable", "true");
+            el.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", occupantId));
+          }
+          el.addEventListener("dragover", e => e.preventDefault());
+          el.addEventListener("drop", e => {
+            e.preventDefault();
+            const playerId = e.dataTransfer.getData("text/plain");
+            if (playerId && players[playerId]) placeInSlot(playerId, el.dataset.slot);
+          });
+        }
+      });
+    }
+
+    function renderBench(){
+      const assigned = new Set([lineup.gk, ...lineup.slots].filter(Boolean));
+      const benchPlayers = Object.entries(players).filter(([id]) => !assigned.has(id));
+      const el = document.getElementById("bench");
+      el.innerHTML = benchPlayers.map(([id, p]) => `
+        <div class="bench-token" data-id="${id}">
+          <div class="slot-token ${selection && selection.id === id ? "selected" : ""}">${initials(p.name)}</div>
+          <span class="bench-name">${p.name.split(" ")[0]}</span>
+        </div>
+      `).join("") || `<p class="empty-state" style="padding:0; border:none;">Everyone's on the pitch.</p>`;
+
+      el.querySelectorAll(".bench-token").forEach(t => {
+        t.addEventListener("click", () => onBenchTokenClick(t.dataset.id));
+        if (isAdmin){
+          t.setAttribute("draggable", "true");
+          t.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", t.dataset.id));
+        }
+      });
+    }
+
+    function placeInSlot(playerId, slotKey){
+      if (!players[playerId]) return;
+      removePlayerFromLineup(playerId);
+      if (slotKey === "gk") lineup.gk = playerId; else lineup.slots[Number(slotKey)] = playerId;
+      selection = null; saveLineup(); renderPitch(); renderBench();
+    }
+    function returnToBench(playerId){
+      removePlayerFromLineup(playerId);
+      selection = null; saveLineup(); renderPitch(); renderBench();
+    }
+    function removePlayerFromLineup(playerId){
+      if (lineup.gk === playerId) lineup.gk = null;
+      lineup.slots = lineup.slots.map(s => s === playerId ? null : s);
+    }
+    function onSlotClick(slotKey){
+      if (!isAdmin) return;
+      const current = slotKey === "gk" ? lineup.gk : lineup.slots[Number(slotKey)];
+      if (selection && current && selection.id === current){ selection = null; renderPitch(); renderBench(); return; }
+      if (selection){ placeInSlot(selection.id, slotKey); }
+      else if (current){ selection = { id: current }; renderPitch(); renderBench(); }
+    }
+    function onBenchTokenClick(playerId){
+      if (!isAdmin) return;
+      selection = (selection && selection.id === playerId) ? null : { id: playerId };
+      renderPitch(); renderBench();
     }
 
     // ---------------------------------------------------------------
@@ -2034,14 +1710,10 @@
     function renderNavAdmin(){
       const el = document.getElementById("navAdmin");
       el.innerHTML = isAdmin
-        ? `<span class="admin-tag">Admin: LiamSawade</span><button class="btn btn-small" id="publishBtnNav">Publish to GitHub</button><button class="btn btn-small" id="logoutBtn">Log out</button>`
+        ? `<span class="admin-tag">Admin: LiamSawade</span><button class="btn btn-small" id="logoutBtn">Log out</button>`
         : `<button class="btn btn-small" id="loginBtnNav">Admin</button>`;
-      if (isAdmin){
-        document.getElementById("logoutBtn").addEventListener("click", logout);
-        document.getElementById("publishBtnNav").addEventListener("click", openPublish);
-      } else {
-        document.getElementById("loginBtnNav").addEventListener("click", openLogin);
-      }
+      if (isAdmin) document.getElementById("logoutBtn").addEventListener("click", logout);
+      else document.getElementById("loginBtnNav").addEventListener("click", openLogin);
     }
 
     function openLogin(){
@@ -2075,162 +1747,11 @@
       isAdmin = false;
       sessionStorage.removeItem("sfx_admin");
       document.body.classList.remove("is-admin");
+      selection = null;
       refreshAll();
       if (document.getElementById("profileModal").style.display === "flex" && currentProfileId){
         renderProfileView(currentProfileId);
       }
-    }
-
-    // ---------------------------------------------------------------
-    // Publish to GitHub
-    //
-    // Admin edits only ever touch this browser's localStorage. To make
-    // them permanent for every visitor, this panel rewrites the two
-    // data blocks below (between the DATA:...:START / DATA:...:END
-    // markers) with the current in-memory players/games, then commits
-    // the whole file straight to the repo via the GitHub Contents API.
-    // If that fails (bad token, offline, etc.) "Copy data instead"
-    // builds the same replacement text and puts it on the clipboard so
-    // it can be pasted over the markers manually in GitHub's web editor.
-    // ---------------------------------------------------------------
-    function jsLiteral(value, indent){
-      // Pretty-printed JS object/array literal (not JSON) so the file
-      // keeps reading the same way it did by hand — quoted keys are
-      // avoided where safe, strings use double quotes.
-      const pad = "  ".repeat(indent);
-      const padIn = "  ".repeat(indent + 1);
-      if (Array.isArray(value)){
-        if (value.length === 0) return "[]";
-        const items = value.map(v => padIn + jsLiteral(v, indent + 1)).join(",\n");
-        return `[\n${items}\n${pad}]`;
-      }
-      if (value && typeof value === "object"){
-        const keys = Object.keys(value);
-        if (keys.length === 0) return "{}";
-        const items = keys.map(k => {
-          const safeKey = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k);
-          return `${padIn}${safeKey}: ${jsLiteral(value[k], indent + 1)}`;
-        }).join(",\n");
-        return `{\n${items}\n${pad}}`;
-      }
-      return JSON.stringify(value);
-    }
-
-    function buildDataBlock(){
-      const playersLiteral = jsLiteral(players, 2);
-      const gamesLiteral = jsLiteral(games, 2);
-      return (
-`    // ===== DATA:PLAYERS:START =====
-    const DEFAULT_PLAYERS = ${playersLiteral};
-    // ===== DATA:PLAYERS:END =====
-
-    // ===== DATA:GAMES:START =====
-    const DEFAULT_GAMES = ${gamesLiteral};
-    // ===== DATA:GAMES:END =====`
-      );
-    }
-
-    function replaceDataMarkers(fileText){
-      const block = buildDataBlock();
-      const playersRe = /\/\/ ===== DATA:PLAYERS:START =====[\s\S]*?\/\/ ===== DATA:PLAYERS:END =====/;
-      const gamesRe = /\/\/ ===== DATA:GAMES:START =====[\s\S]*?\/\/ ===== DATA:GAMES:END =====/;
-      const playersBlock = block.slice(0, block.indexOf("// ===== DATA:GAMES:START ====="));
-      const gamesBlock = block.slice(block.indexOf("// ===== DATA:GAMES:START ====="));
-      if (!playersRe.test(fileText) || !gamesRe.test(fileText)){
-        throw new Error("Couldn't find the DATA:...:START / DATA:...:END markers in Futsul.html — has the file been edited outside this panel?");
-      }
-      return fileText.replace(playersRe, playersBlock.trimEnd()).replace(gamesRe, gamesBlock.trimEnd());
-    }
-
-    function utf8ToBase64(str){
-      return btoa(unescape(encodeURIComponent(str)));
-    }
-    function base64ToUtf8(b64){
-      return decodeURIComponent(escape(atob(b64.replace(/\n/g, ""))));
-    }
-
-    function openPublish(){
-      document.getElementById("publishStatus").hidden = true;
-      document.getElementById("publishForm").reset();
-      document.getElementById("pub-owner").value = "Liam-Gamemaker";
-      document.getElementById("pub-repo").value = "Futsul";
-      document.getElementById("pub-path").value = "Futsul.html";
-      document.getElementById("pub-branch").value = "main";
-      openModal("publishModal");
-      document.getElementById("pub-token").focus();
-    }
-
-    function setPublishStatus(msg, isError){
-      const el = document.getElementById("publishStatus");
-      el.textContent = msg;
-      el.style.color = isError ? "var(--red)" : "var(--turf)";
-      el.hidden = false;
-    }
-
-    async function submitPublish(e){
-      e.preventDefault();
-      const owner = document.getElementById("pub-owner").value.trim();
-      const repo = document.getElementById("pub-repo").value.trim();
-      const path = document.getElementById("pub-path").value.trim().replace(/^\/+/, "");
-      const branch = document.getElementById("pub-branch").value.trim();
-      const token = document.getElementById("pub-token").value.trim();
-      const btn = document.getElementById("publishNowBtn");
-
-      btn.disabled = true;
-      setPublishStatus("Publishing… fetching the current file…", false);
-      try{
-        const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
-        const headers = {
-          "Authorization": `Bearer ${token}`,
-          "Accept": "application/vnd.github+json"
-        };
-
-        const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, { headers });
-        if (!getRes.ok){
-          throw new Error(`Couldn't read the current file (${getRes.status}). Check the repo/path/branch and that the token has Contents: Read and write on this repo.`);
-        }
-        const getData = await getRes.json();
-        const currentText = base64ToUtf8(getData.content);
-
-        setPublishStatus("Publishing… updating stats and committing…", false);
-        const newText = replaceDataMarkers(currentText);
-
-        const putRes = await fetch(apiBase, {
-          method: "PUT",
-          headers: { ...headers, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: `Publish stats update — ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
-            content: utf8ToBase64(newText),
-            sha: getData.sha,
-            branch
-          })
-        });
-        if (!putRes.ok){
-          const errBody = await putRes.json().catch(() => ({}));
-          throw new Error(`GitHub rejected the commit (${putRes.status}): ${errBody.message || "unknown error"}`);
-        }
-
-        setPublishStatus("Published! GitHub Pages will rebuild the live site in a minute or two.", false);
-        document.getElementById("pub-token").value = "";
-      } catch(err){
-        setPublishStatus(err.message || "Publish failed — try 'Copy data instead' and paste the update in manually.", true);
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    async function copyDataInstead(){
-      try{
-        await navigator.clipboard.writeText(buildDataBlock());
-        setPublishStatus("Copied! In GitHub's web editor, replace everything from \"// ===== DATA:PLAYERS:START =====\" through \"// ===== DATA:GAMES:END =====\" with what you just copied, then commit.", false);
-      } catch(err){
-        setPublishStatus("Couldn't access the clipboard in this browser — try publishing directly instead.", true);
-      }
-    }
-
-    function closePublish(){
-      document.getElementById("pub-token").value = "";
-      closeModal("publishModal");
     }
 
     function refreshAll(){
@@ -2241,7 +1762,9 @@
       renderLeaders();
       refreshRanking();
       renderGameLog();
-      renderNews();
+      renderLineupControls();
+      renderPitch();
+      renderBench();
       renderNavAdmin();
     }
 
@@ -2255,10 +1778,10 @@
     }
     window.addEventListener("keydown", e => {
       if (e.key !== "Escape") return;
-      ["profileModal","loginModal","gameModal","publishModal"].forEach(id => { if (document.getElementById(id).style.display === "flex") closeModal(id); });
+      ["profileModal","loginModal","gameModal"].forEach(id => { if (document.getElementById(id).style.display === "flex") closeModal(id); });
     });
     window.addEventListener("click", e => {
-      ["profileModal","loginModal","gameModal","publishModal"].forEach(id => { if (e.target === document.getElementById(id)) closeModal(id); });
+      ["profileModal","loginModal","gameModal"].forEach(id => { if (e.target === document.getElementById(id)) closeModal(id); });
     });
 
     // ---------------------------------------------------------------
@@ -2275,9 +1798,6 @@
       document.getElementById("gameForm").addEventListener("submit", submitGame);
       document.getElementById("addStatBtn").addEventListener("click", addPendingStat);
       document.getElementById("cancelGameBtn").addEventListener("click", () => closeModal("gameModal"));
-      document.getElementById("publishForm").addEventListener("submit", submitPublish);
-      document.getElementById("copyDataBtn").addEventListener("click", copyDataInstead);
-      document.getElementById("cancelPublishBtn").addEventListener("click", closePublish);
 
       renderRankingTabs();
       refreshAll();
