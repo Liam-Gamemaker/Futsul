@@ -672,13 +672,13 @@
     // DATA:...:START / DATA:...:END markers below and commits Futsul.html
     // straight to the repo, which makes GitHub Pages rebuild the site.
     // ---------------------------------------------------------------
-                // ===== DATA:PLAYERS:START =====
+                    // ===== DATA:PLAYERS:START =====
     const DEFAULT_PLAYERS = {
       player1: {
         name: "William McCracken",
         picture: "insert profile picture here",
         team: "shirts",
-        goals: "7",
+        goals: "1",
         assists: "1",
         fights: "0",
         saves: "0",
@@ -697,7 +697,11 @@
         weaknesses: [
           "Great Hair",
           "2nd thing here"
-        ]
+        ],
+        cleanSheets: "0",
+        technique: "0",
+        kicking: "0",
+        goalie: "0"
       },
       player2: {
         name: "Billy Moffit",
@@ -705,7 +709,7 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "6",
+        fights: "2",
         saves: "0",
         passing: "79",
         defending: "84",
@@ -754,7 +758,7 @@
         picture: "Seb.png",
         team: "shirts",
         goals: "2",
-        assists: "1",
+        assists: "0",
         fights: "0",
         saves: "0",
         passing: "93",
@@ -778,10 +782,10 @@
         name: "Darcy Brown",
         picture: "DB",
         team: "shirts",
-        goals: "-3",
+        goals: "0",
         assists: "0",
-        fights: "4",
-        saves: "3",
+        fights: "2",
+        saves: "0",
         passing: "79",
         defending: "84",
         overall: "81",
@@ -789,7 +793,7 @@
         strength: "86",
         dribbling: "72",
         shooting: "82",
-        goalkeeping: "80",
+        goalkeeping: "0",
         strengths: [
           "Temper",
           "Really good when he plays against his own team"
@@ -805,7 +809,7 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "3",
+        fights: "0",
         saves: "0",
         passing: "73",
         defending: "83",
@@ -830,11 +834,11 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "5",
+        fights: "2",
         saves: "0",
         passing: "72",
         defending: "78",
-        overall: "78",
+        overall: "77",
         speed: "91",
         strength: "90",
         dribbling: "66",
@@ -847,11 +851,7 @@
         weaknesses: [
           "Doesn't know how to play",
           "Vert doesn't really help"
-        ],
-        cleanSheets: "0",
-        technique: "0",
-        kicking: "0",
-        goalie: "0"
+        ]
       },
       playerB: {
         name: "Tapi Gotchy",
@@ -859,7 +859,7 @@
         team: "shirts",
         goals: "0",
         assists: "0",
-        fights: "1",
+        fights: "0",
         saves: "0",
         passing: "74",
         defending: "78",
@@ -883,8 +883,8 @@
         picture: "Tom.JPG",
         team: "shirts",
         goals: "0",
-        assists: "1",
-        fights: "2",
+        assists: "0",
+        fights: "1",
         saves: "0",
         passing: "80",
         defending: "82",
@@ -907,10 +907,10 @@
         name: "Jack Rollenston",
         picture: "JackR.png",
         team: "shirts",
-        goals: "5",
-        assists: "1",
+        goals: "1",
+        assists: "0",
         fights: "0",
-        saves: "4",
+        saves: "0",
         passing: "84",
         defending: "83",
         overall: "86",
@@ -918,7 +918,7 @@
         strength: "90",
         dribbling: "81",
         shooting: "85",
-        goalkeeping: "84",
+        goalkeeping: "0",
         strengths: [
           "Fast with ball",
           "Tecky"
@@ -932,9 +932,9 @@
         name: "Liam Molloy",
         picture: "LiamM.JPG",
         team: "jerseys",
-        goals: "2",
-        assists: "2",
-        fights: "3",
+        goals: "0",
+        assists: "1",
+        fights: "1",
         saves: "0",
         passing: "90",
         defending: "90",
@@ -957,9 +957,9 @@
         name: "Lucas D'macio",
         picture: "Lucas.jpg",
         team: "jerseys",
-        goals: "3",
+        goals: "0",
         assists: "1",
-        fights: "6",
+        fights: "2",
         saves: "0",
         passing: "89",
         defending: "87",
@@ -980,15 +980,15 @@
       },
       player11: {
         name: "Aditya",
-        picture: "Aditya.jpeg",
+        picture: "",
         team: "jerseys",
-        goals: "4",
+        goals: "2",
         assists: "1",
-        fights: "2",
+        fights: "1",
         saves: "0",
         passing: "63",
         defending: "61",
-        overall: "66",
+        overall: "64",
         speed: "71",
         strength: "74",
         dribbling: "60",
@@ -1034,7 +1034,7 @@
         team: "jerseys",
         goals: "2",
         assists: "0",
-        fights: "1",
+        fights: "0",
         saves: "0",
         passing: "93",
         defending: "87",
@@ -1051,11 +1051,7 @@
         weaknesses: [
           "Bad with woman",
           "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "0",
-        kicking: "0",
-        goalie: "88"
+        ]
       },
       playerE: {
         name: "Luka Seckar",
@@ -1064,7 +1060,7 @@
         goals: "0",
         assists: "0",
         fights: "0",
-        saves: "10",
+        saves: "6",
         passing: "91",
         defending: "93",
         overall: "93",
@@ -1087,9 +1083,9 @@
         picture: "Anthony.JPG",
         team: "jerseys",
         goals: "0",
-        assists: "2",
-        fights: "2",
-        saves: "5",
+        assists: "0",
+        fights: "1",
+        saves: "0",
         passing: "90",
         defending: "94",
         overall: "92",
@@ -1097,7 +1093,7 @@
         strength: "92",
         dribbling: "89",
         shooting: "92",
-        goalkeeping: "85",
+        goalkeeping: "0",
         strengths: [
           "Good at soccer",
           "Happy"
@@ -1111,15 +1107,15 @@
         name: "Rory Netting",
         picture: "Rory.JPG",
         team: "jerseys",
-        goals: "1",
+        goals: "0",
         assists: "0",
-        fights: "6",
+        fights: "2",
         saves: "0",
         passing: "79",
         defending: "82",
         overall: "81",
         speed: "85",
-        strength: "83",
+        strength: "86",
         dribbling: "77",
         shooting: "79",
         goalkeeping: "0",
@@ -1130,11 +1126,7 @@
         weaknesses: [
           "Bad with woman",
           "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "0",
-        kicking: "0",
-        goalie: "0"
+        ]
       },
       playerH: {
         name: "AJ",
@@ -1165,8 +1157,8 @@
         name: "Riley Mcauliffe",
         picture: "Riley.JPG",
         team: "jerseys",
-        goals: "1",
-        assists: "1",
+        goals: "0",
+        assists: "0",
         fights: "1",
         saves: "0",
         passing: "70",
@@ -1177,7 +1169,7 @@
         dribbling: "69",
         shooting: "67",
         goalkeeping: "0",
-        technique: "63",
+        technique: "24",
         strengths: [
           "Good at soccer",
           "Happy"
@@ -1192,9 +1184,9 @@
         picture: "insert profile picture here",
         team: "jerseys",
         goals: "0",
-        assists: "1",
+        assists: "0",
         fights: "0",
-        saves: "4",
+        saves: "0",
         passing: "82",
         defending: "83",
         overall: "85",
@@ -1202,7 +1194,7 @@
         strength: "86",
         dribbling: "85",
         shooting: "84",
-        goalkeeping: "75",
+        goalkeeping: "0",
         strengths: [
           "",
           ""
@@ -1211,60 +1203,6 @@
           "",
           ""
         ]
-      },
-      player_mt4bcyoi: {
-        name: "New Player",
-        picture: "",
-        team: "shirts",
-        goals: "0",
-        assists: "0",
-        saves: "0",
-        cleanSheets: "0",
-        fights: "0",
-        overall: "50",
-        speed: "50",
-        strength: "50",
-        technique: "50",
-        kicking: "50",
-        goalie: "50",
-        strengths: [],
-        weaknesses: []
-      },
-      player_mt4bd2j6: {
-        name: "New Player",
-        picture: "",
-        team: "shirts",
-        goals: "0",
-        assists: "0",
-        saves: "0",
-        cleanSheets: "0",
-        fights: "0",
-        overall: "50",
-        speed: "50",
-        strength: "50",
-        technique: "50",
-        kicking: "50",
-        goalie: "50",
-        strengths: [],
-        weaknesses: []
-      },
-      player_mt4carwk: {
-        name: "New Player",
-        picture: "",
-        team: "shirts",
-        goals: "0",
-        assists: "0",
-        saves: "0",
-        cleanSheets: "0",
-        fights: "0",
-        overall: "50",
-        speed: "50",
-        strength: "50",
-        technique: "50",
-        kicking: "50",
-        goalie: "50",
-        strengths: [],
-        weaknesses: []
       }
     };
     // ===== DATA:PLAYERS:END =====
