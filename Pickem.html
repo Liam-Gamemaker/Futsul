@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Draft Versus · SFX Futsal</title>
+<title>SFX Futsal · Game Arena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -19,11 +19,16 @@
     --gold: #E3B23C;
     --gold-ink: #F4CE6B;
     --win: #33D17A;
+    --loss: #E2483C;
 
-    --p1: #E2483C;       /* Team A / Player 1 — red */
+    --p1: #E2483C;
     --p1-soft: #FF8377;
-    --p2: #2E3AA8;       /* Team B / Player 2 — navy/blue */
+    --p2: #2E3AA8;
     --p2-soft: #7C8CFF;
+    --cpu: #6B5FD6;
+    --cpu-soft: #A79CFF;
+    --beat: #C9862F;
+    --beat-soft: #F0B15E;
 
     --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
     --font-body: 'Inter', 'Segoe UI', sans-serif;
@@ -33,27 +38,36 @@
   body{
     font-family: var(--font-body); background: var(--paper); color: var(--ink);
     line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
     background-size:22px 22px;
   }
   button{ font-family:inherit; background:none; border:none; cursor:pointer; color:inherit; }
   input{ font-family:inherit; }
   :focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 
-  .wrap{ max-width:1040px; margin:0 auto; padding:36px 24px 80px; }
+  .wrap{ max-width:1040px; margin:0 auto; padding:24px 24px 80px; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+  .topbar-brand{ font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.18em; font-size:.68rem; color:var(--muted); }
+  .home-btn{
+    display:none; align-items:center; gap:6px; font-family:var(--font-mono); text-transform:uppercase;
+    letter-spacing:.08em; font-size:.72rem; font-weight:600; color:var(--ink-soft); background:var(--surface-2);
+    border:1px solid var(--card-line); padding:8px 14px; border-radius:20px; transition:all .15s ease;
+  }
+  .home-btn:hover{ color:var(--gold); border-color:var(--gold); }
+  .home-btn.show{ display:inline-flex; }
 
   .masthead{ text-align:center; margin-bottom:30px; }
   .eyebrow{
-    display:block; font-family:var(--font-mono); text-transform:uppercase;
-    letter-spacing:.24em; font-size:.7rem; color:var(--gold); font-weight:600; margin-bottom:12px;
+    display:block; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.24em;
+    font-size:.7rem; color:var(--gold); font-weight:600; margin-bottom:12px;
   }
   .masthead h1{
     font-family:var(--font-display); font-weight:800; font-size:clamp(2.1rem,6vw,3.2rem);
     letter-spacing:-.01em; text-transform:uppercase;
   }
   .masthead h1 .accent{ color:var(--p1); }
-  .masthead p{ color:var(--muted); margin-top:10px; max-width:52ch; margin-left:auto; margin-right:auto; }
+  .masthead p{ color:var(--muted); margin-top:10px; max-width:56ch; margin-left:auto; margin-right:auto; }
 
   .screen{ display:none; animation:fadeIn .35s ease; }
   .screen.active{ display:block; }
@@ -62,6 +76,37 @@
   .card-panel{
     background:var(--surface); border:1px solid var(--card-line); border-radius:20px;
     padding:36px; box-shadow:0 20px 50px rgba(0,0,0,.4);
+  }
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); text-transform:uppercase;
+    letter-spacing:.08em; font-size:.7rem; font-weight:600; color:var(--muted); margin-bottom:20px; transition:color .15s ease;
+  }
+  .back-link:hover{ color:var(--gold); }
+
+  /* ---------- Home / mode select ---------- */
+  .mode-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .mode-card{
+    background:linear-gradient(160deg, var(--surface-2) 0%, var(--surface) 100%);
+    border:1px solid var(--card-line); border-radius:18px; padding:26px 22px; text-align:left;
+    display:flex; flex-direction:column; gap:14px; transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    position:relative; overflow:hidden;
+  }
+  .mode-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent, var(--gold)); }
+  .mode-card:hover{ transform:translateY(-5px); border-color:var(--accent, var(--gold)); box-shadow:0 16px 34px rgba(0,0,0,.4); }
+  .mode-icon{
+    width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; background:rgba(255,255,255,.06); border:1px solid var(--card-line);
+  }
+  .mode-tag{
+    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.1em; font-size:.62rem;
+    color:var(--accent, var(--gold)); font-weight:700;
+  }
+  .mode-title{ font-family:var(--font-display); font-weight:800; font-size:1.25rem; text-transform:uppercase; letter-spacing:-.01em; }
+  .mode-desc{ color:var(--ink-soft); font-size:.86rem; flex:1; }
+  .mode-cta{
+    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:700;
+    color:var(--accent, var(--gold)); display:flex; align-items:center; gap:6px;
   }
 
   /* ---------- Setup ---------- */
@@ -77,6 +122,7 @@
     font-family:var(--font-display); font-weight:700; font-size:1.1rem; background:var(--surface-2); color:var(--ink);
   }
   .name-input:focus{ background:var(--surface); }
+  .name-input:disabled{ color:var(--muted); cursor:not-allowed; }
   .setup-side.p1 .name-input:focus{ border-color:var(--p1); }
   .setup-side.p2 .name-input:focus{ border-color:var(--p2-soft); }
   .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; }
@@ -155,7 +201,6 @@
   .progress-seg.done{ background:var(--gold); }
   .progress-seg.current{ background:var(--ink); }
 
-  /* ---- mystery draft-pool cards ---- */
   .pool-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:16px; margin-bottom:40px; }
   .pool-card{
     background:linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
@@ -163,10 +208,9 @@
     display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px;
     transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease; position:relative; overflow:hidden;
   }
-  .pool-card::before{
-    content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent, var(--gold));
-  }
+  .pool-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent, var(--gold)); }
   .pool-card:hover{ transform:translateY(-5px); border-color:var(--accent, var(--gold)); box-shadow:0 16px 32px rgba(0,0,0,.4); }
+  .pool-card.disabled{ pointer-events:none; opacity:.45; }
 
   .pool-avatar{
     width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -181,13 +225,11 @@
   .pool-card:hover .fv.mystery{ color:var(--accent, var(--gold)); }
   .pool-hint{ font-family:var(--font-mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-top:2px; }
 
-  /* ---- shared position-bar rows (draft roster + results) — NBA-card style ---- */
   .rosters{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
   .roster-col{ border-radius:16px; overflow:visible; background:transparent; }
   .roster-col-head{
     padding:12px 18px; font-family:var(--font-display); font-weight:800; font-size:1rem;
-    color:#fff; text-transform:uppercase; letter-spacing:.03em; border-radius:12px; margin-bottom:12px;
-    text-align:center;
+    color:#fff; text-transform:uppercase; letter-spacing:.03em; border-radius:12px; margin-bottom:12px; text-align:center;
   }
   .roster-slots{ display:flex; flex-direction:column; gap:9px; }
 
@@ -203,9 +245,7 @@
     font-family:var(--font-mono); font-weight:700; font-size:.66rem; color:#fff; flex-shrink:0; border:2px solid rgba(255,255,255,.3);
     box-shadow:0 2px 6px rgba(0,0,0,.25);
   }
-  .slot-name{
-    flex:1; display:flex; flex-direction:column; justify-content:center; gap:1px; min-width:0;
-  }
+  .slot-name{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:1px; min-width:0; }
   .slot-name-first{
     font-family:var(--font-display); font-weight:600; font-size:.74rem; color:rgba(255,255,255,.82);
     text-transform:uppercase; letter-spacing:.03em; line-height:1.1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
@@ -245,14 +285,91 @@
   .results-col{ display:flex; flex-direction:column; gap:10px; }
   .results-col.winner .slot-row{ box-shadow:0 0 0 2px var(--win); }
 
-  .result-actions{ display:flex; justify-content:center; }
+  .result-actions{ display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
   .btn-restart{
-    display:inline-flex; align-items:center; justify-content:center; padding:16px 44px; border-radius:30px;
-    font-family:var(--font-display); font-weight:800; font-size:.92rem; letter-spacing:.07em; text-transform:uppercase;
+    display:inline-flex; align-items:center; justify-content:center; padding:16px 40px; border-radius:30px;
+    font-family:var(--font-display); font-weight:800; font-size:.88rem; letter-spacing:.06em; text-transform:uppercase;
     background:linear-gradient(180deg, #FF7A6B, var(--p1)); color:#fff; border:none;
     box-shadow:0 10px 24px rgba(226,72,60,.35); transition:transform .15s ease, box-shadow .15s ease;
   }
   .btn-restart:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(226,72,60,.45); }
+  .btn-ghost{
+    display:inline-flex; align-items:center; justify-content:center; padding:16px 32px; border-radius:30px;
+    font-family:var(--font-display); font-weight:800; font-size:.88rem; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--card-line); transition:all .15s ease;
+  }
+  .btn-ghost:hover{ color:var(--gold); border-color:var(--gold); }
+
+  /* ---------- Beat The Player mode ---------- */
+  .beat-target-wrap{ text-align:center; margin-bottom:34px; }
+  .beat-vs-label{ font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; color:var(--muted); margin-bottom:14px; }
+  .beat-target-card{
+    display:inline-flex; align-items:center; gap:18px; background:linear-gradient(120deg, var(--surface-2), var(--surface));
+    border:1px solid var(--card-line); border-radius:18px; padding:18px 28px; box-shadow:0 14px 30px rgba(0,0,0,.35);
+  }
+  .beat-target-avatar{
+    width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:1.1rem; border:3px solid var(--beat);
+  }
+  .beat-target-info{ text-align:left; }
+  .beat-target-name{ font-family:var(--font-display); font-weight:800; font-size:1.15rem; text-transform:uppercase; }
+  .beat-target-stat{ font-family:var(--font-mono); color:var(--muted); font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+  .beat-target-value{ font-family:var(--font-display); font-weight:800; font-size:2.4rem; color:var(--beat-soft); line-height:1; }
+
+  .beat-candidates{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:30px; }
+  .beat-card{
+    background:linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
+    border:2px solid var(--card-line); border-radius:16px; padding:24px 16px 18px;
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px;
+    transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+  }
+  .beat-card:not(.disabled):hover{ transform:translateY(-5px); border-color:var(--beat); box-shadow:0 16px 32px rgba(0,0,0,.4); }
+  .beat-card.disabled{ pointer-events:none; }
+  .beat-card.picked{ border-color:var(--beat); }
+  .beat-card.result-win{ border-color:var(--win); box-shadow:0 0 0 2px var(--win); }
+  .beat-card.result-loss{ border-color:var(--loss); box-shadow:0 0 0 2px var(--loss); }
+  .beat-avatar{
+    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:.95rem; border:3px solid var(--surface);
+  }
+  .beat-name{ font-family:var(--font-display); font-weight:700; font-size:.92rem; text-transform:uppercase; line-height:1.2; }
+  .beat-value{ font-family:var(--font-display); font-weight:800; font-size:1.9rem; color:var(--card-line); line-height:1; }
+  .beat-card.revealed .beat-value{ color:var(--ink); }
+  .beat-card.result-win .beat-value{ color:var(--win); }
+  .beat-card.result-loss .beat-value{ color:var(--loss); }
+  .beat-hint{ font-family:var(--font-mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+
+  .beat-outcome{
+    display:none; text-align:center; font-family:var(--font-display); font-weight:800; font-size:1.15rem;
+    text-transform:uppercase; letter-spacing:.04em; padding:14px; border-radius:12px; margin-bottom:24px;
+  }
+  .beat-outcome.win{ display:block; background:rgba(51,209,122,.14); border:1px solid var(--win); color:var(--win); }
+  .beat-outcome.loss{ display:block; background:rgba(226,72,60,.14); border:1px solid var(--loss); color:var(--p1-soft); }
+
+  .beat-score-row{ display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:26px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:.78rem; color:var(--muted); }
+  .beat-score-row b{ color:var(--gold); font-size:1rem; }
+
+  .beat-next{ display:flex; justify-content:center; }
+  .beat-next .btn{ max-width:260px; }
+
+  .beat-history{ display:flex; flex-direction:column; gap:10px; margin-bottom:32px; }
+  .beat-history-row{
+    display:flex; align-items:center; gap:14px; background:var(--surface-2); border:1px solid var(--card-line);
+    border-radius:12px; padding:12px 16px;
+  }
+  .beat-history-row.win{ border-color:var(--win); }
+  .beat-history-row.loss{ border-color:var(--loss); }
+  .beat-history-icon{ font-size:1.2rem; width:28px; text-align:center; flex-shrink:0; }
+  .beat-history-mid{ flex:1; min-width:0; }
+  .beat-history-cat{ font-family:var(--font-mono); text-transform:uppercase; font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-bottom:2px; }
+  .beat-history-detail{ font-family:var(--font-display); font-weight:700; font-size:.92rem; }
+  .beat-history-nums{ font-family:var(--font-mono); font-weight:700; font-size:.95rem; flex-shrink:0; text-align:right; }
+
+  .beat-final-score{
+    text-align:center; font-family:var(--font-display); font-weight:800; font-size:clamp(2rem,7vw,3rem);
+    color:var(--gold); text-shadow:0 0 22px rgba(227,178,60,.4); margin-bottom:6px;
+  }
+  .beat-final-tag{ text-align:center; color:var(--ink-soft); font-size:.94rem; margin-bottom:30px; }
 
   @media (max-width:640px){
     .setup-grid{ grid-template-columns:1fr; }
@@ -264,20 +381,59 @@
     .slot-badge{ width:44px; font-size:.62rem; }
     .slot-name-last{ font-size:.92rem; }
     .slot-stat b{ font-size:1rem; }
+    .mode-grid{ grid-template-columns:1fr; }
+    .beat-candidates{ grid-template-columns:1fr; }
+    .beat-target-card{ flex-direction:column; text-align:center; }
+    .beat-target-info{ text-align:center; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="masthead">
-    <span class="eyebrow">SFX Futsal · Draft Mode</span>
-    <h1>Draft <span class="accent">Versus</span></h1>
-    <p>A fresh squad is shuffled together every game. Snake-draft teammates onto your card, category by category — but their rating stays hidden until you commit. Best average wins.</p>
+  <div class="topbar">
+    <span class="topbar-brand">SFX Futsal · Game Arena</span>
+    <button class="home-btn" id="homeBtn">⌂ All modes</button>
   </div>
 
-  <!-- SETUP -->
-  <section id="screen-setup" class="screen active">
+  <div class="masthead">
+    <span class="eyebrow">SFX Futsal</span>
+    <h1 id="mastheadTitle">Game <span class="accent">Arena</span></h1>
+    <p id="mastheadSub">Pick a mode below. Every squad and every category is shuffled fresh, so no two games play the same.</p>
+  </div>
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen active">
+    <div class="mode-grid">
+      <button class="mode-card" id="modeVersusBtn" style="--accent:var(--p1);">
+        <span class="mode-icon">⚔️</span>
+        <span class="mode-tag">2 Players</span>
+        <span class="mode-title">Draft Versus</span>
+        <span class="mode-desc">Snake-draft a random 12-player pool against a friend, category by category. Every rating stays hidden until it's drafted.</span>
+        <span class="mode-cta">Play &rarr;</span>
+      </button>
+
+      <button class="mode-card" id="modeSoloBtn" style="--accent:var(--cpu);">
+        <span class="mode-icon">🤖</span>
+        <span class="mode-tag">Solo · vs CPU</span>
+        <span class="mode-title">Solo Draft</span>
+        <span class="mode-desc">Same snake draft, but the CPU picks against you. Race the clock on your turns — the CPU never waits.</span>
+        <span class="mode-cta">Play &rarr;</span>
+      </button>
+
+      <button class="mode-card" id="modeBeatBtn" style="--accent:var(--beat);">
+        <span class="mode-icon">🎯</span>
+        <span class="mode-tag">Solo · Blind Pick</span>
+        <span class="mode-title">Beat The Player</span>
+        <span class="mode-desc">A random rival's rating is revealed each round. Blind-pick one of 3 mystery teammates and hope they clear it.</span>
+        <span class="mode-cta">Play &rarr;</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- SETUP (Draft Versus + Solo Draft) -->
+  <section id="screen-setup" class="screen">
+    <a class="back-link" id="setupBackLink">&larr; All modes</a>
     <div class="card-panel">
       <div class="setup-grid">
         <div class="setup-side p1">
@@ -286,19 +442,12 @@
         </div>
         <span class="setup-vs">VS</span>
         <div class="setup-side p2">
-          <label><span class="dot" style="background:var(--p2-soft);"></span>Player 2</label>
+          <label id="p2FieldLabel"><span class="dot" style="background:var(--p2-soft);"></span>Player 2</label>
           <input class="name-input" id="p2Name" maxlength="16" value="Player 2">
         </div>
       </div>
 
-      <ul class="rules-list">
-        <li><span class="num">1</span>A random 12-player squad is shuffled together from the whole club before every draft — never the same pool twice.</li>
-        <li><span class="num">2</span>5 rounds, 5 random categories (Speed, Shooting, Strength, whatever comes up). One category revealed per round.</li>
-        <li><span class="num">3</span>Snake draft: you alternate who picks first each round. Once a player's taken, they're off the board for both of you.</li>
-        <li><span class="num">4</span>A player's rating in the round's category stays hidden until after you draft them — no scanning for the highest number.</li>
-        <li><span class="num">5</span>20 seconds per pick. Run out the clock and we'll auto-pick a player for you.</li>
-        <li><span class="num">6</span>Your score for a round is that player's rating in that round's category. Add up all 5, divide by 5 — highest average wins.</li>
-      </ul>
+      <ul class="rules-list" id="setupRules"></ul>
 
       <button class="btn" id="startDraftBtn">Shuffle the squad &amp; start the draft</button>
     </div>
@@ -327,7 +476,7 @@
 
     <div class="auto-notice" id="autoNotice"></div>
 
-    <div class="timer-row">
+    <div class="timer-row" id="timerRow">
       <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
       <span class="timer-value" id="timerValue">20s</span>
     </div>
@@ -363,7 +512,78 @@
     </div>
 
     <div class="result-actions">
-      <button class="btn-restart" id="playAgainBtn">Restart Game</button>
+      <button class="btn-restart" id="playAgainBtn">Rematch</button>
+      <button class="btn-ghost" id="resultsHomeBtn">All modes</button>
+    </div>
+  </section>
+
+  <!-- BEAT THE PLAYER: SETUP -->
+  <section id="screen-beat-setup" class="screen">
+    <a class="back-link" id="beatSetupBackLink">&larr; All modes</a>
+    <div class="card-panel">
+      <div class="setup-grid" style="grid-template-columns:1fr;">
+        <div class="setup-side p1">
+          <label><span class="dot" style="background:var(--beat);"></span>Your name</label>
+          <input class="name-input" id="beatName" maxlength="16" value="You">
+        </div>
+      </div>
+
+      <ul class="rules-list">
+        <li><span class="num">1</span>Each round we reveal a random rival's rating in a random category — that's your target.</li>
+        <li><span class="num">2</span>You get 3 mystery teammates pulled at random from the squad. Their ratings stay hidden.</li>
+        <li><span class="num">3</span>Blind-pick one and hope their number clears the target. Equal or higher counts as a win.</li>
+        <li><span class="num">4</span>5 rounds total. Your final score is how many rounds you beat.</li>
+      </ul>
+
+      <button class="btn" id="startBeatBtn" style="background:var(--beat);">Find a rival &amp; start</button>
+    </div>
+  </section>
+
+  <!-- BEAT THE PLAYER: PLAY -->
+  <section id="screen-beat-play" class="screen">
+    <div class="draft-top">
+      <div class="round-info">
+        <span class="round-label" id="beatRoundLabel">Round 1 of 5</span>
+        <span class="category-pill"><span class="category-swatch" id="beatCatSwatch"></span><span id="beatCatLabel">—</span></span>
+      </div>
+    </div>
+
+    <div class="progress-track" id="beatProgressTrack"></div>
+
+    <div class="beat-target-wrap">
+      <div class="beat-vs-label">Player to beat</div>
+      <div class="beat-target-card">
+        <span class="beat-target-avatar" id="beatTargetAvatar"></span>
+        <div class="beat-target-info">
+          <div class="beat-target-name" id="beatTargetName"></div>
+          <div class="beat-target-stat" id="beatTargetStatLabel"></div>
+        </div>
+        <span class="beat-target-value" id="beatTargetValue">--</span>
+      </div>
+    </div>
+
+    <div class="beat-score-row">Score so far: <b id="beatScoreValue">0/0</b></div>
+
+    <div class="beat-outcome" id="beatOutcome"></div>
+
+    <div class="beat-candidates" id="beatCandidates"></div>
+
+    <div class="beat-next">
+      <button class="btn" id="beatNextBtn" style="display:none; background:var(--beat);">Next round &rarr;</button>
+    </div>
+  </section>
+
+  <!-- BEAT THE PLAYER: RESULTS -->
+  <section id="screen-beat-results" class="screen">
+    <div class="vs-title"><span class="light">Beat The</span> <span class="accent" style="color:var(--beat-soft);">Player</span></div>
+    <div class="beat-final-score" id="beatFinalScore">0/5</div>
+    <div class="beat-final-tag" id="beatFinalTag"></div>
+
+    <div class="beat-history" id="beatHistory"></div>
+
+    <div class="result-actions">
+      <button class="btn-restart" id="beatPlayAgainBtn" style="background:linear-gradient(180deg,#F0B15E,var(--beat));">Rematch</button>
+      <button class="btn-ghost" id="beatResultsHomeBtn">All modes</button>
     </div>
   </section>
 
@@ -372,31 +592,32 @@
 <script>
   // ---------------------------------------------------------------
   // Roster snapshot — mirrors the current SFX Futsal stat sheet.
-  // Only the 8 attribute fields present on every player are used
-  // as draftable categories, so every card is comparable.
+  // Every field below is a draftable / competable category, so
+  // every card is directly comparable.
   // ---------------------------------------------------------------
   const ROSTER = [
-    { id:"player1", name:"William McCracken", team:"shirts", overall:90, speed:92, strength:88, dribbling:89, shooting:95, passing:85, defending:70, goalkeeping:0 },
-    { id:"player2", name:"Billy Moffit", team:"shirts", overall:81, speed:91, strength:83, dribbling:73, shooting:80, passing:79, defending:84, goalkeeping:0 },
-    { id:"player3", name:"Leo Braybon", team:"shirts", overall:86, speed:86, strength:91, dribbling:85, shooting:86, passing:83, defending:85, goalkeeping:92 },
-    { id:"player4", name:"Seb Munoz", team:"shirts", overall:94, speed:80, strength:87, dribbling:95, shooting:94, passing:93, defending:86, goalkeeping:0 },
-    { id:"player5", name:"Darcy Brown", team:"shirts", overall:81, speed:83, strength:86, dribbling:72, shooting:82, passing:79, defending:84, goalkeeping:80 },
-    { id:"player6", name:"Tommy Wills", team:"shirts", overall:81, speed:92, strength:95, dribbling:71, shooting:79, passing:73, defending:83, goalkeeping:0 },
-    { id:"player7", name:"Liam Sawade", team:"shirts", overall:77, speed:91, strength:90, dribbling:66, shooting:63, passing:72, defending:78, goalkeeping:0 },
-    { id:"playerB", name:"Tapi Gotchy", team:"shirts", overall:75, speed:87, strength:91, dribbling:73, shooting:75, passing:74, defending:78, goalkeeping:0 },
-    { id:"playerA", name:"Tom Griffin", team:"shirts", overall:85, speed:83, strength:86, dribbling:83, shooting:85, passing:80, defending:82, goalkeeping:0 },
-    { id:"player8", name:"Jack Rollenston", team:"shirts", overall:86, speed:93, strength:90, dribbling:81, shooting:85, passing:84, defending:83, goalkeeping:84 },
-    { id:"player9", name:"Liam Molloy", team:"jerseys", overall:93, speed:91, strength:90, dribbling:91, shooting:92, passing:90, defending:90, goalkeeping:0 },
-    { id:"player10", name:"Lucas D'macio", team:"jerseys", overall:89, speed:87, strength:88, dribbling:86, shooting:87, passing:89, defending:87, goalkeeping:0 },
-    { id:"player11", name:"Aditya", team:"jerseys", overall:66, speed:71, strength:74, dribbling:60, shooting:55, passing:63, defending:61, goalkeeping:0 },
-    { id:"playerC", name:"William Hunt", team:"jerseys", overall:82, speed:86, strength:89, dribbling:81, shooting:81, passing:83, defending:85, goalkeeping:0 },
-    { id:"playerD", name:"Harry Behnke", team:"jerseys", overall:94, speed:90, strength:85, dribbling:94, shooting:94, passing:93, defending:87, goalkeeping:80 },
-    { id:"playerE", name:"Luka Seckar", team:"jerseys", overall:93, speed:93, strength:90, dribbling:91, shooting:93, passing:91, defending:93, goalkeeping:93 },
-    { id:"player16", name:"Anthony Miniutti", team:"jerseys", overall:92, speed:90, strength:92, dribbling:89, shooting:92, passing:90, defending:94, goalkeeping:0 },
-    { id:"playerG", name:"Rory Netting", team:"jerseys", overall:81, speed:85, strength:86, dribbling:77, shooting:79, passing:79, defending:82, goalkeeping:0 },
-    { id:"playerH", name:"AJ", team:"jerseys", overall:91, speed:88, strength:91, dribbling:90, shooting:88, passing:87, defending:91, goalkeeping:0 },
-    { id:"player12", name:"Riley Mcauliffe", team:"jerseys", overall:73, speed:82, strength:82, dribbling:69, shooting:67, passing:70, defending:68, goalkeeping:0 },
-    { id:"player13", name:"Jigme Chopel", team:"jerseys", overall:85, speed:83, strength:86, dribbling:85, shooting:84, passing:82, defending:83, goalkeeping:0 }
+    { id:"player1", name:"William McCracken", team:"shirts", overall:90, speed:92, strength:88, dribbling:89, shooting:95, passing:85, defending:70, goalkeeping:0, technique:95, kicking:93 },
+    { id:"player2", name:"Billy Moffit", team:"shirts", overall:81, speed:91, strength:83, dribbling:73, shooting:80, passing:79, defending:84, goalkeeping:0, technique:79, kicking:82 },
+    { id:"player3", name:"Leo Braybon", team:"shirts", overall:86, speed:86, strength:91, dribbling:85, shooting:86, passing:83, defending:85, goalkeeping:92, technique:85, kicking:86 },
+    { id:"player4", name:"Seb Munoz", team:"shirts", overall:94, speed:80, strength:87, dribbling:95, shooting:94, passing:93, defending:86, goalkeeping:0, technique:95, kicking:93 },
+    { id:"player5", name:"Darcy Brown", team:"shirts", overall:81, speed:83, strength:86, dribbling:72, shooting:82, passing:79, defending:84, goalkeeping:80, technique:72, kicking:82 },
+    { id:"player6", name:"Tommy Wills", team:"shirts", overall:81, speed:92, strength:95, dribbling:71, shooting:79, passing:73, defending:83, goalkeeping:0, technique:71, kicking:79 },
+    { id:"player7", name:"Liam Sawade", team:"shirts", overall:78, speed:91, strength:90, dribbling:66, shooting:63, passing:72, defending:78, goalkeeping:0, technique:70, kicking:75 },
+    { id:"playerB", name:"Tapi Gotchy", team:"shirts", overall:75, speed:87, strength:91, dribbling:73, shooting:75, passing:74, defending:78, goalkeeping:0, technique:73, kicking:75 },
+    { id:"playerBunter", name:"Alex Bunter", team:"shirts", overall:76, speed:83, strength:84, dribbling:73, shooting:72, passing:75, defending:71, goalkeeping:0, technique:74, kicking:72 },
+    { id:"playerA", name:"Tom Griffin", team:"shirts", overall:85, speed:83, strength:86, dribbling:83, shooting:85, passing:80, defending:82, goalkeeping:0, technique:83, kicking:85 },
+    { id:"player8", name:"Jack Rollenston", team:"shirts", overall:86, speed:93, strength:90, dribbling:81, shooting:85, passing:84, defending:83, goalkeeping:84, technique:81, kicking:85 },
+    { id:"player9", name:"Liam Molloy", team:"jerseys", overall:93, speed:91, strength:90, dribbling:91, shooting:92, passing:90, defending:90, goalkeeping:0, technique:91, kicking:92 },
+    { id:"player10", name:"Lucas D'macio", team:"jerseys", overall:89, speed:87, strength:88, dribbling:86, shooting:87, passing:89, defending:87, goalkeeping:0, technique:89, kicking:87 },
+    { id:"player11", name:"Aditya", team:"jerseys", overall:66, speed:71, strength:74, dribbling:60, shooting:55, passing:63, defending:61, goalkeeping:0, technique:60, kicking:55 },
+    { id:"playerC", name:"William Hunt", team:"jerseys", overall:82, speed:86, strength:89, dribbling:81, shooting:81, passing:83, defending:85, goalkeeping:0, technique:81, kicking:81 },
+    { id:"playerD", name:"Harry Behnke", team:"jerseys", overall:94, speed:90, strength:85, dribbling:94, shooting:94, passing:93, defending:87, goalkeeping:80, technique:94, kicking:94 },
+    { id:"playerE", name:"Luka Seckar", team:"jerseys", overall:93, speed:93, strength:90, dribbling:91, shooting:93, passing:91, defending:93, goalkeeping:93, technique:91, kicking:93 },
+    { id:"player16", name:"Anthony Miniutti", team:"jerseys", overall:92, speed:90, strength:92, dribbling:89, shooting:92, passing:90, defending:94, goalkeeping:85, technique:89, kicking:92 },
+    { id:"playerG", name:"Rory Netting", team:"jerseys", overall:81, speed:85, strength:86, dribbling:77, shooting:79, passing:79, defending:82, goalkeeping:0, technique:77, kicking:69 },
+    { id:"playerH", name:"AJ", team:"jerseys", overall:91, speed:88, strength:91, dribbling:90, shooting:88, passing:87, defending:91, goalkeeping:0, technique:90, kicking:88 },
+    { id:"player12", name:"Riley Mcauliffe", team:"jerseys", overall:73, speed:82, strength:82, dribbling:69, shooting:67, passing:70, defending:68, goalkeeping:0, technique:69, kicking:67 },
+    { id:"player13", name:"Jigme Chopel", team:"jerseys", overall:85, speed:83, strength:86, dribbling:85, shooting:84, passing:82, defending:83, goalkeeping:75, technique:85, kicking:84 }
   ];
 
   const CATEGORIES = [
@@ -407,13 +628,19 @@
     { key:"shooting",    label:"Shooting",    abbr:"SHO", color:"#4FC17E", dark:"#1F6B45" },
     { key:"passing",     label:"Passing",     abbr:"PAS", color:"#3FBEBE", dark:"#1F6B6B" },
     { key:"defending",   label:"Defending",   abbr:"DEF", color:"#E08A3F", dark:"#7A4A1F" },
-    { key:"goalkeeping", label:"Goalkeeping", abbr:"GK",  color:"#5D7DD6", dark:"#2A3A70" }
+    { key:"goalkeeping", label:"Goalkeeping", abbr:"GK",  color:"#5D7DD6", dark:"#2A3A70" },
+    { key:"technique",   label:"Technique",   abbr:"TEC", color:"#D65DB1", dark:"#6E2B5A" },
+    { key:"kicking",     label:"Kicking",     abbr:"KCK", color:"#6FCF97", dark:"#245C3B" }
   ];
   const ROUNDS = 5;
-  const POOL_SIZE = 12;      // random squad size, drawn from the whole club
-  const TURN_SECONDS = 20;   // seconds allowed per pick before auto-pick
+  const POOL_SIZE = 12;
+  const TURN_SECONDS = 20;
+  const CPU_THINK_MS = 1100;
+  const BEAT_ROUNDS = 5;
+  const BEAT_CANDIDATES = 3;
 
-  let state = null;
+  let state = null;      // draft state (versus / solo)
+  let beatState = null;  // beat-the-player state
 
   function initials(name){ return name.split(" ").filter(Boolean).map(w => w[0]).slice(0,2).join("").toUpperCase(); }
   function nameLines(name){
@@ -423,10 +650,30 @@
     return { first: parts.join(" "), last };
   }
   function shuffle(arr){ const a = arr.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-  function showScreen(id){ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); document.getElementById(id).classList.add("active"); }
+  function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    document.getElementById("homeBtn").classList.toggle("show", id !== "screen-home");
+  }
   function byId(id){ return ROSTER.find(p => p.id === id); }
+  function avatarColors(p){
+    return p.team === "shirts" ? { bg:"#3A4A3F", fg:"#F3F5EF" } : { bg:"#0C130F", fg:"#E3B23C" };
+  }
 
-  // Shared "position bar" row used in both the live roster panel and the results screen.
+  document.getElementById("homeBtn").addEventListener("click", goHome);
+  document.getElementById("setupBackLink").addEventListener("click", goHome);
+  document.getElementById("beatSetupBackLink").addEventListener("click", goHome);
+  document.getElementById("resultsHomeBtn").addEventListener("click", goHome);
+  document.getElementById("beatResultsHomeBtn").addEventListener("click", goHome);
+
+  function goHome(){
+    clearTimer();
+    showScreen("screen-home");
+    document.getElementById("mastheadTitle").innerHTML = 'Game <span class="accent">Arena</span>';
+    document.getElementById("mastheadSub").textContent = "Pick a mode below. Every squad and every category is shuffled fresh, so no two games play the same.";
+  }
+
+  // Shared "position bar" row used in both the live roster panel and the draft results screen.
   function slotRowHTML(cat, pid, teamColorVar){
     if (!pid){
       return `
@@ -454,20 +701,72 @@
       </div>`;
   }
 
-  // ---------------------------------------------------------------
-  // Setup -> team reveal
-  // ---------------------------------------------------------------
-  document.getElementById("startDraftBtn").addEventListener("click", () => {
-    const p1Name = document.getElementById("p1Name").value.trim() || "Player 1";
-    const p2Name = document.getElementById("p2Name").value.trim() || "Player 2";
+  // =================================================================
+  // MODE SELECT
+  // =================================================================
+  document.getElementById("modeVersusBtn").addEventListener("click", () => openSetup("versus"));
+  document.getElementById("modeSoloBtn").addEventListener("click", () => openSetup("solo"));
+  document.getElementById("modeBeatBtn").addEventListener("click", () => openBeatSetup());
 
-    // 1) Randomly assemble tonight's squad from the whole club...
+  const RULES_VERSUS = [
+    "A random 12-player squad is shuffled together from the whole club before every draft — never the same pool twice.",
+    "5 rounds, 5 random categories out of 10 possible (Speed, Shooting, Technique, whatever comes up). One category revealed per round.",
+    "Snake draft: you alternate who picks first each round. Once a player's taken, they're off the board for both of you.",
+    "A player's rating in the round's category stays hidden until after you draft them — no scanning for the highest number.",
+    "20 seconds per pick. Run out the clock and we'll auto-pick a player for you.",
+    "Your score for a round is that player's rating in that round's category. Add up all 5, divide by 5 — highest average wins."
+  ];
+  const RULES_SOLO = [
+    "A random 12-player squad is shuffled together from the whole club before every draft — never the same pool twice.",
+    "5 rounds, 5 random categories out of 10 possible. One category revealed per round.",
+    "Snake draft against the CPU: you alternate who picks first each round. The CPU thinks fast and never stalls.",
+    "A player's rating in the round's category stays hidden until after they're drafted — no scanning for the highest number.",
+    "You get 20 seconds per pick. Run out the clock and we'll auto-pick a player for you.",
+    "Your score for a round is that player's rating in that round's category. Add up all 5, divide by 5 — beat the CPU's average to win."
+  ];
+
+  function openSetup(mode){
+    state = null;
+    const isSolo = mode === "solo";
+    document.getElementById("mastheadTitle").innerHTML = isSolo
+      ? 'Solo <span class="accent">Draft</span>'
+      : 'Draft <span class="accent">Versus</span>';
+    document.getElementById("mastheadSub").textContent = isSolo
+      ? "Snake-draft a shuffled squad against the CPU. Same rules, no waiting on a second controller."
+      : "A fresh squad is shuffled together every game. Snake-draft teammates onto your card, category by category.";
+
+    document.getElementById("p1Name").value = "Player 1";
+    document.getElementById("p1Name").disabled = false;
+    const p2Input = document.getElementById("p2Name");
+    const p2FieldLabel = document.getElementById("p2FieldLabel");
+    if (isSolo){
+      p2Input.value = "CPU";
+      p2Input.disabled = true;
+      p2FieldLabel.innerHTML = '<span class="dot" style="background:var(--cpu-soft);"></span>Opponent';
+    } else {
+      p2Input.value = "Player 2";
+      p2Input.disabled = false;
+      p2FieldLabel.innerHTML = '<span class="dot" style="background:var(--p2-soft);"></span>Player 2';
+    }
+
+    const rulesList = document.getElementById("setupRules");
+    rulesList.innerHTML = (isSolo ? RULES_SOLO : RULES_VERSUS)
+      .map((text, i) => `<li><span class="num">${i + 1}</span>${text}</li>`).join("");
+
+    document.getElementById("startDraftBtn").dataset.mode = mode;
+    showScreen("screen-setup");
+  }
+
+  document.getElementById("startDraftBtn").addEventListener("click", (e) => {
+    const mode = e.currentTarget.dataset.mode || "versus";
+    const p1Name = document.getElementById("p1Name").value.trim() || "Player 1";
+    const p2Name = mode === "solo" ? "CPU" : (document.getElementById("p2Name").value.trim() || "Player 2");
+
     const pool = shuffle(ROSTER).slice(0, POOL_SIZE).map(p => p.id);
-    // 2) ...then pick the categories for the rounds.
     const categories = shuffle(CATEGORIES).slice(0, ROUNDS);
 
     state = {
-      p1Name, p2Name, pool, poolSize: pool.length, categories,
+      mode, p1Name, p2Name, pool, poolSize: pool.length, categories,
       round: 0, pickInRound: 0,
       rosters: { p1: {}, p2: {} },
       timerId: null, timeLeft: TURN_SECONDS, lastAutoPick: null
@@ -501,9 +800,8 @@
           const chip = document.createElement("span");
           chip.className = "mini-chip";
           chip.style.animationDelay = (i * 0.05) + "s";
-          const avBg = p.team === "shirts" ? "#3A4A3F" : "#0C130F";
-          const avFg = p.team === "shirts" ? "#F3F5EF" : "#E3B23C";
-          chip.innerHTML = `<span class="mini-avatar" style="background:${avBg}; color:${avFg};">${initials(p.name)}</span>${p.name}`;
+          const c = avatarColors(p);
+          chip.innerHTML = `<span class="mini-avatar" style="background:${c.bg}; color:${c.fg};">${initials(p.name)}</span>${p.name}`;
           preview.appendChild(chip);
         });
         beginBtn.style.display = "inline-flex";
@@ -516,12 +814,13 @@
     showScreen("screen-draft");
   });
 
-  // ---------------------------------------------------------------
-  // Draft
-  // ---------------------------------------------------------------
+  // =================================================================
+  // DRAFT (Versus + Solo share this engine)
+  // =================================================================
   function currentCategory(){ return state.categories[state.round]; }
   function pickOrder(){ return state.round % 2 === 0 ? ["p1","p2"] : ["p2","p1"]; }
   function currentPicker(){ return pickOrder()[state.pickInRound]; }
+  function isCpuTurn(){ return state.mode === "solo" && currentPicker() === "p2"; }
 
   function clearTimer(){
     if (state && state.timerId){ clearInterval(state.timerId); state.timerId = null; }
@@ -558,8 +857,19 @@
     const picker = currentPicker();
     const pickerName = picker === "p1" ? state.p1Name : state.p2Name;
     const randomId = state.pool[Math.floor(Math.random() * state.pool.length)];
-    state.lastAutoPick = { pickerName, playerName: byId(randomId).name };
+    state.lastAutoPick = { pickerName, playerName: byId(randomId).name, cpu:false };
     makePick(randomId);
+  }
+
+  function cpuTurn(){
+    document.getElementById("timerRow").style.display = "none";
+    document.querySelectorAll("#poolGrid .pool-card").forEach(c => c.classList.add("disabled"));
+    setTimeout(() => {
+      if (!state || !isCpuTurn()) return;
+      const randomId = state.pool[Math.floor(Math.random() * state.pool.length)];
+      state.lastAutoPick = { pickerName: state.p2Name, playerName: byId(randomId).name, cpu:true };
+      makePick(randomId);
+    }, CPU_THINK_MS);
   }
 
   function renderDraft(){
@@ -570,15 +880,17 @@
 
     const picker = currentPicker();
     const pickerName = picker === "p1" ? state.p1Name : state.p2Name;
-    const pickerColor = picker === "p1" ? "var(--p1)" : "var(--p2)";
+    const pickerColor = picker === "p1" ? "var(--p1)" : (state.mode === "solo" ? "var(--cpu)" : "var(--p2)");
     const banner = document.getElementById("turnBanner");
     banner.style.background = pickerColor;
-    banner.textContent = `${pickerName}'s pick`;
+    banner.textContent = isCpuTurn() ? `${pickerName} is thinking\u2026` : `${pickerName}'s pick`;
 
     const notice = document.getElementById("autoNotice");
     if (state.lastAutoPick){
       notice.style.display = "flex";
-      notice.textContent = `\u23F1\uFE0F Time's up! Auto-picked ${state.lastAutoPick.playerName} for ${state.lastAutoPick.pickerName}.`;
+      notice.textContent = state.lastAutoPick.cpu
+        ? `\u{1F916} ${state.lastAutoPick.pickerName} drafted ${state.lastAutoPick.playerName}.`
+        : `\u23F1\uFE0F Time's up! Auto-picked ${state.lastAutoPick.playerName} for ${state.lastAutoPick.pickerName}.`;
       state.lastAutoPick = null;
     } else {
       notice.style.display = "none";
@@ -592,6 +904,7 @@
       track.appendChild(seg);
     }
 
+    document.getElementById("timerRow").style.display = "flex";
     const grid = document.getElementById("poolGrid");
     grid.innerHTML = "";
     state.pool.forEach(pid => {
@@ -599,10 +912,9 @@
       const card = document.createElement("button");
       card.className = "pool-card";
       card.style.setProperty("--accent", cat.color);
-      const avBg = p.team === "shirts" ? "#3A4A3F" : "#0C130F";
-      const avFg = p.team === "shirts" ? "#F3F5EF" : "#E3B23C";
+      const c = avatarColors(p);
       card.innerHTML = `
-        <div class="pool-avatar" style="background:${avBg}; color:${avFg};">${initials(p.name)}</div>
+        <div class="pool-avatar" style="background:${c.bg}; color:${c.fg};">${initials(p.name)}</div>
         <div class="pool-name">${p.name}</div>
         <div class="pool-featured">
           <span class="fl">${cat.label}</span>
@@ -616,11 +928,11 @@
     renderRosterCol("p1", state.p1Name);
     renderRosterCol("p2", state.p2Name);
 
-    startTimer();
+    if (isCpuTurn()) cpuTurn(); else startTimer();
   }
 
   function renderRosterCol(who, name){
-    const teamColor = who === "p1" ? "var(--p1)" : "var(--p2)";
+    const teamColor = who === "p1" ? "var(--p1)" : (state.mode === "solo" ? "var(--cpu)" : "var(--p2)");
     const headEl = document.getElementById(who + "Head");
     headEl.textContent = name;
     headEl.style.background = teamColor;
@@ -650,7 +962,7 @@
   }
 
   // ---------------------------------------------------------------
-  // Results
+  // Draft results
   // ---------------------------------------------------------------
   function renderResults(){
     clearTimer();
@@ -663,11 +975,16 @@
     const p1Avg = p1Total / ROUNDS;
     const p2Avg = p2Total / ROUNDS;
 
+    document.querySelector("#screen-results .vs-title").innerHTML = state.mode === "solo"
+      ? '<span class="light">Solo</span> <span class="accent">Draft</span>'
+      : '<span class="light">Draft</span> <span class="accent">Versus</span>';
+
     const winnerLine = document.getElementById("winnerLine");
     const p1LabelEl = document.getElementById("p1Label");
     const p2LabelEl = document.getElementById("p2Label");
     const p1ColEl = document.getElementById("p1ResultsCol");
     const p2ColEl = document.getElementById("p2ResultsCol");
+    p2LabelEl.className = "team-label " + (state.mode === "solo" ? "p2" : "p2");
 
     p1LabelEl.innerHTML = `${state.p1Name} : <b>${p1Avg.toFixed(1)}</b> avg`;
     p2LabelEl.innerHTML = `${state.p2Name} : <b>${p2Avg.toFixed(1)}</b> avg`;
@@ -679,19 +996,164 @@
       winnerLine.classList.add("tie");
     } else {
       winnerLine.classList.remove("tie");
-      winnerLine.textContent = "\u{1F3C6} Winner";
+      winnerLine.textContent = p1Avg > p2Avg && state.mode === "solo" ? "\u{1F3C6} You beat the CPU!"
+        : p1Avg < p2Avg && state.mode === "solo" ? "\u{1F916} CPU takes it"
+        : "\u{1F3C6} Winner";
       if (p1Avg > p2Avg){ p1LabelEl.classList.add("winner"); p1ColEl.classList.add("winner"); }
       else { p2LabelEl.classList.add("winner"); p2ColEl.classList.add("winner"); }
     }
 
     p1ColEl.innerHTML = state.categories.map(cat => slotRowHTML(cat, state.rosters.p1[cat.key], "var(--p1)")).join("");
-    p2ColEl.innerHTML = state.categories.map(cat => slotRowHTML(cat, state.rosters.p2[cat.key], "var(--p2)")).join("");
+    const p2TeamColor = state.mode === "solo" ? "var(--cpu)" : "var(--p2)";
+    p2ColEl.innerHTML = state.categories.map(cat => slotRowHTML(cat, state.rosters.p2[cat.key], p2TeamColor)).join("");
   }
 
   document.getElementById("playAgainBtn").addEventListener("click", () => {
     clearTimer();
-    showScreen("screen-setup");
+    openSetup(state ? state.mode : "versus");
   });
+
+  // =================================================================
+  // BEAT THE PLAYER
+  // =================================================================
+  function openBeatSetup(){
+    beatState = null;
+    document.getElementById("mastheadTitle").innerHTML = 'Beat The <span class="accent" style="color:var(--beat-soft);">Player</span>';
+    document.getElementById("mastheadSub").textContent = "A random rival's rating is revealed every round. Blind-pick a teammate and try to clear it.";
+    showScreen("screen-beat-setup");
+  }
+
+  document.getElementById("startBeatBtn").addEventListener("click", () => {
+    const playerName = document.getElementById("beatName").value.trim() || "You";
+    beatState = {
+      playerName,
+      categories: shuffle(CATEGORIES).slice(0, BEAT_ROUNDS),
+      round: 0,
+      score: 0,
+      history: [],
+      current: null
+    };
+    showScreen("screen-beat-play");
+    renderBeatRound();
+  });
+
+  function renderBeatRound(){
+    document.getElementById("beatOutcome").className = "beat-outcome";
+    document.getElementById("beatOutcome").textContent = "";
+    document.getElementById("beatNextBtn").style.display = "none";
+    document.getElementById("beatScoreValue").textContent = `${beatState.score}/${beatState.round}`;
+
+    const cat = beatState.categories[beatState.round];
+    document.getElementById("beatRoundLabel").textContent = `Round ${beatState.round + 1} of ${BEAT_ROUNDS}`;
+    document.getElementById("beatCatSwatch").style.background = cat.color;
+    document.getElementById("beatCatLabel").textContent = cat.label;
+
+    const track = document.getElementById("beatProgressTrack");
+    track.innerHTML = "";
+    for (let i = 0; i < BEAT_ROUNDS; i++){
+      const seg = document.createElement("span");
+      seg.className = "progress-seg" + (i < beatState.round ? " done" : i === beatState.round ? " current" : "");
+      track.appendChild(seg);
+    }
+
+    const target = shuffle(ROSTER)[0];
+    const candidatePool = ROSTER.filter(p => p.id !== target.id);
+    const candidates = shuffle(candidatePool).slice(0, BEAT_CANDIDATES);
+
+    beatState.current = { cat, targetId: target.id, targetValue: target[cat.key], candidateIds: candidates.map(c => c.id) };
+
+    const tc = avatarColors(target);
+    document.getElementById("beatTargetAvatar").textContent = initials(target.name);
+    document.getElementById("beatTargetAvatar").style.background = tc.bg;
+    document.getElementById("beatTargetAvatar").style.color = tc.fg;
+    document.getElementById("beatTargetName").textContent = target.name;
+    document.getElementById("beatTargetStatLabel").textContent = cat.label + " to beat";
+    document.getElementById("beatTargetValue").textContent = beatState.current.targetValue;
+
+    const grid = document.getElementById("beatCandidates");
+    grid.innerHTML = "";
+    candidates.forEach(p => {
+      const c = avatarColors(p);
+      const card = document.createElement("button");
+      card.className = "beat-card";
+      card.dataset.id = p.id;
+      card.innerHTML = `
+        <div class="beat-avatar" style="background:${c.bg}; color:${c.fg};">${initials(p.name)}</div>
+        <div class="beat-name">${p.name}</div>
+        <div class="beat-value">?</div>
+        <div class="beat-hint">Tap to lock in</div>`;
+      card.addEventListener("click", () => pickBeatCandidate(p.id));
+      grid.appendChild(card);
+    });
+  }
+
+  function pickBeatCandidate(playerId){
+    const { cat, targetValue } = beatState.current;
+    const picked = byId(playerId);
+    const pickedValue = picked[cat.key];
+    const won = pickedValue >= targetValue;
+
+    document.querySelectorAll("#beatCandidates .beat-card").forEach(card => {
+      const p = byId(card.dataset.id);
+      const val = p[cat.key];
+      card.classList.add("disabled", "revealed");
+      card.querySelector(".beat-value").textContent = val;
+      card.querySelector(".beat-hint").textContent = card.dataset.id === playerId ? "Your pick" : "";
+      if (card.dataset.id === playerId){
+        card.classList.add(won ? "result-win" : "result-loss");
+      }
+    });
+
+    if (won) beatState.score++;
+    beatState.history.push({
+      catLabel: cat.label, targetValue, pickedName: picked.name, pickedValue, won
+    });
+
+    const outcome = document.getElementById("beatOutcome");
+    outcome.className = "beat-outcome " + (won ? "win" : "loss");
+    outcome.textContent = won
+      ? `\u2705 ${picked.name} cleared it — ${pickedValue} vs ${targetValue}!`
+      : `\u274C ${picked.name} fell short — ${pickedValue} vs ${targetValue}.`;
+
+    document.getElementById("beatScoreValue").textContent = `${beatState.score}/${beatState.round + 1}`;
+    document.getElementById("beatNextBtn").style.display = "inline-flex";
+  }
+
+  document.getElementById("beatNextBtn").addEventListener("click", () => {
+    beatState.round++;
+    if (beatState.round >= BEAT_ROUNDS){
+      renderBeatResults();
+      showScreen("screen-beat-results");
+    } else {
+      renderBeatRound();
+    }
+  });
+
+  function renderBeatResults(){
+    document.getElementById("beatFinalScore").textContent = `${beatState.score}/${BEAT_ROUNDS}`;
+    const tagMap = {
+      5: "\u{1F525} Perfect run — you beat every rival.",
+      4: "\u{1F3C6} Elite pick rate. Almost flawless.",
+      3: "\u{1F44D} Solid — you cleared more than half.",
+      2: "\u{1F937} Rough night blind-picking. Run it back.",
+      1: "\u{1F62C} The rivals had your number.",
+      0: "\u2744\uFE0F Ice cold. Every pick came up short."
+    };
+    document.getElementById("beatFinalTag").textContent = `${beatState.playerName} — ${tagMap[beatState.score]}`;
+
+    const historyEl = document.getElementById("beatHistory");
+    historyEl.innerHTML = beatState.history.map((h, i) => `
+      <div class="beat-history-row ${h.won ? "win" : "loss"}">
+        <span class="beat-history-icon">${h.won ? "\u2705" : "\u274C"}</span>
+        <div class="beat-history-mid">
+          <div class="beat-history-cat">Round ${i + 1} \u00B7 ${h.catLabel}</div>
+          <div class="beat-history-detail">${h.pickedName}</div>
+        </div>
+        <div class="beat-history-nums">${h.pickedValue} vs ${h.targetValue}</div>
+      </div>`).join("");
+  }
+
+  document.getElementById("beatPlayAgainBtn").addEventListener("click", openBeatSetup);
 </script>
 </body>
 </html>
