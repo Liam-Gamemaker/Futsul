@@ -27,8 +27,13 @@
     --p2-soft: #7C8CFF;
     --cpu: #6B5FD6;
     --cpu-soft: #A79CFF;
-    --beat: #C9862F;
-    --beat-soft: #F0B15E;
+    --beat: #E2583C;
+    --beat-soft: #FF8B6B;
+    --beat-empty: #123B44;
+    --beat-empty-line: #2FB7C9;
+    --beat-target-cap: #8FB6FF;
+    --beat-target: #2F6FE0;
+    --beat-pick-cap: #6FCF97;
 
     --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
     --font-body: 'Inter', 'Segoe UI', sans-serif;
@@ -42,7 +47,7 @@
     background-size:22px 22px;
   }
   button{ font-family:inherit; background:none; border:none; cursor:pointer; color:inherit; }
-  input{ font-family:inherit; }
+  input, select{ font-family:inherit; }
   :focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 
   .wrap{ max-width:1040px; margin:0 auto; padding:24px 24px 80px; }
@@ -141,6 +146,21 @@
     border:none; background:var(--gold); color:#171717; transition:all .18s ease; width:100%;
   }
   .btn:hover{ background:var(--gold-ink); transform:translateY(-1px); }
+
+  /* ---------- Rival select (Beat The Player setup) ---------- */
+  .rival-select-row{ margin-bottom:26px; }
+  .rival-select-row label{
+    display:block; text-align:center; font-family:var(--font-mono); text-transform:uppercase; font-size:.68rem;
+    letter-spacing:.1em; color:var(--muted); margin-bottom:10px;
+  }
+  .rival-select{
+    width:100%; padding:14px 16px; border:2px solid var(--card-line); border-radius:12px;
+    font-family:var(--font-display); font-weight:700; font-size:1rem; background:var(--surface-2); color:var(--ink);
+    text-align:center; cursor:pointer; appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2386888C'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='%2386888C' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 16px center; background-size:16px;
+  }
+  .rival-select:focus{ border-color:var(--beat); }
 
   /* ---------- Team reveal ---------- */
   .reveal-stage{ text-align:center; padding:44px 20px; }
@@ -301,53 +321,113 @@
   .btn-ghost:hover{ color:var(--gold); border-color:var(--gold); }
 
   /* ---------- Beat The Player mode ---------- */
-  .beat-target-wrap{ text-align:center; margin-bottom:34px; }
-  .beat-vs-label{ font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.14em; font-size:.7rem; color:var(--muted); margin-bottom:14px; }
-  .beat-target-card{
-    display:inline-flex; align-items:center; gap:18px; background:linear-gradient(120deg, var(--surface-2), var(--surface));
-    border:1px solid var(--card-line); border-radius:18px; padding:18px 28px; box-shadow:0 14px 30px rgba(0,0,0,.35);
-  }
-  .beat-target-avatar{
-    width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-mono); font-weight:700; font-size:1.1rem; border:3px solid var(--beat);
-  }
-  .beat-target-info{ text-align:left; }
-  .beat-target-name{ font-family:var(--font-display); font-weight:800; font-size:1.15rem; text-transform:uppercase; }
-  .beat-target-stat{ font-family:var(--font-mono); color:var(--muted); font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
-  .beat-target-value{ font-family:var(--font-display); font-weight:800; font-size:2.4rem; color:var(--beat-soft); line-height:1; }
+  .beat-score-row{ display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:.78rem; color:var(--muted); }
+  .beat-score-row b{ color:var(--gold); font-size:1rem; }
 
-  .beat-candidates{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:30px; }
-  .beat-card{
-    background:linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
-    border:2px solid var(--card-line); border-radius:16px; padding:24px 16px 18px;
-    display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px;
-    transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+  /* progress bar: blue = rival's target rating, red = your live running average */
+  .beat-progress-wrap{ margin-bottom:20px; }
+  .beat-progress-track{
+    position:relative; height:16px; border-radius:9px; background:var(--beat-empty);
+    border:1px solid var(--beat-empty-line); overflow:hidden;
   }
-  .beat-card:not(.disabled):hover{ transform:translateY(-5px); border-color:var(--beat); box-shadow:0 16px 32px rgba(0,0,0,.4); }
-  .beat-card.disabled{ pointer-events:none; }
-  .beat-card.picked{ border-color:var(--beat); }
-  .beat-card.result-win{ border-color:var(--win); box-shadow:0 0 0 2px var(--win); }
-  .beat-card.result-loss{ border-color:var(--loss); box-shadow:0 0 0 2px var(--loss); }
-  .beat-avatar{
-    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-mono); font-weight:700; font-size:.95rem; border:3px solid var(--surface);
+  .beat-progress-target-fill{
+    position:absolute; top:0; left:0; bottom:0; width:0%; border-radius:9px; z-index:1;
+    background:linear-gradient(90deg, var(--beat-target), var(--beat-target-cap));
+    transition:width .6s cubic-bezier(.22,1,.36,1);
   }
-  .beat-name{ font-family:var(--font-display); font-weight:700; font-size:.92rem; text-transform:uppercase; line-height:1.2; }
-  .beat-value{ font-family:var(--font-display); font-weight:800; font-size:1.9rem; color:var(--card-line); line-height:1; }
-  .beat-card.revealed .beat-value{ color:var(--ink); }
-  .beat-card.result-win .beat-value{ color:var(--win); }
-  .beat-card.result-loss .beat-value{ color:var(--loss); }
-  .beat-hint{ font-family:var(--font-mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+  .beat-progress-fill{
+    position:absolute; top:0; left:0; bottom:0; width:0%; border-radius:9px; z-index:2;
+    background:linear-gradient(90deg, #C0402C, var(--beat));
+    transition:width .7s cubic-bezier(.22,1,.36,1);
+  }
+  .beat-progress-labels{ display:flex; justify-content:space-between; margin-top:9px; font-family:var(--font-mono); font-size:.86rem; font-weight:700; }
+  .beat-progress-current{ color:var(--ink); }
+  .beat-progress-target{ color:var(--ink); }
+  .beat-progress-target small{ color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:.06em; margin-left:4px; }
+
+  .beat-legend{
+    display:flex; justify-content:center; gap:20px; margin-bottom:22px; font-family:var(--font-mono);
+    text-transform:uppercase; letter-spacing:.08em; font-size:.64rem; color:var(--muted);
+  }
+  .beat-legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .beat-legend i{ width:10px; height:10px; border-radius:3px; display:inline-block; }
+
+  /* matchup row: player-to-beat card | skip button | current candidate card */
+  .beat-matchup-row{ display:flex; align-items:flex-start; justify-content:center; gap:26px; margin-bottom:26px; flex-wrap:wrap; }
+  .beat-player-col{ display:flex; flex-direction:column; align-items:center; gap:8px; width:150px; }
+  .beat-target-select-wrap{ position:relative; display:inline-block; max-width:100%; }
+  .beat-name-pill{
+    display:inline-flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--card-line);
+    border-radius:18px; padding:7px 14px; font-family:var(--font-display); font-weight:700; font-size:.8rem;
+    letter-spacing:.01em; color:var(--ink); max-width:100%; cursor:pointer; transition:border-color .15s ease;
+  }
+  .beat-name-pill:hover{ border-color:var(--beat-target-cap); }
+  .beat-name-pill span.arrow{ color:var(--muted); font-size:.65rem; flex-shrink:0; transition:transform .15s ease; }
+  .beat-name-pill.open{ border-color:var(--beat-target-cap); }
+  .beat-name-pill.open span.arrow{ transform:rotate(180deg); }
+  .beat-target-dropdown{
+    display:none; position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%);
+    width:230px; max-height:270px; overflow-y:auto; background:var(--surface-2); border:1px solid var(--card-line);
+    border-radius:12px; box-shadow:0 18px 38px rgba(0,0,0,.55); z-index:50; padding:6px;
+  }
+  .beat-target-dropdown.open{ display:block; }
+  .beat-target-option{
+    display:block; width:100%; text-align:left; padding:9px 12px; border-radius:8px; font-family:var(--font-body);
+    font-size:.84rem; color:var(--ink-soft); transition:background .12s ease, color .12s ease;
+  }
+  .beat-target-option:hover{ background:var(--surface); color:var(--ink); }
+  .beat-target-option.selected{ background:var(--p2); color:#fff; }
+  .beat-target-option small{ opacity:.65; margin-left:4px; }
+  .beat-name-plain{ font-family:var(--font-display); font-weight:700; font-size:.86rem; text-align:center; color:var(--beat-pick-cap); }
+  .beat-player-avatar{
+    width:80px; height:80px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:1.3rem; border:2px solid var(--card-line);
+    box-shadow:0 8px 18px rgba(0,0,0,.35); transition:opacity .18s ease, transform .18s ease;
+  }
+  .beat-player-avatar.rolling{ opacity:.25; transform:scale(.94); }
+  .beat-caption{ font-family:var(--font-display); font-weight:600; font-size:.82rem; font-style:italic; }
+  .beat-caption.target-cap{ color:var(--beat-target-cap); }
+  .beat-caption.pick-cap{ color:var(--beat-pick-cap); }
+  .beat-skip-btn{
+    display:flex; flex-direction:column; align-items:center; gap:4px; background:var(--surface-2);
+    border:1px solid var(--card-line); border-radius:14px; padding:14px 20px; font-family:var(--font-display);
+    font-weight:800; font-size:.86rem; letter-spacing:.02em; color:var(--ink);
+    transition:all .15s ease; flex-shrink:0; align-self:center; margin-top:34px;
+  }
+  .beat-skip-btn:hover{ color:var(--gold); border-color:var(--gold); transform:translateY(-2px); }
+  .beat-skip-btn:disabled{ opacity:.35; pointer-events:none; }
+  .beat-skip-hint{ font-family:var(--font-mono); font-size:.56rem; color:var(--muted); font-weight:500; }
+
+  /* vertical attribute list */
+  .beat-attr-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:26px; }
+  .beat-attr-btn{
+    position:relative; display:flex; align-items:center; gap:10px;
+    padding:14px 20px; border-radius:22px; border:2px solid var(--beat-empty-line); background:var(--beat-empty);
+    overflow:hidden; transition:border-color .15s ease, transform .1s ease, background .3s ease;
+  }
+  .beat-attr-btn:not(:disabled):hover{ transform:translateX(3px); border-color:var(--gold); }
+  .beat-attr-btn:disabled{ pointer-events:none; }
+  .beat-attr-btn.assigned{ border-color:var(--beat); background:var(--surface-2); }
+  .beat-attr-target-fill{
+    position:absolute; top:0; left:0; bottom:0; width:0%; z-index:1;
+    background:linear-gradient(90deg, var(--beat-target), var(--beat-target-cap));
+    transition:width .6s cubic-bezier(.22,1,.36,1);
+  }
+  .beat-attr-fill{
+    position:absolute; top:0; left:0; bottom:0; width:0%; z-index:2;
+    background:linear-gradient(90deg, #C0402C, var(--beat)); transition:width .7s cubic-bezier(.22,1,.36,1);
+  }
+  .beat-attr-label{ position:relative; z-index:3; font-family:var(--font-display); font-weight:700; font-size:.92rem; letter-spacing:.01em; color:var(--ink); white-space:nowrap; }
+  .beat-attr-name{ position:relative; z-index:3; font-family:var(--font-display); font-weight:600; font-size:.9rem; color:rgba(255,255,255,.92); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .beat-attr-target-value{ position:relative; z-index:3; margin-left:auto; font-family:var(--font-mono); font-weight:700; font-size:.72rem; color:var(--beat-target-cap); flex-shrink:0; white-space:nowrap; }
+  .beat-attr-value{ position:relative; z-index:3; font-family:var(--font-mono); font-weight:800; font-size:.85rem; color:rgba(255,255,255,.85); flex-shrink:0; }
 
   .beat-outcome{
-    display:none; text-align:center; font-family:var(--font-display); font-weight:800; font-size:1.15rem;
-    text-transform:uppercase; letter-spacing:.04em; padding:14px; border-radius:12px; margin-bottom:24px;
+    display:none; text-align:center; font-family:var(--font-display); font-weight:800; font-size:1.05rem;
+    letter-spacing:.02em; padding:12px; border-radius:12px; margin-bottom:20px;
   }
   .beat-outcome.win{ display:block; background:rgba(51,209,122,.14); border:1px solid var(--win); color:var(--win); }
   .beat-outcome.loss{ display:block; background:rgba(226,72,60,.14); border:1px solid var(--loss); color:var(--p1-soft); }
-
-  .beat-score-row{ display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:26px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:.78rem; color:var(--muted); }
-  .beat-score-row b{ color:var(--gold); font-size:1rem; }
 
   .beat-next{ display:flex; justify-content:center; }
   .beat-next .btn{ max-width:260px; }
@@ -364,6 +444,7 @@
   .beat-history-cat{ font-family:var(--font-mono); text-transform:uppercase; font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-bottom:2px; }
   .beat-history-detail{ font-family:var(--font-display); font-weight:700; font-size:.92rem; }
   .beat-history-nums{ font-family:var(--font-mono); font-weight:700; font-size:.95rem; flex-shrink:0; text-align:right; }
+  .beat-history-nums small{ display:block; font-weight:500; color:var(--muted); font-size:.6rem; text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
 
   .beat-final-score{
     text-align:center; font-family:var(--font-display); font-weight:800; font-size:clamp(2rem,7vw,3rem);
@@ -385,6 +466,7 @@
     .beat-candidates{ grid-template-columns:1fr; }
     .beat-target-card{ flex-direction:column; text-align:center; }
     .beat-target-info{ text-align:center; }
+    .beat-target-dropdown{ width:200px; }
   }
 </style>
 </head>
@@ -425,7 +507,7 @@
         <span class="mode-icon">🎯</span>
         <span class="mode-tag">Solo · Blind Pick</span>
         <span class="mode-title">Beat The Player</span>
-        <span class="mode-desc">A random rival's rating is revealed each round. Blind-pick one of 3 mystery teammates and hope they clear it.</span>
+        <span class="mode-desc">Choose exactly who you want to face, then blind-pick one of 3 mystery teammates each round and hope they clear the rival's stat.</span>
         <span class="mode-cta">Play &rarr;</span>
       </button>
     </div>
@@ -528,11 +610,18 @@
         </div>
       </div>
 
+      <div class="rival-select-row">
+        <label><span class="dot" style="background:var(--beat-target-cap);"></span>Choose your rival</label>
+        <select class="rival-select" id="rivalSelect"></select>
+      </div>
+
       <ul class="rules-list">
-        <li><span class="num">1</span>Each round we reveal a random rival's rating in a random category — that's your target.</li>
-        <li><span class="num">2</span>You get 3 mystery teammates pulled at random from the squad. Their ratings stay hidden.</li>
-        <li><span class="num">3</span>Blind-pick one and hope their number clears the target. Equal or higher counts as a win.</li>
-        <li><span class="num">4</span>5 rounds total. Your final score is how many rounds you beat.</li>
+        <li><span class="num">1</span>Pick exactly who you want to face with the dropdown above (or leave it on Random) — their <b>overall rating</b> becomes your target average.</li>
+        <li><span class="num">2</span>Every attribute bar shows a <b style="color:var(--beat-target-cap);">blue</b> fill for the rival's rating in that exact category right from the start — you can see which categories will be tough before you touch anything.</li>
+        <li><span class="num">3</span>A new random teammate rotates in for every attribute. Their stats stay hidden until you assign them — tap an attribute to lock the teammate in, and a <b style="color:var(--beat);">red</b> bar shows their rating in that category, going head-to-head against the rival's matching stat (Strength vs Strength, Speed vs Speed, and so on — never their overall).</li>
+        <li><span class="num">4</span>Don't like who rotated in? Hit Skip to reroll them before you commit — it doesn't cost you an attribute.</li>
+        <li><span class="num">5</span>Not feeling the matchup? Click your rival's name at any point during the game to swap in someone else.</li>
+        <li><span class="num">6</span>Fill all 10 attributes. If your final average meets or beats the target, you win.</li>
       </ul>
 
       <button class="btn" id="startBeatBtn" style="background:var(--beat);">Find a rival &amp; start</button>
@@ -543,46 +632,64 @@
   <section id="screen-beat-play" class="screen">
     <div class="draft-top">
       <div class="round-info">
-        <span class="round-label" id="beatRoundLabel">Round 1 of 5</span>
-        <span class="category-pill"><span class="category-swatch" id="beatCatSwatch"></span><span id="beatCatLabel">—</span></span>
+        <span class="round-label" id="beatRoundLabel">Attribute 1 of 10</span>
+        <span class="category-pill"><span class="category-swatch" style="background:var(--beat);"></span>Beat The Player</span>
       </div>
     </div>
 
-    <div class="progress-track" id="beatProgressTrack"></div>
+    <div class="beat-progress-wrap">
+      <div class="beat-progress-track">
+        <div class="beat-progress-target-fill" id="beatProgressTargetFill"></div>
+        <div class="beat-progress-fill" id="beatProgressFill"></div>
+      </div>
+      <div class="beat-progress-labels">
+        <span class="beat-progress-current" id="beatCurrentLabel">0.0</span>
+        <span class="beat-progress-target" id="beatTargetLabel">--<small>target</small></span>
+      </div>
+    </div>
 
-    <div class="beat-target-wrap">
-      <div class="beat-vs-label">Player to beat</div>
-      <div class="beat-target-card">
-        <span class="beat-target-avatar" id="beatTargetAvatar"></span>
-        <div class="beat-target-info">
-          <div class="beat-target-name" id="beatTargetName"></div>
-          <div class="beat-target-stat" id="beatTargetStatLabel"></div>
+    <div class="beat-legend">
+      <span><i style="background:linear-gradient(90deg, var(--beat-target), var(--beat-target-cap));"></i>Rival's stat</span>
+      <span><i style="background:linear-gradient(90deg, #C0402C, var(--beat));"></i>Your pick's stat</span>
+    </div>
+
+    <div class="beat-matchup-row">
+      <div class="beat-player-col target">
+        <div class="beat-target-select-wrap">
+          <button type="button" class="beat-name-pill" id="beatTargetPill"><span id="beatTargetName">—</span><span class="arrow">&#9662;</span></button>
+          <div class="beat-target-dropdown" id="beatTargetDropdown"></div>
         </div>
-        <span class="beat-target-value" id="beatTargetValue">--</span>
+        <span class="beat-player-avatar" id="beatTargetAvatar"></span>
+        <span class="beat-caption target-cap">player to beat</span>
+      </div>
+
+      <button class="beat-skip-btn" id="beatSkipBtn">
+        Skip &#9655;
+        <span class="beat-skip-hint">reroll this player</span>
+      </button>
+
+      <div class="beat-player-col yours">
+        <span class="beat-name-plain" id="beatYourName">—</span>
+        <span class="beat-player-avatar" id="beatYourAvatar"></span>
+        <span class="beat-caption pick-cap">pick attribute</span>
       </div>
     </div>
-
-    <div class="beat-score-row">Score so far: <b id="beatScoreValue">0/0</b></div>
 
     <div class="beat-outcome" id="beatOutcome"></div>
 
-    <div class="beat-candidates" id="beatCandidates"></div>
-
-    <div class="beat-next">
-      <button class="btn" id="beatNextBtn" style="display:none; background:var(--beat);">Next round &rarr;</button>
-    </div>
+    <div class="beat-attr-list" id="beatAttrList"></div>
   </section>
 
   <!-- BEAT THE PLAYER: RESULTS -->
   <section id="screen-beat-results" class="screen">
     <div class="vs-title"><span class="light">Beat The</span> <span class="accent" style="color:var(--beat-soft);">Player</span></div>
-    <div class="beat-final-score" id="beatFinalScore">0/5</div>
+    <div class="beat-final-score" id="beatFinalScore">0.0</div>
     <div class="beat-final-tag" id="beatFinalTag"></div>
 
     <div class="beat-history" id="beatHistory"></div>
 
     <div class="result-actions">
-      <button class="btn-restart" id="beatPlayAgainBtn" style="background:linear-gradient(180deg,#F0B15E,var(--beat));">Rematch</button>
+      <button class="btn-restart" id="beatPlayAgainBtn" style="background:linear-gradient(180deg,#FF8B6B,var(--beat));">Rematch</button>
       <button class="btn-ghost" id="beatResultsHomeBtn">All modes</button>
     </div>
   </section>
@@ -596,27 +703,27 @@
   // every card is directly comparable.
   // ---------------------------------------------------------------
   const ROSTER = [
-    { id:"player1", name:"William McCracken", team:"shirts", overall:90, speed:92, strength:88, dribbling:89, shooting:95, passing:85, defending:70, goalkeeping:0, technique:95, kicking:93 },
-    { id:"player2", name:"Billy Moffit", team:"shirts", overall:81, speed:91, strength:83, dribbling:73, shooting:80, passing:79, defending:84, goalkeeping:0, technique:79, kicking:82 },
+    { id:"player1", name:"William McCracken", team:"shirts", overall:90, speed:92, strength:88, dribbling:89, shooting:95, passing:85, defending:70, goalkeeping:60, technique:95, kicking:93 },
+    { id:"player2", name:"Billy Moffit", team:"shirts", overall:81, speed:91, strength:83, dribbling:73, shooting:80, passing:79, defending:84, goalkeeping:60, technique:79, kicking:82 },
     { id:"player3", name:"Leo Braybon", team:"shirts", overall:86, speed:86, strength:91, dribbling:85, shooting:86, passing:83, defending:85, goalkeeping:92, technique:85, kicking:86 },
-    { id:"player4", name:"Seb Munoz", team:"shirts", overall:94, speed:80, strength:87, dribbling:95, shooting:94, passing:93, defending:86, goalkeeping:0, technique:95, kicking:93 },
+    { id:"player4", name:"Seb Munoz", team:"shirts", overall:94, speed:80, strength:87, dribbling:95, shooting:94, passing:93, defending:86, goalkeeping:60, technique:95, kicking:93 },
     { id:"player5", name:"Darcy Brown", team:"shirts", overall:81, speed:83, strength:86, dribbling:72, shooting:82, passing:79, defending:84, goalkeeping:80, technique:72, kicking:82 },
-    { id:"player6", name:"Tommy Wills", team:"shirts", overall:81, speed:92, strength:95, dribbling:71, shooting:79, passing:73, defending:83, goalkeeping:0, technique:71, kicking:79 },
-    { id:"player7", name:"Liam Sawade", team:"shirts", overall:78, speed:91, strength:90, dribbling:66, shooting:63, passing:72, defending:78, goalkeeping:0, technique:70, kicking:75 },
-    { id:"playerB", name:"Tapi Gotchy", team:"shirts", overall:75, speed:87, strength:91, dribbling:73, shooting:75, passing:74, defending:78, goalkeeping:0, technique:73, kicking:75 },
-    { id:"playerBunter", name:"Alex Bunter", team:"shirts", overall:76, speed:83, strength:84, dribbling:73, shooting:72, passing:75, defending:71, goalkeeping:0, technique:74, kicking:72 },
-    { id:"playerA", name:"Tom Griffin", team:"shirts", overall:85, speed:83, strength:86, dribbling:83, shooting:85, passing:80, defending:82, goalkeeping:0, technique:83, kicking:85 },
+    { id:"player6", name:"Tommy Wills", team:"shirts", overall:81, speed:92, strength:95, dribbling:71, shooting:79, passing:73, defending:83, goalkeeping:60, technique:71, kicking:79 },
+    { id:"player7", name:"Liam Sawade", team:"shirts", overall:78, speed:91, strength:90, dribbling:66, shooting:63, passing:72, defending:78, goalkeeping:60, technique:70, kicking:75 },
+    { id:"playerB", name:"Tapi Gotchy", team:"shirts", overall:75, speed:87, strength:91, dribbling:73, shooting:75, passing:74, defending:78, goalkeeping:60, technique:73, kicking:75 },
+    { id:"playerBunter", name:"Alex Bunter", team:"shirts", overall:76, speed:83, strength:84, dribbling:73, shooting:72, passing:75, defending:71, goalkeeping:60, technique:74, kicking:72 },
+    { id:"playerA", name:"Tom Griffin", team:"shirts", overall:85, speed:83, strength:86, dribbling:83, shooting:85, passing:80, defending:82, goalkeeping:60, technique:83, kicking:85 },
     { id:"player8", name:"Jack Rollenston", team:"shirts", overall:86, speed:93, strength:90, dribbling:81, shooting:85, passing:84, defending:83, goalkeeping:84, technique:81, kicking:85 },
-    { id:"player9", name:"Liam Molloy", team:"jerseys", overall:93, speed:91, strength:90, dribbling:91, shooting:92, passing:90, defending:90, goalkeeping:0, technique:91, kicking:92 },
-    { id:"player10", name:"Lucas D'macio", team:"jerseys", overall:89, speed:87, strength:88, dribbling:86, shooting:87, passing:89, defending:87, goalkeeping:0, technique:89, kicking:87 },
-    { id:"player11", name:"Aditya", team:"jerseys", overall:66, speed:71, strength:74, dribbling:60, shooting:55, passing:63, defending:61, goalkeeping:0, technique:60, kicking:55 },
-    { id:"playerC", name:"William Hunt", team:"jerseys", overall:82, speed:86, strength:89, dribbling:81, shooting:81, passing:83, defending:85, goalkeeping:0, technique:81, kicking:81 },
+    { id:"player9", name:"Liam Molloy", team:"jerseys", overall:93, speed:91, strength:90, dribbling:91, shooting:92, passing:90, defending:90, goalkeeping:60, technique:91, kicking:92 },
+    { id:"player10", name:"Lucas D'macio", team:"jerseys", overall:89, speed:87, strength:88, dribbling:86, shooting:87, passing:89, defending:87, goalkeeping:60, technique:89, kicking:87 },
+    { id:"player11", name:"Aditya", team:"jerseys", overall:66, speed:71, strength:74, dribbling:60, shooting:55, passing:63, defending:61, goalkeeping:60, technique:60, kicking:55 },
+    { id:"playerC", name:"William Hunt", team:"jerseys", overall:82, speed:86, strength:89, dribbling:81, shooting:81, passing:83, defending:85, goalkeeping:60, technique:81, kicking:81 },
     { id:"playerD", name:"Harry Behnke", team:"jerseys", overall:94, speed:90, strength:85, dribbling:94, shooting:94, passing:93, defending:87, goalkeeping:80, technique:94, kicking:94 },
     { id:"playerE", name:"Luka Seckar", team:"jerseys", overall:93, speed:93, strength:90, dribbling:91, shooting:93, passing:91, defending:93, goalkeeping:93, technique:91, kicking:93 },
     { id:"player16", name:"Anthony Miniutti", team:"jerseys", overall:92, speed:90, strength:92, dribbling:89, shooting:92, passing:90, defending:94, goalkeeping:85, technique:89, kicking:92 },
-    { id:"playerG", name:"Rory Netting", team:"jerseys", overall:81, speed:85, strength:86, dribbling:77, shooting:79, passing:79, defending:82, goalkeeping:0, technique:77, kicking:69 },
-    { id:"playerH", name:"AJ", team:"jerseys", overall:91, speed:88, strength:91, dribbling:90, shooting:88, passing:87, defending:91, goalkeeping:0, technique:90, kicking:88 },
-    { id:"player12", name:"Riley Mcauliffe", team:"jerseys", overall:73, speed:82, strength:82, dribbling:69, shooting:67, passing:70, defending:68, goalkeeping:0, technique:69, kicking:67 },
+    { id:"playerG", name:"Rory Netting", team:"jerseys", overall:81, speed:85, strength:86, dribbling:77, shooting:79, passing:79, defending:82, goalkeeping:60, technique:77, kicking:69 },
+    { id:"playerH", name:"AJ", team:"jerseys", overall:91, speed:88, strength:91, dribbling:90, shooting:88, passing:87, defending:91, goalkeeping:60, technique:90, kicking:88 },
+    { id:"player12", name:"Riley Mcauliffe", team:"jerseys", overall:73, speed:82, strength:82, dribbling:69, shooting:67, passing:70, defending:68, goalkeeping:60, technique:69, kicking:67 },
     { id:"player13", name:"Jigme Chopel", team:"jerseys", overall:85, speed:83, strength:86, dribbling:85, shooting:84, passing:82, defending:83, goalkeeping:75, technique:85, kicking:84 }
   ];
 
@@ -636,8 +743,6 @@
   const POOL_SIZE = 12;
   const TURN_SECONDS = 20;
   const CPU_THINK_MS = 1100;
-  const BEAT_ROUNDS = 5;
-  const BEAT_CANDIDATES = 3;
 
   let state = null;      // draft state (versus / solo)
   let beatState = null;  // beat-the-player state
@@ -650,10 +755,12 @@
     return { first: parts.join(" "), last };
   }
   function shuffle(arr){ const a = arr.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function sortedRoster(){ return ROSTER.slice().sort((a, b) => a.name.localeCompare(b.name)); }
   function showScreen(id){
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
     document.getElementById("homeBtn").classList.toggle("show", id !== "screen-home");
+    closeRivalDropdown();
   }
   function byId(id){ return ROSTER.find(p => p.id === id); }
   function avatarColors(p){
@@ -1016,141 +1123,262 @@
   // =================================================================
   // BEAT THE PLAYER
   // =================================================================
+  function populateRivalSelect(){
+    const sel = document.getElementById("rivalSelect");
+    sel.innerHTML = `<option value="random">\u{1F3B2} Random rival</option>` +
+      sortedRoster().map(p => `<option value="${p.id}">${p.name} (OVR ${p.overall})</option>`).join("");
+  }
+
   function openBeatSetup(){
     beatState = null;
     document.getElementById("mastheadTitle").innerHTML = 'Beat The <span class="accent" style="color:var(--beat-soft);">Player</span>';
-    document.getElementById("mastheadSub").textContent = "A random rival's rating is revealed every round. Blind-pick a teammate and try to clear it.";
+    document.getElementById("mastheadSub").textContent = "Pick your rival, then fill ten attributes with a rotating cast of random teammates and try to beat them.";
+    populateRivalSelect();
     showScreen("screen-beat-setup");
   }
 
   document.getElementById("startBeatBtn").addEventListener("click", () => {
     const playerName = document.getElementById("beatName").value.trim() || "You";
+    const rivalChoice = document.getElementById("rivalSelect").value;
+    const target = rivalChoice === "random" ? shuffle(ROSTER)[0] : (byId(rivalChoice) || shuffle(ROSTER)[0]);
     beatState = {
       playerName,
-      categories: shuffle(CATEGORIES).slice(0, BEAT_ROUNDS),
-      round: 0,
-      score: 0,
-      history: [],
-      current: null
+      targetId: target.id,
+      targetValue: target.overall,
+      attrOrder: shuffle(CATEGORIES),
+      assigned: {},        // key -> { playerId, value }
+      sumAssigned: 0,
+      countAssigned: 0,
+      currentCandidateId: null,
+      history: []
     };
     showScreen("screen-beat-play");
-    renderBeatRound();
+    renderBeatGame();
+    rollCandidate();
   });
 
-  function renderBeatRound(){
-    document.getElementById("beatOutcome").className = "beat-outcome";
-    document.getElementById("beatOutcome").textContent = "";
-    document.getElementById("beatNextBtn").style.display = "none";
-    document.getElementById("beatScoreValue").textContent = `${beatState.score}/${beatState.round}`;
+  function totalAttrs(){ return beatState.attrOrder.length; }
 
-    const cat = beatState.categories[beatState.round];
-    document.getElementById("beatRoundLabel").textContent = `Round ${beatState.round + 1} of ${BEAT_ROUNDS}`;
-    document.getElementById("beatCatSwatch").style.background = cat.color;
-    document.getElementById("beatCatLabel").textContent = cat.label;
-
-    const track = document.getElementById("beatProgressTrack");
-    track.innerHTML = "";
-    for (let i = 0; i < BEAT_ROUNDS; i++){
-      const seg = document.createElement("span");
-      seg.className = "progress-seg" + (i < beatState.round ? " done" : i === beatState.round ? " current" : "");
-      track.appendChild(seg);
-    }
-
-    const target = shuffle(ROSTER)[0];
-    const candidatePool = ROSTER.filter(p => p.id !== target.id);
-    const candidates = shuffle(candidatePool).slice(0, BEAT_CANDIDATES);
-
-    beatState.current = { cat, targetId: target.id, targetValue: target[cat.key], candidateIds: candidates.map(c => c.id) };
-
+  function renderBeatHeader(){
+    const target = byId(beatState.targetId);
     const tc = avatarColors(target);
     document.getElementById("beatTargetAvatar").textContent = initials(target.name);
     document.getElementById("beatTargetAvatar").style.background = tc.bg;
     document.getElementById("beatTargetAvatar").style.color = tc.fg;
     document.getElementById("beatTargetName").textContent = target.name;
-    document.getElementById("beatTargetStatLabel").textContent = cat.label + " to beat";
-    document.getElementById("beatTargetValue").textContent = beatState.current.targetValue;
+    document.getElementById("beatTargetLabel").innerHTML = `${beatState.targetValue}<small>target</small>`;
+  }
 
-    const grid = document.getElementById("beatCandidates");
-    grid.innerHTML = "";
-    candidates.forEach(p => {
-      const c = avatarColors(p);
-      const card = document.createElement("button");
-      card.className = "beat-card";
-      card.dataset.id = p.id;
-      card.innerHTML = `
-        <div class="beat-avatar" style="background:${c.bg}; color:${c.fg};">${initials(p.name)}</div>
-        <div class="beat-name">${p.name}</div>
-        <div class="beat-value">?</div>
-        <div class="beat-hint">Tap to lock in</div>`;
-      card.addEventListener("click", () => pickBeatCandidate(p.id));
-      grid.appendChild(card);
+  function renderBeatGame(){
+    renderBeatHeader();
+    document.getElementById("beatOutcome").className = "beat-outcome";
+    document.getElementById("beatOutcome").textContent = "";
+    updateBeatRoundLabel();
+    updateProgressUI();
+
+    const list = document.getElementById("beatAttrList");
+    list.innerHTML = "";
+    beatState.attrOrder.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "beat-attr-btn";
+      btn.dataset.key = cat.key;
+      btn.innerHTML = `
+        <span class="beat-attr-target-fill"></span>
+        <span class="beat-attr-fill"></span>
+        <span class="beat-attr-label">${cat.label}:</span>
+        <span class="beat-attr-name"></span>
+        <span class="beat-attr-target-value"></span>
+        <span class="beat-attr-value"></span>`;
+      btn.addEventListener("click", () => pickAttribute(cat));
+      list.appendChild(btn);
+    });
+
+    // Reveal the rival's per-category rating (blue bar) for every row right
+    // away — you can see how tough each category will be before you assign
+    // a teammate to it. Only the number itself is being compared against
+    // your candidate's SAME category once you actually assign it.
+    syncAllTargetFills();
+  }
+
+  // Sets the blue "rival" fill width on every attribute row to that
+  // category's value for the CURRENT target — called on game start and
+  // whenever the rival is swapped mid-game.
+  function syncAllTargetFills(){
+    requestAnimationFrame(() => {
+      const target = byId(beatState.targetId);
+      beatState.attrOrder.forEach(cat => {
+        const btn = document.querySelector(`#beatAttrList .beat-attr-btn[data-key="${cat.key}"]`);
+        if (!btn) return;
+        btn.querySelector(".beat-attr-target-fill").style.width = target[cat.key] + "%";
+        // only reveal the exact number once that attribute has been assigned
+        const assigned = beatState.assigned[cat.key];
+        if (assigned){
+          btn.querySelector(".beat-attr-target-value").textContent = `vs ${target[cat.key]}`;
+        }
+      });
     });
   }
 
-  function pickBeatCandidate(playerId){
-    const { cat, targetValue } = beatState.current;
-    const picked = byId(playerId);
-    const pickedValue = picked[cat.key];
-    const won = pickedValue >= targetValue;
+  function updateBeatRoundLabel(){
+    document.getElementById("beatRoundLabel").textContent = `Attribute ${Math.min(beatState.countAssigned + 1, totalAttrs())} of ${totalAttrs()}`;
+  }
 
-    document.querySelectorAll("#beatCandidates .beat-card").forEach(card => {
-      const p = byId(card.dataset.id);
-      const val = p[cat.key];
-      card.classList.add("disabled", "revealed");
-      card.querySelector(".beat-value").textContent = val;
-      card.querySelector(".beat-hint").textContent = card.dataset.id === playerId ? "Your pick" : "";
-      if (card.dataset.id === playerId){
-        card.classList.add(won ? "result-win" : "result-loss");
-      }
-    });
-
-    if (won) beatState.score++;
-    beatState.history.push({
-      catLabel: cat.label, targetValue, pickedName: picked.name, pickedValue, won
-    });
+  function updateProgressUI(){
+    const average = beatState.countAssigned ? beatState.sumAssigned / beatState.countAssigned : 0;
+    document.getElementById("beatCurrentLabel").textContent = average.toFixed(1);
+    document.getElementById("beatProgressFill").style.width = Math.max(0, Math.min(100, average)) + "%";
+    document.getElementById("beatProgressTargetFill").style.width = Math.max(0, Math.min(100, beatState.targetValue)) + "%";
+    document.getElementById("beatTargetLabel").innerHTML = `${beatState.targetValue}<small>target</small>`;
 
     const outcome = document.getElementById("beatOutcome");
-    outcome.className = "beat-outcome " + (won ? "win" : "loss");
-    outcome.textContent = won
-      ? `\u2705 ${picked.name} cleared it — ${pickedValue} vs ${targetValue}!`
-      : `\u274C ${picked.name} fell short — ${pickedValue} vs ${targetValue}.`;
-
-    document.getElementById("beatScoreValue").textContent = `${beatState.score}/${beatState.round + 1}`;
-    document.getElementById("beatNextBtn").style.display = "inline-flex";
+    if (beatState.countAssigned === 0){
+      outcome.className = "beat-outcome";
+      outcome.textContent = "";
+      return;
+    }
+    const last = beatState.history[beatState.history.length - 1];
+    const clearing = average >= beatState.targetValue;
+    outcome.className = "beat-outcome " + (clearing ? "win" : "loss");
+    outcome.textContent = clearing
+      ? `\u2705 ${last.playerName}'s ${last.catLabel} (${last.value}) keeps your average ahead of the target.`
+      : `\u274C ${last.playerName}'s ${last.catLabel} (${last.value}) pulls your average below the target.`;
   }
 
-  document.getElementById("beatNextBtn").addEventListener("click", () => {
-    beatState.round++;
-    if (beatState.round >= BEAT_ROUNDS){
-      renderBeatResults();
-      showScreen("screen-beat-results");
-    } else {
-      renderBeatRound();
-    }
+  // Swap the rival mid-game: updates the header, the overall target bar,
+  // and re-syncs the blue "rival" fill (and revealed numbers) on every row.
+  function setTarget(newId){
+    if (!beatState || newId === beatState.targetId) return;
+    beatState.targetId = newId;
+    beatState.targetValue = byId(newId).overall;
+    renderBeatHeader();
+    updateProgressUI();
+    syncAllTargetFills();
+  }
+
+  function renderRivalDropdown(){
+    const dd = document.getElementById("beatTargetDropdown");
+    dd.innerHTML = sortedRoster().map(p => `
+      <button type="button" class="beat-target-option${p.id === beatState.targetId ? " selected" : ""}" data-id="${p.id}">
+        ${p.name}<small>OVR ${p.overall}</small>
+      </button>`).join("");
+    dd.querySelectorAll(".beat-target-option").forEach(optBtn => {
+      optBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setTarget(optBtn.dataset.id);
+        closeRivalDropdown();
+      });
+    });
+  }
+
+  function openRivalDropdown(){
+    if (!beatState) return;
+    renderRivalDropdown();
+    document.getElementById("beatTargetDropdown").classList.add("open");
+    document.getElementById("beatTargetPill").classList.add("open");
+  }
+  function closeRivalDropdown(){
+    const dd = document.getElementById("beatTargetDropdown");
+    const pill = document.getElementById("beatTargetPill");
+    if (dd) dd.classList.remove("open");
+    if (pill) pill.classList.remove("open");
+  }
+  document.getElementById("beatTargetPill").addEventListener("click", (e) => {
+    e.stopPropagation();
+    const dd = document.getElementById("beatTargetDropdown");
+    if (dd.classList.contains("open")) closeRivalDropdown(); else openRivalDropdown();
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".beat-target-select-wrap")) closeRivalDropdown();
   });
 
+  function rollCandidate(){
+    const pool = ROSTER.filter(p => p.id !== beatState.currentCandidateId);
+    const candidate = shuffle(pool)[0];
+    beatState.currentCandidateId = candidate.id;
+
+    const avatar = document.getElementById("beatYourAvatar");
+    avatar.classList.add("rolling");
+    setTimeout(() => {
+      const yc = avatarColors(candidate);
+      avatar.textContent = initials(candidate.name);
+      avatar.style.background = yc.bg;
+      avatar.style.color = yc.fg;
+      avatar.classList.remove("rolling");
+      document.getElementById("beatYourName").textContent = candidate.name;
+    }, 140);
+
+    document.getElementById("beatSkipBtn").disabled = false;
+  }
+
+  document.getElementById("beatSkipBtn").addEventListener("click", rollCandidate);
+
+  function pickAttribute(cat){
+    const btn = document.querySelector(`#beatAttrList .beat-attr-btn[data-key="${cat.key}"]`);
+    if (!btn || btn.classList.contains("assigned")) return;
+
+    const candidate = byId(beatState.currentCandidateId);
+    const value = candidate[cat.key];
+    // this attribute's rating for the CURRENT rival — every category verses
+    // its own matching category (Strength vs Strength, Speed vs Speed...),
+    // never the rival's overall rating.
+    const targetVal = byId(beatState.targetId)[cat.key];
+
+    beatState.assigned[cat.key] = { playerId: candidate.id, value };
+    beatState.sumAssigned += value;
+    beatState.countAssigned++;
+    beatState.history.push({ key: cat.key, catLabel: cat.label, playerName: candidate.name, value });
+
+    btn.classList.add("assigned");
+    btn.disabled = true;
+    btn.querySelector(".beat-attr-name").textContent = candidate.name;
+    btn.querySelector(".beat-attr-value").textContent = value;
+    btn.querySelector(".beat-attr-target-value").textContent = `vs ${targetVal}`;
+    // animate the red "yours" fill on the next frame so the transition plays;
+    // the blue "rival" fill for this row is already showing from game start
+    requestAnimationFrame(() => {
+      btn.querySelector(".beat-attr-fill").style.width = value + "%";
+      btn.querySelector(".beat-attr-target-fill").style.width = targetVal + "%";
+    });
+
+    updateProgressUI();
+    updateBeatRoundLabel();
+
+    if (beatState.countAssigned >= totalAttrs()){
+      document.getElementById("beatSkipBtn").disabled = true;
+      setTimeout(() => {
+        renderBeatResults();
+        showScreen("screen-beat-results");
+      }, 900);
+    } else {
+      rollCandidate();
+    }
+  }
+
   function renderBeatResults(){
-    document.getElementById("beatFinalScore").textContent = `${beatState.score}/${BEAT_ROUNDS}`;
-    const tagMap = {
-      5: "\u{1F525} Perfect run — you beat every rival.",
-      4: "\u{1F3C6} Elite pick rate. Almost flawless.",
-      3: "\u{1F44D} Solid — you cleared more than half.",
-      2: "\u{1F937} Rough night blind-picking. Run it back.",
-      1: "\u{1F62C} The rivals had your number.",
-      0: "\u2744\uFE0F Ice cold. Every pick came up short."
-    };
-    document.getElementById("beatFinalTag").textContent = `${beatState.playerName} — ${tagMap[beatState.score]}`;
+    const average = beatState.sumAssigned / beatState.countAssigned;
+    const target = byId(beatState.targetId);
+    const won = average >= beatState.targetValue;
+
+    document.getElementById("beatFinalScore").textContent = average.toFixed(1);
+    document.getElementById("beatFinalScore").style.color = won ? "var(--win)" : "var(--loss)";
+    document.getElementById("beatFinalTag").textContent = won
+      ? `${beatState.playerName} beat ${target.name}! Final average ${average.toFixed(1)} vs a target of ${beatState.targetValue}.`
+      : `${beatState.playerName} fell short of ${target.name}. Final average ${average.toFixed(1)} vs a target of ${beatState.targetValue}.`;
 
     const historyEl = document.getElementById("beatHistory");
-    historyEl.innerHTML = beatState.history.map((h, i) => `
-      <div class="beat-history-row ${h.won ? "win" : "loss"}">
-        <span class="beat-history-icon">${h.won ? "\u2705" : "\u274C"}</span>
+    historyEl.innerHTML = beatState.history.map((h, i) => {
+      const targetVal = byId(beatState.targetId)[h.key];
+      const clearedThis = h.value >= targetVal;
+      return `
+      <div class="beat-history-row ${clearedThis ? "win" : "loss"}">
+        <span class="beat-history-icon">${clearedThis ? "\u2705" : "\u274C"}</span>
         <div class="beat-history-mid">
-          <div class="beat-history-cat">Round ${i + 1} \u00B7 ${h.catLabel}</div>
-          <div class="beat-history-detail">${h.pickedName}</div>
+          <div class="beat-history-cat">Attribute ${i + 1} \u00B7 ${h.catLabel}</div>
+          <div class="beat-history-detail">${h.playerName}</div>
         </div>
-        <div class="beat-history-nums">${h.pickedValue} vs ${h.targetValue}</div>
-      </div>`).join("");
+        <div class="beat-history-nums">${h.value}<small>vs ${targetVal}</small></div>
+      </div>`;
+    }).join("");
   }
 
   document.getElementById("beatPlayAgainBtn").addEventListener("click", openBeatSetup);
