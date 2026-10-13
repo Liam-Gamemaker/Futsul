@@ -2,2702 +2,442 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Futsal Stats Tracker · SFX Futsal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SFX Futsal all-time tally and player roster.">
+<title>SFX Futsal</title>
 <style>
-  :root{
-    --paper: #EEF0EA;
-    --surface: #FFFFFF;
-    --surface-2: #F6F6F0;
-    --ink: #15221B;
-    --ink-soft: #33413A;
-    --muted: #5B5F53;
-    --border: #DBDACB;
-    --gold: #C1932F;
-    --gold-ink: #8A6A22;
-    --red: #A23B33;
-    --bib-light: #FAFAF6;
-    --bib-dark: #1B2420;
-    --turf: #2F5D3A;
-    --turf-line: rgba(255,255,255,.55);
-
-    --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
-    --font-body: 'Inter', 'Segoe UI', sans-serif;
-    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-  }
-
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-
-  body{
-    font-family: var(--font-body);
-    background: var(--paper);
-    color: var(--ink);
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  button{ font-family:inherit; background:none; border:none; cursor:pointer; color:inherit; }
-  img{ max-width:100%; display:block; }
-  :focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
-
-  /* ---------- Form controls ---------- */
-  label{
-    display:block; font-family:var(--font-mono); text-transform:uppercase; font-size:.68rem;
-    letter-spacing:.06em; color:var(--muted); margin-bottom:6px;
-  }
-  input[type="text"], input[type="password"], input[type="number"], input[type="date"], select, textarea{
-    width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px;
-    font-family:inherit; font-size:.9rem; background:var(--surface); color:var(--ink);
-    margin-bottom:14px;
-  }
-  textarea{ resize:vertical; }
-  .form-error{ color:var(--red); font-size:.82rem; margin:-6px 0 12px; }
-
-  .btn{
-    display:inline-flex; align-items:center; gap:6px; padding:10px 16px; border-radius:8px;
-    font-family:var(--font-display); font-weight:600; font-size:.85rem;
-    border:1px solid var(--border); background:var(--surface); transition:all .2s ease;
-  }
-  .btn:hover{ border-color:var(--ink); }
-  .btn-primary{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
-  .btn-primary:hover{ background:var(--ink-soft); }
-  .btn-small{ padding:7px 12px; font-size:.78rem; }
-  .admin-tag{
-    font-family:var(--font-mono); font-size:.74rem; text-transform:uppercase;
-    letter-spacing:.05em; color:var(--gold-ink);
-  }
-
-  /* ---------- Masthead ---------- */
-  .masthead{ border-bottom:2px solid var(--ink); padding:36px 0 22px; }
-  .masthead-inner{
-    max-width:1120px; margin:0 auto; padding:0 24px;
-    display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;
-  }
-  .eyebrow{
-    display:block; font-family:var(--font-mono); text-transform:uppercase;
-    letter-spacing:.12em; font-size:.72rem; color:var(--gold-ink); font-weight:600; margin-bottom:10px;
-  }
-  .masthead h1{
-    font-family:var(--font-display); font-weight:700; letter-spacing:-0.01em;
-    font-size:clamp(2rem,5vw,3.1rem); color:var(--ink);
-  }
-  .masthead-meta{
-    display:flex; gap:22px; font-family:var(--font-mono); font-size:.78rem;
-    color:var(--muted); text-transform:uppercase; letter-spacing:.06em;
-  }
-  .masthead-meta span{ white-space:nowrap; }
-
-  /* ---------- Nav ---------- */
-  .site-nav{
-    position:sticky; top:0; z-index:20; background:var(--paper);
-    border-bottom:1px solid var(--border);
-    display:flex; align-items:center; gap:2px; max-width:1120px; margin:0 auto; padding:0 24px;
-    overflow-x:auto;
-  }
-  .nav-link{
-    font-family:var(--font-display); font-weight:600; font-size:.94rem;
-    padding:16px 14px; color:var(--muted); position:relative; white-space:nowrap;
-    transition:color .2s ease;
-  }
-  .nav-link::after{
-    content:''; position:absolute; left:14px; right:14px; bottom:-1px; height:2px;
-    background:transparent; transition:background .2s ease;
-  }
-  .nav-link:hover{ color:var(--ink); }
-  .nav-link.active{ color:var(--ink); }
-  .nav-link.active::after{ background:var(--gold); }
-  .nav-admin{ margin-left:auto; display:flex; align-items:center; gap:12px; padding:8px 0; white-space:nowrap; }
-
-  /* ---------- Layout ---------- */
-  .page{ max-width:1120px; margin:0 auto; padding:44px 24px 88px; }
-  .content-section{ display:none; }
-  .content-section.active{ display:block; animation:fadeIn .35s ease; }
-  @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
-
-  .section-head{ margin-bottom:26px; }
-  .section-kicker{
-    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.1em;
-    font-size:.72rem; color:var(--gold-ink); font-weight:600;
-  }
-  .section-head h2{
-    font-family:var(--font-display); font-size:1.7rem; font-weight:700;
-    color:var(--ink); margin-top:6px;
-  }
-  .section-head p{ color:var(--muted); margin-top:8px; max-width:56ch; }
-
-  /* ---------- Leaders strip ---------- */
-  .leaders{
-    display:grid; grid-template-columns:repeat(3,1fr);
-    border:1px solid var(--border); border-radius:10px; overflow:hidden;
-    background:var(--surface); margin-bottom:56px;
-  }
-  .leader{ padding:24px 22px; display:flex; flex-direction:column; gap:12px; border-left:1px solid var(--border); }
-  .leader:first-child{ border-left:none; }
-  .leader-label{
-    font-family:var(--font-mono); text-transform:uppercase; font-size:.7rem;
-    letter-spacing:.08em; color:var(--muted);
-  }
-  .leader-player{ display:flex; align-items:center; gap:10px; min-height:36px; }
-  .leader-name{ font-weight:600; }
-  .leader-empty{ color:var(--muted); font-style:italic; font-weight:400; font-size:.92rem; }
-  .leader-value{ font-family:var(--font-mono); font-size:1.8rem; font-weight:600; color:var(--ink); }
-  .leader-unit{ font-size:.68rem; text-transform:uppercase; color:var(--muted); margin-left:6px; letter-spacing:.05em; }
-
-  /* ---------- All-time score ---------- */
-  .all-time-card{
-    display:flex; align-items:center; justify-content:center; gap:0;
-    background:linear-gradient(135deg, var(--bib-dark) 0%, #223229 52%, var(--bib-dark) 100%);
-    border-radius:14px; padding:30px 24px; margin-bottom:44px; position:relative; overflow:hidden;
-    border:1px solid var(--ink);
-  }
-  .all-time-card::before{
-    content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 20% 20%, rgba(193,147,47,.16), transparent 55%),
-               radial-gradient(circle at 80% 80%, rgba(193,147,47,.12), transparent 55%);
-    pointer-events:none;
-  }
-  .all-time-inner{ display:flex; align-items:center; gap:26px; position:relative; z-index:1; flex-wrap:wrap; justify-content:center; }
-  .all-time-kicker{
-    position:absolute; top:14px; left:50%; transform:translateX(-50%); z-index:1;
-    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.14em; font-size:.68rem;
-    color:var(--gold); font-weight:600;
-  }
-  .all-time-side{ display:flex; flex-direction:column; align-items:center; gap:6px; min-width:110px; }
-  .all-time-team{
-    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:600;
-  }
-  .all-time-side.shirts .all-time-team{ color:var(--bib-light); }
-  .all-time-side.jerseys .all-time-team{ color:var(--gold); }
-  .all-time-value{ font-family:var(--font-display); font-weight:700; font-size:clamp(2.6rem,7vw,4rem); color:#fff; line-height:1; }
-  .all-time-side.jerseys .all-time-value{ color:var(--gold); }
-  .all-time-sub{ font-family:var(--font-mono); font-size:.66rem; color:rgba(255,255,255,.55); letter-spacing:.05em; }
-  .all-time-sep{ font-family:var(--font-display); font-size:2rem; color:rgba(255,255,255,.35); font-weight:700; margin-top:14px; }
-
-  /* ---------- Game log ---------- */
-  .game-log-panel{ display:flex; flex-direction:column; gap:14px; }
-  .empty-state{ color:var(--muted); max-width:440px; margin:0 auto; line-height:1.7; }
-  .game-log-panel .empty-state{ border:1px dashed var(--border); border-radius:10px; padding:44px 24px; text-align:center; margin:0; }
-
-  .log-entry{
-    background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden;
-    box-shadow:0 1px 2px rgba(21,34,27,.04); transition:box-shadow .2s ease, border-color .2s ease;
-  }
-  .log-entry.win-jerseys{ border-left:5px solid var(--ink); }
-  .log-entry.win-shirts{ border-left:5px solid var(--gold); }
-  .log-entry.draw{ border-left:5px solid var(--muted); }
-  .log-entry:hover{ box-shadow:0 8px 20px rgba(21,34,27,.08); }
-
-  .log-summary{
-    width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px;
-    padding:18px 20px; text-align:left; flex-wrap:wrap;
-  }
-  .log-summary-left{ display:flex; flex-direction:column; gap:5px; }
-  .log-date{ font-family:var(--font-mono); font-weight:600; font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
-  .log-note{ color:var(--ink-soft); font-size:.9rem; font-weight:500; }
-  .log-badge{
-    display:inline-block; font-family:var(--font-mono); font-size:.64rem; text-transform:uppercase;
-    letter-spacing:.06em; font-weight:700; padding:3px 8px; border-radius:20px; margin-right:8px;
-  }
-  .log-badge.jerseys{ background:var(--bib-dark); color:var(--gold); }
-  .log-badge.shirts{ background:var(--surface-2); color:var(--ink); border:1px solid var(--border); }
-  .log-badge.draw{ background:var(--surface-2); color:var(--muted); border:1px solid var(--border); }
-
-  .log-score-wrap{ display:flex; align-items:center; gap:14px; }
-  .log-score-big{ display:flex; align-items:baseline; gap:8px; font-family:var(--font-display); font-weight:700; }
-  .log-score-big .num{ font-size:2.1rem; line-height:1; }
-  .log-score-big .num.shirts-score{ color:var(--ink); }
-  .log-score-big .num.jerseys-score{ color:var(--gold-ink); }
-  .log-score-big .sep{ font-size:1.2rem; color:var(--muted); }
-  .log-chevron{ font-size:1.1rem; color:var(--muted); transition:transform .25s ease; flex-shrink:0; }
-  .log-entry.expanded .log-chevron{ transform:rotate(180deg); }
-  .log-delete{ color:var(--red); font-size:1.15rem; line-height:1; padding:4px; }
-
-  .log-details{
-    max-height:0; overflow:hidden; transition:max-height .3s ease;
-    background:var(--surface-2); border-top:1px solid var(--border);
-  }
-  .log-entry.expanded .log-details{ max-height:600px; }
-  .log-details-inner{ padding:18px 20px 20px; }
-  .log-stat-groups{ display:flex; flex-direction:column; gap:14px; }
-  .log-stat-group-label{
-    font-family:var(--font-mono); text-transform:uppercase; font-size:.68rem; letter-spacing:.08em;
-    font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:6px;
-  }
-  .log-stat-group-label .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
-  .log-chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
-  .log-chip{
-    display:flex; align-items:center; gap:7px; background:var(--surface); border:1px solid var(--border);
-    border-radius:20px; padding:5px 12px 5px 6px; font-size:.82rem; font-weight:500; color:var(--ink-soft);
-  }
-  .log-chip .qty{
-    font-family:var(--font-mono); font-weight:700; font-size:.72rem; color:#fff;
-    width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  }
-  .log-contribs{ list-style:none; }
-
-  /* ---------- Avatars ---------- */
-  .avatar{ position:relative; display:inline-flex; border-radius:50%; overflow:hidden; flex-shrink:0; }
-  .avatar img{ width:100%; height:100%; object-fit:cover; }
-  .avatar-fallback{
-    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
-    font-family:var(--font-display); font-weight:700; letter-spacing:.02em;
-  }
-  .avatar-xs{ width:26px; height:26px; font-size:.6rem; }
-  .avatar-sm{ width:36px; height:36px; font-size:.72rem; }
-  .avatar-lg{ width:64px; height:64px; font-size:1rem; border:2px solid var(--border); }
-  .avatar-xl{ width:88px; height:88px; font-size:1.3rem; border:2px solid var(--border); }
-
-  /* ---------- Roster ---------- */
-  .roster-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
-  .roster-card{
-    background:var(--surface); border:1px solid var(--border); border-radius:10px;
-    padding:22px 18px 18px; display:flex; flex-direction:column; align-items:center;
-    text-align:center; gap:12px; position:relative; width:100%;
-    transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-  }
-  .roster-card:hover, .roster-card:focus-visible{
-    transform:translateY(-3px); border-color:var(--ink); box-shadow:0 10px 24px rgba(21,34,27,.08);
-  }
-  .roster-number{
-    position:absolute; top:14px; left:16px; font-family:var(--font-mono);
-    font-weight:700; color:var(--gold-ink); font-size:.82rem; letter-spacing:.04em;
-  }
-  .roster-name{ font-family:var(--font-display); font-weight:600; font-size:1.04rem; }
-  .roster-stats{
-    display:grid; grid-template-columns:repeat(2,1fr); gap:10px 22px; width:100%;
-    margin-top:2px; border-top:1px solid var(--border); padding-top:14px;
-  }
-  .roster-stats span{
-    display:flex; flex-direction:column; gap:3px; font-size:.68rem;
-    text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
-  }
-  .roster-stats b{ font-family:var(--font-mono); font-size:1.05rem; color:var(--ink); font-weight:600; }
-
-  /* ---------- Rankings ---------- */
-  .ranking-tabs{ display:flex; gap:2px; flex-wrap:wrap; margin-bottom:26px; border-bottom:1px solid var(--border); }
-  .ranking-tab{
-    font-family:var(--font-mono); font-size:.76rem; text-transform:uppercase; letter-spacing:.06em;
-    padding:11px 14px; color:var(--muted); position:relative; top:1px; border-bottom:2px solid transparent;
-    transition:color .2s ease, border-color .2s ease;
-  }
-  .ranking-tab:hover{ color:var(--ink); }
-  .ranking-tab.active{ color:var(--ink); border-color:var(--gold); }
-
-  .table-wrap{ overflow-x:auto; }
-  .rankings-table{ width:100%; border-collapse:collapse; min-width:420px; }
-  .rankings-table th{
-    text-align:left; font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase;
-    letter-spacing:.08em; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--ink);
-  }
-  .rankings-table td{ padding:12px; border-bottom:1px solid var(--border); font-size:.95rem; }
-  .rankings-table tr:nth-child(even){ background:var(--surface-2); }
-  .rank-number{ font-family:var(--font-mono); color:var(--gold-ink); font-weight:700; width:50px; }
-  .value-cell{ font-family:var(--font-mono); font-weight:600; }
-  .player-info{ display:flex; align-items:center; gap:10px; }
-
-  /* ---------- News ---------- */
-  .news-grid{ display:flex; flex-direction:column; gap:22px; }
-  .news-card{
-    display:flex; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:14px;
-    overflow:hidden; box-shadow:0 1px 2px rgba(21,34,27,.04); transition:box-shadow .2s ease, transform .2s ease;
-    position:relative;
-  }
-  .news-card:hover{ box-shadow:0 10px 26px rgba(21,34,27,.09); transform:translateY(-2px); }
-  .news-card-bar{ width:6px; flex-shrink:0; }
-  .news-card-body{ padding:22px 24px; display:flex; flex-direction:column; gap:12px; flex:1; min-width:0; }
-  .news-card-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  .news-tag{
-    display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); text-transform:uppercase;
-    font-size:.66rem; letter-spacing:.08em; font-weight:700; padding:4px 10px; border-radius:20px;
-  }
-  .news-date{ font-family:var(--font-mono); font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
-  .news-headline{ font-family:var(--font-display); font-size:1.28rem; font-weight:700; color:var(--ink); line-height:1.3; }
-  .news-body{ color:var(--ink-soft); font-size:.94rem; line-height:1.65; max-width:64ch; }
-  .news-players{ display:flex; flex-wrap:wrap; gap:14px; margin-top:4px; }
-  .news-player-chip{
-    display:flex; align-items:center; gap:9px; background:var(--surface-2); border:1px solid var(--border);
-    border-radius:24px; padding:6px 14px 6px 6px;
-  }
-  .news-player-chip .name{ font-size:.82rem; font-weight:600; color:var(--ink); }
-  .news-player-chip .sub{ display:block; font-size:.64rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:500; }
-  @media (max-width:520px){
-    .news-card-body{ padding:18px; }
-    .news-headline{ font-size:1.1rem; }
-  }
-
-  /* ---------- Games / Pickem CTA ---------- */
-  .games-cta{
-    display:flex; flex-direction:column; align-items:center; text-align:center; gap:22px;
-    padding:56px 28px; border-radius:18px; position:relative; overflow:hidden;
-    background:linear-gradient(135deg, var(--bib-dark) 0%, #223229 55%, var(--bib-dark) 100%);
-    border:1px solid var(--ink);
-  }
-  .games-cta::before{
-    content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 15% 20%, rgba(193,147,47,.2), transparent 55%),
-               radial-gradient(circle at 85% 80%, rgba(62,123,196,.18), transparent 55%);
-    pointer-events:none;
-  }
-  .games-cta-kicker{
-    position:relative; z-index:1; font-family:var(--font-mono); text-transform:uppercase;
-    letter-spacing:.14em; font-size:.7rem; color:var(--gold); font-weight:600;
-  }
-  .games-cta h3{
-    position:relative; z-index:1; font-family:var(--font-display); font-weight:700; color:#fff;
-    font-size:clamp(1.5rem,4vw,2.1rem);
-  }
-  .games-cta p{
-    position:relative; z-index:1; color:rgba(255,255,255,.72); max-width:52ch; font-size:.95rem;
-  }
-  .pickem-btn{
-    position:relative; z-index:1; display:inline-flex; align-items:center; gap:10px;
-    padding:16px 34px; border-radius:40px; font-family:var(--font-display); font-weight:800;
-    font-size:1.02rem; letter-spacing:.03em; text-transform:uppercase; color:#fff; text-decoration:none;
-    background:linear-gradient(90deg, #E0574C 0%, #C1932F 35%, #3E7BC4 68%, #8A56C4 100%);
-    background-size:220% 220%; animation:pickemGradient 6s ease infinite;
-    box-shadow:0 14px 34px rgba(0,0,0,.4); transition:transform .18s ease, box-shadow .18s ease;
-    border:none; cursor:pointer;
-  }
-  .pickem-btn:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 18px 40px rgba(0,0,0,.5); }
-  .pickem-btn .arrow{ transition:transform .18s ease; }
-  .pickem-btn:hover .arrow{ transform:translateX(4px); }
-  @keyframes pickemGradient{
-    0%{ background-position:0% 50%; }
-    50%{ background-position:100% 50%; }
-    100%{ background-position:0% 50%; }
-  }
-
-  /* ---------- Modals ---------- */
-  .profile-modal{
-    display:none; position:fixed; inset:0; background:rgba(21,34,27,.55);
-    z-index:100; align-items:center; justify-content:center; padding:24px;
-  }
-  .profile-content{
-    background:var(--surface); border-radius:14px; max-width:560px; width:100%;
-    max-height:85vh; overflow-y:auto; padding:32px; position:relative; animation:popIn .2s ease;
-  }
-  .profile-content.wide{ max-width:640px; }
-  @keyframes popIn{ from{ opacity:0; transform:scale(.97);} to{ opacity:1; transform:scale(1);} }
-  .close-btn{ position:absolute; top:16px; right:16px; font-size:1.5rem; color:var(--muted); line-height:1; }
-  .close-btn:hover{ color:var(--ink); }
-
-  .profile-header{ display:flex; align-items:center; gap:16px; margin-bottom:20px; padding-right:20px; }
-  .profile-bib{
-    display:block; font-family:var(--font-mono); text-transform:uppercase; font-size:.68rem;
-    letter-spacing:.08em; color:var(--gold-ink); font-weight:600; margin-bottom:4px;
-  }
-  .profile-header h2{ font-family:var(--font-display); font-size:1.4rem; font-weight:700; }
-
-  .profile-content h3{
-    font-family:var(--font-mono); text-transform:uppercase; font-size:.72rem; letter-spacing:.08em;
-    color:var(--muted); margin-bottom:10px;
-  }
-  .profile-section{ margin-bottom:26px; }
-  .profile-section h3{ border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:14px; }
-
-  .profile-stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(88px,1fr)); gap:14px; }
-  .profile-stat{ display:flex; flex-direction:column; gap:2px; }
-  .profile-stat .v{ font-family:var(--font-mono); font-size:1.4rem; font-weight:600; }
-  .profile-stat .l{ font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
-
-  .attr-list{ display:flex; flex-direction:column; gap:11px; }
-  .attr-row{ display:grid; grid-template-columns:112px 1fr 32px; align-items:center; gap:12px; }
-  .attr-label{ font-size:.84rem; color:var(--ink-soft); }
-  .attr-bar{ height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
-  .attr-bar span{ display:block; height:100%; background:var(--gold); border-radius:3px; }
-  .attr-value{ font-family:var(--font-mono); font-size:.82rem; text-align:right; color:var(--muted); }
-
-  .profile-split{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  .plain-list{ list-style:none; }
-  .plain-list li{ padding:8px 0; border-bottom:1px solid var(--border); font-size:.9rem; }
-  .plain-list li:last-child{ border-bottom:none; }
-
-  .edit-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0 16px; }
-  .stat-add-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; align-items:end; margin-bottom:12px; }
-  .stat-add-row select, .stat-add-row input{ margin-bottom:0; }
-  .pending-list{ list-style:none; display:flex; flex-direction:column; gap:6px; margin-bottom:6px; max-height:160px; overflow-y:auto; }
-  .pending-list li{ display:flex; justify-content:space-between; align-items:center; background:var(--surface-2); border-radius:6px; padding:8px 10px; font-size:.85rem; }
-  .pending-list button{ color:var(--red); font-size:1rem; line-height:1; }
-
-  /* ---------- Footer ---------- */
-  .site-footer{
-    max-width:1120px; margin:0 auto; padding:0 24px 60px; color:var(--muted);
-    font-size:.82rem; border-top:1px solid var(--border); padding-top:24px;
-  }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width:760px){
-    .masthead-inner{ flex-direction:column; align-items:flex-start; }
-    .leaders{ grid-template-columns:1fr; }
-    .leader{ border-left:none; border-top:1px solid var(--border); }
-    .leader:first-child{ border-top:none; }
-    .profile-split{ grid-template-columns:1fr; }
-    .attr-row{ grid-template-columns:96px 1fr 30px; }
-    .roster-grid{ grid-template-columns:1fr 1fr; }
-  }
-  @media (max-width:520px){
-    .roster-grid{ grid-template-columns:1fr; }
-    .page{ padding:32px 16px 64px; }
-    .masthead-inner, .site-nav, .site-footer{ padding-left:16px; padding-right:16px; }
-  }
-
-  @media (prefers-reduced-motion:reduce){
-    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
-  }
+:root {
+color-scheme: light;
+--bg: #f5f5ef;
+--bg: #fff;
+--white: #fff;
+--ink: #17251d;
+--muted: #627065;
+--line: #dfe4d9;
+--green: #245638;
+--gold: #d9ad4b;
+--ink: #111;
+--muted: #4b4b4b;
+--line: rgba(0, 0, 0, .2);
+--yellow: #ffd500;
+}
+{ box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+margin: 0;
+background: var(--bg);
+color: var(--ink);
+font-family: Arial, Helvetica, sans-serif;
+line-height: 1.5;
+}
+a { color: inherit; }
+a:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+a:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+.shell { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+.site-header { background: var(--white); border-bottom: 1px solid var(--line); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 76px; }
+.brand { color: var(--green); font-size: 1.2rem; font-weight: 800; letter-spacing: .04em; text-decoration: none; }
+.brand { color: var(--ink); font-size: 1.2rem; font-weight: 800; letter-spacing: .04em; text-decoration: none; }
+.nav { display: flex; gap: 8px; }
+.nav a { padding: 10px 16px; border-radius: 999px; font-weight: 700; text-decoration: none; }
+.nav a:hover, .nav a[aria-current="page"] { background: var(--green); color: var(--white); }
+.nav a:hover, .nav a[aria-current="page"] { background: var(--yellow); color: var(--ink); }
+main { padding: 60px 0 80px; min-height: calc(100vh - 140px); }
+[hidden] { display: none !important; }
+.eyebrow { color: var(--green); font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.eyebrow { color: var(--ink); font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { max-width: 650px; margin: 10px 0 14px; font-size: clamp(2.4rem, 6vw, 4.5rem); line-height: 1.08; letter-spacing: -.045em; }
+.intro { max-width: 600px; color: var(--muted); font-size: 1.08rem; }
+.score-card { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; margin: 36px 0 24px; padding: clamp(24px, 5vw, 48px); border-radius: 20px; background: var(--green); color: var(--white); }
+.score-label { grid-column: 1 / -1; color: #d4e7d7; font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-align: center; text-transform: uppercase; }
+.score-card { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; margin: 36px 0 24px; padding: clamp(24px, 5vw, 48px); border-radius: 20px; background: var(--ink); color: var(--white); }
+.score-label { grid-column: 1 / -1; color: var(--yellow); font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-align: center; text-transform: uppercase; }
+.team-score { text-align: center; }
+.team-name { display: block; font-size: clamp(1rem, 2.5vw, 1.35rem); font-weight: 800; }
+.team-wins { display: block; margin: 2px 0; font-size: clamp(4rem, 12vw, 8rem); font-weight: 800; line-height: 1; letter-spacing: -.08em; }
+.team-unit { color: #d4e7d7; font-size: .85rem; }
+.score-divider { color: var(--gold); font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 700; }
+.team-unit { color: var(--white); font-size: .85rem; }
+.score-divider { color: var(--yellow); font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 700; }
+.home-footer { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; color: var(--muted); }
+.button { display: inline-block; padding: 12px 19px; border-radius: 9px; background: var(--ink); color: var(--white); font-weight: 700; text-decoration: none; }
+.button:hover { background: var(--green); }
+.button { display: inline-block; padding: 12px 19px; border-radius: 9px; background: var(--yellow); color: var(--ink); font-weight: 700; text-decoration: none; }
+.button:hover { background: var(--ink); color: var(--white); }
+.page-title { margin-bottom: 36px; }
+.page-title h1 { margin-bottom: 8px; }
+.team-section + .team-section { margin-top: 52px; }
+.team-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+.team-heading h2 { margin: 0; font-size: 1.65rem; }
+.team-heading span { color: var(--muted); font-size: .9rem; }
+.player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-top: 18px; }
+.player-card { display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
+.player-card { padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
+.player-top { display: flex; align-items: center; gap: 12px; }
+.avatar { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: #e1eddf; color: var(--green); font-size: .8rem; font-weight: 800; }
+.jerseys .avatar { background: var(--ink); color: var(--white); }
+.player-name { margin: 0; font-size: 1rem; line-height: 1.25; }
+.player-overall { margin-left: auto; color: var(--green); font-size: .8rem; font-weight: 800; white-space: nowrap; }
+.player-stats { display: flex; gap: 8px; margin: 0; }
+.player-stats div { flex: 1; min-width: 0; padding: 9px 5px; border-radius: 7px; background: var(--bg); text-align: center; }
+.player-stats dt { color: var(--muted); font-size: .69rem; font-weight: 700; text-transform: uppercase; }
+.player-stats dd { margin: 0; font-size: 1.05rem; font-weight: 800; }
+.player-overall { margin-left: auto; padding: 5px 8px; border-radius: 6px; background: var(--yellow); color: var(--ink); font-size: .8rem; font-weight: 800; white-space: nowrap; }
+.site-footer { padding: 22px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+@media (max-width: 520px) {
+.shell { width: min(100% - 28px, 1100px); }
+.header-inner { min-height: 68px; }
+.nav a { padding: 8px 11px; }
+main { padding-top: 40px; }
+.score-card { gap: 8px; }
+.team-name { font-size: .9rem; }
+}
 </style>
 </head>
 <body>
-
-  <header class="masthead">
-    <div class="masthead-inner">
-      <div>
-        <span class="eyebrow">SFX Futsal · Weekly Stat Sheet</span>
-        <h1>Futsal Stats Tracker</h1>
-      </div>
-      <div class="masthead-meta">
-        <span>20 players</span>
-        <span>Shirts vs Jerseys</span>
-        <span>Season 2026</span>
-      </div>
-    </div>
-  </header>
-
-  <nav class="site-nav" aria-label="Primary">
-    <button class="nav-link active" data-section="home">Home</button>
-    <button class="nav-link" data-section="team-shirts">Shirts</button>
-    <button class="nav-link" data-section="team-jerseys">Jerseys</button>
-    <button class="nav-link" data-section="rankings">Rankings</button>
-    <button class="nav-link" data-section="news">News</button>
-    <button class="nav-link" data-section="games">Games</button>
-    <div class="nav-admin" id="navAdmin"></div>
-  </nav>
-
-  <main class="page">
-
-    <!-- Home -->
-    <section id="home" class="content-section active">
-      <div id="allTimeScore"></div>
-
-      <div class="section-head">
-        <span class="section-kicker">Leaderboard</span>
-        <h2>This Season's Leaders</h2>
-      </div>
-      <div class="leaders" id="leaders-list"></div>
-
-      <div class="section-head">
-        <span class="section-kicker">Log</span>
-        <h2>Game Log</h2>
-        <p>Goals, assists, saves, clean sheets and fights all feed the rankings and leaderboard above.</p>
-      </div>
-      <div id="gameLogActions" style="margin-bottom:16px;"></div>
-      <div class="game-log-panel" id="gameLogPanel"></div>
-    </section>
-
-    <!-- Team Shirts -->
-    <section id="team-shirts" class="content-section">
-      <div class="section-head">
-        <span class="section-kicker">Roster · Light bibs</span>
-        <h2>Shirts</h2>
-        <div id="shirtsActions" style="margin-top:12px;"></div>
-      </div>
-      <div class="roster-grid" id="shirts-grid"></div>
-    </section>
-
-    <!-- Team Jerseys -->
-    <section id="team-jerseys" class="content-section">
-      <div class="section-head">
-        <span class="section-kicker">Roster · Dark bibs</span>
-        <h2>Jerseys</h2>
-        <div id="jerseysActions" style="margin-top:12px;"></div>
-      </div>
-      <div class="roster-grid" id="jerseys-grid"></div>
-    </section>
-
-    <!-- Rankings -->
-    <section id="rankings" class="content-section">
-      <div class="section-head">
-        <span class="section-kicker">All-time</span>
-        <h2>Rankings</h2>
-      </div>
-      <div class="ranking-tabs" id="ranking-tabs"></div>
-      <div class="table-wrap">
-        <table class="rankings-table">
-          <thead><tr><th>Rank</th><th>Player</th><th>Value</th></tr></thead>
-          <tbody id="ranking-tbody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- News -->
-    <section id="news" class="content-section">
-      <div class="section-head">
-        <span class="section-kicker">Off the pitch</span>
-        <h2>Club News</h2>
-        <p>The latest headlines from around SFX Futsal — results, rumours and everything in between.</p>
-      </div>
-      <div class="news-grid" id="news-grid"></div>
-    </section>
-
-    <!-- Games -->
-    <section id="games" class="content-section">
-      <div class="section-head">
-        <span class="section-kicker">Play</span>
-        <h2>Games</h2>
-        <p>Fancy testing your knowledge of the squad? Head over to the Draft Versus game and go head-to-head against a mate.</p>
-      </div>
-      <div class="games-cta">
-        <span class="games-cta-kicker">SFX Futsal · Mini Game</span>
-        <h3>Draft Versus</h3>
-        <p>Shuffle a random squad, snake-draft your team category by category, and see whose average comes out on top.</p>
-        <a class="pickem-btn" href="Pickem.html">
-          <span>Play the game</span>
-          <span class="arrow">&rarr;</span>
-        </a>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="site-footer">
-    Stats save to this browser automatically. To publish changes for everyone, an admin needs to use "Publish to GitHub" from the admin bar so the change is committed to the live file.
-  </footer>
-
-  <!-- Player Profile Modal -->
-  <div id="profileModal" class="profile-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="profile-content">
-      <button class="close-btn" onclick="closeModal('profileModal')" aria-label="Close">&times;</button>
-      <div id="profile-content"></div>
-    </div>
-  </div>
-
-  <!-- Admin Login Modal -->
-  <div id="loginModal" class="profile-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="profile-content" style="max-width:360px;">
-      <button class="close-btn" onclick="closeModal('loginModal')" aria-label="Close">&times;</button>
-      <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Admin Login</h2>
-      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">Sign in to edit stats, profiles and news.</p>
-      <form id="loginForm">
-        <label for="loginUser">Username</label>
-        <input type="text" id="loginUser" autocomplete="username" required>
-        <label for="loginPass">Password</label>
-        <input type="password" id="loginPass" autocomplete="current-password" required>
-        <p id="loginError" class="form-error" hidden>Incorrect username or password.</p>
-        <button type="submit" class="btn btn-primary" style="width:100%;">Log in</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Add Game Modal -->
-  <div id="gameModal" class="profile-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="profile-content wide">
-      <button class="close-btn" onclick="closeModal('gameModal')" aria-label="Close">&times;</button>
-      <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Log a Game</h2>
-      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">Record the result, then add each stat as it happened — totals update automatically.</p>
-      <form id="gameForm">
-        <div class="edit-grid">
-          <div><label for="g-date">Date</label><input type="date" id="g-date" required></div>
-          <div><label for="g-note">Note / opponent</label><input type="text" id="g-note" placeholder="e.g. Tuesday night session"></div>
-          <div><label for="g-shirts">Shirts score</label><input type="number" min="0" id="g-shirts" value="0"></div>
-          <div><label for="g-jerseys">Jerseys score</label><input type="number" min="0" id="g-jerseys" value="0"></div>
-        </div>
-
-        <h3 style="margin:6px 0 10px;">Add a stat</h3>
-        <div class="stat-add-row">
-          <div><label for="g-player">Player</label><select id="g-player"></select></div>
-          <div><label for="g-stat">Stat</label>
-            <select id="g-stat">
-              <option value="goals">Goal</option>
-              <option value="assists">Assist</option>
-              <option value="saves">Save</option>
-              <option value="cleanSheets">Clean sheet</option>
-              <option value="fights">Fight</option>
-            </select>
-          </div>
-          <div><label for="g-qty">Qty</label><input type="number" id="g-qty" min="1" value="1"></div>
-          <button type="button" class="btn btn-small" id="addStatBtn">Add</button>
-        </div>
-        <ul class="pending-list" id="pendingList"></ul>
-
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button type="submit" class="btn btn-primary">Save game</button>
-          <button type="button" class="btn" id="cancelGameBtn">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Publish to GitHub Modal -->
-  <div id="publishModal" class="profile-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="profile-content wide">
-      <button class="close-btn" onclick="closePublish()" aria-label="Close">&times;</button>
-      <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:6px;">Publish to GitHub</h2>
-      <p style="color:var(--muted); font-size:.85rem; margin-bottom:20px;">
-        Your edits are live in this browser only. Publishing commits them straight into Futsul.html on GitHub so
-        everyone sees the update once Pages rebuilds (usually a minute or two).
-      </p>
-      <form id="publishForm">
-        <div class="edit-grid">
-          <div><label for="pub-owner">Repo owner</label><input type="text" id="pub-owner" value="Experimentalplayer" required></div>
-          <div><label for="pub-repo">Repo name</label><input type="text" id="pub-repo" value="Futsul" required></div>
-          <div><label for="pub-path">File path</label><input type="text" id="pub-path" value="Futsul.html" required></div>
-          <div><label for="pub-branch">Branch</label><input type="text" id="pub-branch" value="main" required></div>
-        </div>
-        <label for="pub-token">GitHub token</label>
-        <input type="password" id="pub-token" autocomplete="off" placeholder="Paste a fine-grained token with Contents: Read and write" required>
-        <p style="color:var(--muted); font-size:.78rem; margin:-8px 0 14px;">
-          Never stored — only kept in memory for this publish, and cleared as soon as you close this panel.
-        </p>
-        <p id="publishStatus" class="form-error" hidden></p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;">
-          <button type="submit" class="btn btn-primary" id="publishNowBtn">Publish now</button>
-          <button type="button" class="btn" id="copyDataBtn">Copy data instead</button>
-          <button type="button" class="btn" id="cancelPublishBtn">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    // ---------------------------------------------------------------
-    // PLAYER DATA — this is the version that ships to everyone who
-    // visits the site. Admin edits are saved to each visitor's own
-    // browser (localStorage) so the UI updates instantly for them.
-    // To make an edit permanent for ALL visitors, use the "Publish to
-    // GitHub" button in the admin bar (see the Publish section near
-    // the bottom of this script) — it rewrites the blocks between the
-    // DATA:...:START / DATA:...:END markers below and commits Futsul.html
-    // straight to the repo, which makes GitHub Pages rebuild the site.
-    // ---------------------------------------------------------------
-                                                // ===== DATA:PLAYERS:START =====
-    const DEFAULT_PLAYERS = {
-      player1: {
-        name: "William McCracken",
-        picture: "insert profile picture here",
-        team: "shirts",
-        goals: "9",
-        assists: "1",
-        fights: "1",
-        saves: "0",
-        passing: "85",
-        defending: "70",
-        overall: "90",
-        speed: "92",
-        strength: "88",
-        dribbling: "89",
-        shooting: "95",
-        goalkeeping: "0",
-        strengths: [
-          "Shooting",
-          "Good at soccer"
-        ],
-        weaknesses: [
-          "Great Hair",
-          "2nd thing here"
-        ],
-        cleanSheets: "0",
-        technique: "89",
-        kicking: "93",
-        goalie: "60"
-      },
-      player2: {
-        name: "Billy Moffit",
-        picture: "Billy.JPG",
-        team: "shirts",
-        goals: "0",
-        assists: "0",
-        fights: "9",
-        saves: "0",
-        passing: "79",
-        defending: "84",
-        overall: "81",
-        speed: "91",
-        strength: "83",
-        dribbling: "73",
-        shooting: "80",
-        goalkeeping: "0",
-        strengths: [
-          "Fast",
-          "Knows the rules"
-        ],
-        weaknesses: [
-          "Doesn't Play Futsal",
-          "The Ball"
-        ],
-        cleanSheets: "0",
-        technique: "79",
-        kicking: "82",
-        goalie: "60"
-      },
-      player3: {
-        name: "Leo Braybon",
-        picture: "Leo.JPG",
-        team: "shirts",
-        goals: "0",
-        assists: "1",
-        fights: "6",
-        saves: "34",
-        passing: "83",
-        defending: "85",
-        overall: "86",
-        speed: "86",
-        strength: "91",
-        dribbling: "85",
-        shooting: "86",
-        goalkeeping: "92",
-        strengths: [
-          "Top Goalie",
-          "Hell of a kick"
-        ],
-        weaknesses: [
-          "Z",
-          "Scary"
-        ],
-        cleanSheets: "0",
-        technique: "85",
-        kicking: "86",
-        goalie: "92"
-      },
-      player4: {
-        name: "Seb Munoz",
-        picture: "Seb.png",
-        team: "shirts",
-        goals: "6",
-        assists: "1",
-        fights: "1",
-        saves: "0",
-        passing: "93",
-        defending: "86",
-        overall: "94",
-        speed: "80",
-        strength: "87",
-        dribbling: "95",
-        shooting: "94",
-        goalkeeping: "0",
-        strengths: [
-          "Great Passer",
-          "Tecky"
-        ],
-        weaknesses: [
-          "Food",
-          "Lips"
-        ],
-        cleanSheets: "0",
-        technique: "95",
-        kicking: "93",
-        goalie: "60"
-      },
-      player5: {
-        name: "Darcy Brown",
-        picture: "DB",
-        team: "shirts",
-        goals: "0",
-        assists: "0",
-        fights: "5",
-        saves: "4",
-        passing: "79",
-        defending: "84",
-        overall: "81",
-        speed: "83",
-        strength: "86",
-        dribbling: "72",
-        shooting: "82",
-        goalkeeping: "80",
-        strengths: [
-          "Temper",
-          "Really good when he plays against his own team"
-        ],
-        weaknesses: [
-          "Public Enemy No.1",
-          "Always in fights"
-        ],
-        cleanSheets: "0",
-        technique: "72",
-        kicking: "82",
-        goalie: "78"
-      },
-      player6: {
-        name: "Tommy Wills",
-        picture: "Tommy.JPG",
-        team: "shirts",
-        goals: "0",
-        assists: "0",
-        fights: "4",
-        saves: "0",
-        passing: "73",
-        defending: "83",
-        overall: "81",
-        speed: "92",
-        strength: "95",
-        dribbling: "71",
-        shooting: "79",
-        goalkeeping: "0",
-        strengths: [
-          "Strong",
-          "Really aggressive"
-        ],
-        weaknesses: [
-          "Too strong",
-          "Always getting red cards"
-        ],
-        cleanSheets: "0",
-        technique: "71",
-        kicking: "79",
-        goalie: "60"
-      },
-      player7: {
-        name: "Liam Sawade",
-        picture: "LiamS.JPG",
-        team: "shirts",
-        goals: "1",
-        assists: "2",
-        fights: "6",
-        saves: "0",
-        passing: "72",
-        defending: "78",
-        overall: "78",
-        speed: "91",
-        strength: "90",
-        dribbling: "66",
-        shooting: "63",
-        goalkeeping: "0",
-        strengths: [
-          "Curly Hair",
-          "40 inch vert"
-        ],
-        weaknesses: [
-          "Doesn't know how to play",
-          "Vert doesn't really help"
-        ],
-        cleanSheets: "0",
-        technique: "70",
-        kicking: "75",
-        goalie: "81"
-      },
-      playerB: {
-        name: "Tapi Gotchy",
-        picture: "Tapi.JPG",
-        team: "shirts",
-        goals: "1",
-        assists: "0",
-        fights: "2",
-        saves: "0",
-        passing: "74",
-        defending: "78",
-        overall: "75",
-        speed: "87",
-        strength: "91",
-        dribbling: "73",
-        shooting: "75",
-        goalkeeping: "0",
-        strengths: [
-          "Black",
-          "Fast"
-        ],
-        weaknesses: [
-          "Doesn't Play Futsal",
-          "Bad with Woman"
-        ],
-        cleanSheets: "0",
-        technique: "73",
-        kicking: "75",
-        goalie: "60"
-      },
-      playerBunter: {
-        name: "Alex Bunter",
-        picture: "",
-        team: "shirts",
-        goals: "0",
-        assists: "1",
-        fights: "0",
-        saves: "0",
-        passing: "75",
-        defending: "71",
-        overall: "78",
-        speed: "83",
-        strength: "84",
-        dribbling: "73",
-        shooting: "72",
-        goalkeeping: "0",
-        strengths: [
-          "Good at math",
-          "Girlfriend"
-        ],
-        weaknesses: [
-          "No"
-        ],
-        cleanSheets: "0",
-        technique: "76",
-        kicking: "80",
-        goalie: "60"
-      },
-      playerA: {
-        name: "Tom Griffin",
-        picture: "Tom.JPG",
-        team: "shirts",
-        goals: "0",
-        assists: "1",
-        fights: "3",
-        saves: "0",
-        passing: "80",
-        defending: "82",
-        overall: "85",
-        speed: "83",
-        strength: "86",
-        dribbling: "83",
-        shooting: "85",
-        goalkeeping: "0",
-        strengths: [
-          "Popular",
-          "best celebrations in the game"
-        ],
-        weaknesses: [
-          "Doesn't play",
-          "Too nice"
-        ],
-        cleanSheets: "0",
-        technique: "83",
-        kicking: "85",
-        goalie: "60"
-      },
-      player8: {
-        name: "Jack Rollenston",
-        picture: "JackR.png",
-        team: "shirts",
-        goals: "6",
-        assists: "1",
-        fights: "1",
-        saves: "4",
-        passing: "84",
-        defending: "83",
-        overall: "86",
-        speed: "93",
-        strength: "90",
-        dribbling: "81",
-        shooting: "85",
-        goalkeeping: "84",
-        strengths: [
-          "Fast with ball",
-          "Tecky"
-        ],
-        weaknesses: [
-          "Volley Ball Player",
-          "Idk"
-        ],
-        cleanSheets: "0",
-        technique: "81",
-        kicking: "85",
-        goalie: "85"
-      },
-      player9: {
-        name: "Liam Molloy",
-        picture: "LiamM.JPG",
-        team: "jerseys",
-        goals: "10",
-        assists: "3",
-        fights: "5",
-        saves: "0",
-        passing: "90",
-        defending: "90",
-        overall: "93",
-        speed: "91",
-        strength: "90",
-        dribbling: "91",
-        shooting: "92",
-        goalkeeping: "0",
-        strengths: [
-          "Plays soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "91",
-        kicking: "92",
-        goalie: "76"
-      },
-      player10: {
-        name: "Lucas D'macio",
-        picture: "Lucas.jpg",
-        team: "jerseys",
-        goals: "4",
-        assists: "2",
-        fights: "8",
-        saves: "0",
-        passing: "89",
-        defending: "87",
-        overall: "91",
-        speed: "87",
-        strength: "88",
-        dribbling: "86",
-        shooting: "87",
-        goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Fast"
-        ],
-        weaknesses: [
-          "Loud",
-          "Doesn't know futsal rules"
-        ],
-        cleanSheets: "0",
-        technique: "89",
-        kicking: "87",
-        goalie: "60"
-      },
-      player11: {
-        name: "Aditya",
-        picture: "Aditya.jpeg",
-        team: "jerseys",
-        goals: "9",
-        assists: "1",
-        fights: "4",
-        saves: "5",
-        passing: "63",
-        defending: "61",
-        overall: "66",
-        speed: "71",
-        strength: "74",
-        dribbling: "60",
-        shooting: "55",
-        goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "60",
-        kicking: "55",
-        goalie: "60"
-      },
-      playerC: {
-        name: "William Hunt",
-        picture: "WillH.JPG",
-        team: "jerseys",
-        goals: "0",
-        assists: "0",
-        fights: "1",
-        saves: "0",
-        passing: "83",
-        defending: "85",
-        overall: "82",
-        speed: "86",
-        strength: "89",
-        dribbling: "81",
-        shooting: "81",
-        goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "81",
-        kicking: "81",
-        goalie: "60"
-      },
-      playerD: {
-        name: "Harry Behnke",
-        picture: "Harry.jpg",
-        team: "jerseys",
-        goals: "2",
-        assists: "0",
-        fights: "2",
-        saves: "0",
-        passing: "93",
-        defending: "87",
-        overall: "94",
-        speed: "90",
-        strength: "85",
-        dribbling: "94",
-        shooting: "94",
-        goalkeeping: "80",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "94",
-        kicking: "94",
-        goalie: "93"
-      },
-      playerE: {
-        name: "Luka Seckar",
-        picture: "Luka.jpg",
-        team: "jerseys",
-        goals: "2",
-        assists: "1",
-        fights: "1",
-        saves: "33",
-        passing: "91",
-        defending: "93",
-        overall: "93",
-        speed: "93",
-        strength: "90",
-        dribbling: "91",
-        shooting: "93",
-        goalkeeping: "93",
-        strengths: [
-          "Vision",
-          "Shot power"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Injury prone"
-        ],
-        cleanSheets: "0",
-        technique: "91",
-        kicking: "93",
-        goalie: "92"
-      },
-      player16: {
-        name: "Anthony Miniutti",
-        picture: "Anthony.JPG",
-        team: "jerseys",
-        goals: "1",
-        assists: "2",
-        fights: "3",
-        saves: "5",
-        passing: "90",
-        defending: "94",
-        overall: "92",
-        speed: "90",
-        strength: "92",
-        dribbling: "89",
-        shooting: "92",
-        goalkeeping: "85",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "89",
-        kicking: "92",
-        goalie: "60"
-      },
-      playerG: {
-        name: "Rory Netting",
-        picture: "Rory.JPG",
-        team: "jerseys",
-        goals: "1",
-        assists: "0",
-        fights: "7",
-        saves: "0",
-        passing: "79",
-        defending: "82",
-        overall: "81",
-        speed: "85",
-        strength: "83",
-        dribbling: "77",
-        shooting: "79",
-        goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "77",
-        kicking: "69",
-        goalie: "60"
-      },
-      playerH: {
-        name: "AJ",
-        picture: "AJ.JPG",
-        team: "jerseys",
-        goals: "0",
-        assists: "0",
-        fights: "1",
-        saves: "0",
-        passing: "87",
-        defending: "91",
-        overall: "91",
-        speed: "88",
-        strength: "91",
-        dribbling: "90",
-        shooting: "88",
-        goalkeeping: "0",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        technique: "90",
-        kicking: "88",
-        goalie: "60"
-      },
-      player12: {
-        name: "Riley Mcauliffe",
-        picture: "Riley.JPG",
-        team: "jerseys",
-        goals: "1",
-        assists: "1",
-        fights: "2",
-        saves: "0",
-        passing: "70",
-        defending: "68",
-        overall: "73",
-        speed: "82",
-        strength: "82",
-        dribbling: "69",
-        shooting: "67",
-        goalkeeping: "0",
-        technique: "69",
-        strengths: [
-          "Good at soccer",
-          "Happy"
-        ],
-        weaknesses: [
-          "Bad with woman",
-          "Hairline"
-        ],
-        cleanSheets: "0",
-        kicking: "67",
-        goalie: "60"
-      },
-      player13: {
-        name: "Jigme Chopel",
-        picture: "insert profile picture here",
-        team: "jerseys",
-        goals: "0",
-        assists: "2",
-        fights: "1",
-        saves: "4",
-        passing: "82",
-        defending: "83",
-        overall: "85",
-        speed: "83",
-        strength: "86",
-        dribbling: "85",
-        shooting: "84",
-        goalkeeping: "75",
-        strengths: [
-          "Soccer Player"
-        ],
-        weaknesses: [
-          "Too smart"
-        ],
-        cleanSheets: "0",
-        technique: "85",
-        kicking: "84",
-        goalie: "88"
-      },
-      player_mtcbi15n: {
-        name: "Alexander Flinders",
-        picture: "",
-        team: "jerseys",
-        goals: "0",
-        assists: "0",
-        saves: "0",
-        cleanSheets: "0",
-        fights: "0",
-        overall: "77",
-        speed: "60",
-        strength: "73",
-        technique: "78",
-        kicking: "81",
-        goalie: "42",
-        strengths: [
-          "defends the best",
-          "big brain"
-        ],
-        weaknesses: [
-          "OverThinker",
-          "ginger"
-        ]
-      }
-    };
-    // ===== DATA:PLAYERS:END =====
-
-    // ===== DATA:GAMES:START =====
-    const DEFAULT_GAMES = [
-      {
-        id: "b5e8330e-8bee-4e07-98c3-63b72ee61024",
-        date: "2026-08-27",
-        note: "Jerseys Win 7-2",
-        shirtsScore: 0,
-        jerseysScore: 0,
-        contributions: [
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player4",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "playerE",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 3
-          },
-          {
-            playerId: "player10",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "playerE",
-            stat: "saves",
-            qty: 7
-          },
-          {
-            playerId: "player5",
-            stat: "saves",
-            qty: 1
-          },
-          {
-            playerId: "player3",
-            stat: "saves",
-            qty: 2
-          },
-          {
-            playerId: "player2",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player9",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player10",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player3",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player3",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "fights",
-            qty: 1
-          }
-        ]
-      },
-      {
-        id: "game-shirts-3-3-jerseys",
-        date: "2026-08-24",
-        note: "3-3 draw · fights all round",
-        shirtsScore: 3,
-        jerseysScore: 3,
-        contributions: [
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "playerB",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player4",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player5",
-            stat: "goals",
-            qty: -1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player13",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player3",
-            stat: "saves",
-            qty: 7
-          },
-          {
-            playerId: "playerE",
-            stat: "saves",
-            qty: 5
-          },
-          {
-            playerId: "player11",
-            stat: "saves",
-            qty: -2
-          },
-          {
-            playerId: "player1",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player2",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player3",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player4",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player5",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player6",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player7",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerB",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerA",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player8",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player10",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player11",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerC",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerD",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerE",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerG",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "playerH",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player12",
-            stat: "fights",
-            qty: 1
-          },
-          {
-            playerId: "player13",
-            stat: "fights",
-            qty: 1
-          }
-        ]
-      },
-      {
-        id: "game-shirts-4-4-jerseys-pens",
-        date: "2026-08-21",
-        note: "Shirts win 4-4 on penalties",
-        shirtsScore: 4,
-        jerseysScore: 4,
-        shootoutWinner: "shirts",
-        contributions: [
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player5",
-            stat: "goals",
-            qty: -2
-          },
-          {
-            playerId: "player4",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player8",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player13",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player6",
-            stat: "fights",
-            qty: 3
-          },
-          {
-            playerId: "playerG",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player2",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player7",
-            stat: "fights",
-            qty: 2
-          },
-          {
-            playerId: "player10",
-            stat: "fights",
-            qty: 2
-          }
-        ]
-      },
-      {
-        id: "game-jerseys-9-7-shirts",
-        date: "2026-08-13",
-        note: "Jerseys win · 2 fights",
-        shirtsScore: 7,
-        jerseysScore: 9,
-        contributions: [
-          {
-            playerId: "player10",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player9",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "playerD",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player12",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "playerG",
-            stat: "goals",
-            qty: 1
-          },
-          {
-            playerId: "player1",
-            stat: "goals",
-            qty: 5
-          },
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player12",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player16",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player11",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "playerA",
-            stat: "assists",
-            qty: 1
-          }
-        ]
-      },
-      {
-        id: "game-jerseys-4-3-shirts",
-        date: "2026-08-12",
-        note: "Jerseys win in full time · 2 fights",
-        shirtsScore: 3,
-        jerseysScore: 4,
-        contributions: [
-          {
-            playerId: "playerD",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player11",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player10",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player9",
-            stat: "assists",
-            qty: 1
-          },
-          {
-            playerId: "player4",
-            stat: "goals",
-            qty: 2
-          },
-          {
-            playerId: "player8",
-            stat: "goals",
-            qty: 1
-          }
-        ]
-      }
-    ];
-    // ===== DATA:GAMES:END =====
-
-    // ---------------------------------------------------------------
-    // NEWS — recent headlines shown on the News page. Each story can
-    // reference one or more existing player IDs (playerIds) so their
-    // photo/avatar shows next to the story, or a freeform name for
-    // people who aren't in the roster (e.g. a new signing).
-    // ---------------------------------------------------------------
-    const NEWS_STORIES = [
-      {
-        tag: "Transfer News",
-        color: "#3E7BC4",
-        date: "2026-08-26",
-        headline: "Shirts sign Alex Bunter to a 5 week deal",
-        body: "Shirts have bolstered their squad with the signing of Alex Bunter on a short-term 5 week deal. Early word on the sideline pegs him as a solid, if unspectacular, all-rounder — the kind of squad depth Shirts have been crying out for.",
-        playerIds: ["playerBunter"]
-      },
-      {
-        tag: "Transfer Talk",
-        color: "#8A56C4",
-        date: "2026-08-26",
-        headline: "Jerseys desperately trying to trade off Darcy",
-        body: "Just a week after trade rumours first surfaced, sources say Jerseys have gone cold on the idea of taking on Darcy Brown, and are now scrambling to offload him back onto anyone who'll take him. His all-time goal tally sitting firmly in negative numbers isn't helping his case.",
-        playerIds: ["player5"]
-      },
-      {
-        tag: "Discipline",
-        color: "#A23B33",
-        date: "2026-08-24",
-        headline: "Tapi receives first red card of the season",
-        body: "Tapi Gotchy picked up his first red card of the campaign in Sunday's 3-3 draw, capping off a chaotic afternoon that saw fights break out across the pitch. He still found time to get on the scoresheet before being sent for an early shower.",
-        playerIds: ["playerB"]
-      },
-      {
-        tag: "Rumour Mill",
-        color: "#C1932F",
-        date: "2026-08-25",
-        headline: "Rumours hear Lucas D'macio wants out of his contract with Jerseys",
-        body: "Whispers around the club suggest Lucas D'macio is growing restless at Jerseys, with his name now floating in trade chatter. Nothing official yet, but a rising fight count and a quiet few weeks in front of goal have fans reading into it.",
-        playerIds: ["player10"]
-      },
-      {
-        tag: "Match Report",
-        color: "#2F8F5B",
-        date: "2026-08-21",
-        headline: "Shirts take their first win of the season with a paper scissors rock decider",
-        body: "After eight goals and a share of the spoils at 4-4, Shirts finally got their first result of the campaign on the board — settling it the only fair way anyone could agree on: best-of-three paper scissors rock. Jerseys will point to the scoreline and argue the better team lost.",
-        playerIds: []
-      },
-      {
-        tag: "Transfer Talk",
-        color: "#8A56C4",
-        date: "2026-08-19",
-        headline: "Trade talks have emerged between sending Darcy Brown to team Jerseys",
-        body: "Sources close to the dressing room suggest Shirts are open to offers for their most combustible defender, with Jerseys reportedly circling. Darcy Brown has racked up more fights than goals this season, and some reckon a change of bib might be exactly what both sides need.",
-        playerIds: ["player5"]
-      },
-      {
-        tag: "Free Agency",
-        color: "#3E7BC4",
-        date: "2026-08-16",
-        headline: "Alex Bunter signed to free agency",
-        body: "SFX Futsal has confirmed the signing of free agent Alex Bunter, who becomes available for selection immediately. Details on which bib he'll be wearing are still to be finalised, but early word from the sideline is optimistic.",
-        playerIds: [],
-        freeAgents: ["Alex Bunter"]
-      },
-      {
-        tag: "Talking Point",
-        color: "#A23B33",
-        date: "2026-08-21",
-        headline: "Fans question whether Aditya's absence was the reason for Jerseys' first loss of the season",
-        body: "Jerseys' unbeaten start came to an end in a 4-4 thriller, and more than a few fans on the sideline were quick to point the finger at one missing face. Aditya has been a key attacking outlet all season, and his absence left a gap that Shirts were happy to exploit.",
-        playerIds: ["player11"]
-      }
-    ];
-
-    const STAT_LABELS = { goals:"Goal", assists:"Assist", saves:"Save", cleanSheets:"Clean sheet", fights:"Fight" };
-    const STAT_LABELS_PLURAL = { goals:"Goals", assists:"Assists", saves:"Saves", cleanSheets:"Clean sheets", fights:"Fights" };
-    const STAT_COLORS = { goals:"#2F8F5B", assists:"#3E7BC4", saves:"#8A56C4", cleanSheets:"#1B8A8A", fights:"#A23B33" };
-    const STAT_ORDER = ["goals","assists","saves","cleanSheets","fights"];
-
-    const rankingStats = [
-      { key:"goals", label:"Goals" }, { key:"assists", label:"Assists" }, { key:"saves", label:"Saves" },
-      { key:"cleanSheets", label:"Clean Sheets" }, { key:"fights", label:"Fights" }, { key:"overall", label:"Overall" },
-      { key:"speed", label:"Speed" }, { key:"strength", label:"Strength" }, { key:"dribbling", label:"Dribbling" },
-      { key:"shooting", label:"Shooting" }, { key:"goalkeeping", label:"Keeper Rating" }
-    ];
-    const attrOrder = ["overall","speed","strength","technique","kicking","goalie"];
-    function attrLabel(key){ return key === "goalie" ? "Keeper Rating" : key.charAt(0).toUpperCase() + key.slice(1); }
-
-    // ---------------------------------------------------------------
-    // Admin auth — the password is never stored as plain text here.
-    // It's hashed (SHA-256) and only the hash lives in this file, so
-    // reading the page source doesn't reveal the login. This is a
-    // light gate, not real security: this is a static site with no
-    // server, so a technically-minded visitor could still bypass it
-    // via browser dev tools. Don't put anything truly sensitive here.
-    // ---------------------------------------------------------------
-    const ADMIN_HASH = "32708bff28d1e7a5303d32ce57433ae0939236e129640966e9f48061d343aabc";
-
-    async function sha256(message){
-      const data = new TextEncoder().encode(message);
-      const buf = await crypto.subtle.digest("SHA-256", data);
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-    }
-    async function checkLogin(user, pass){
-      const hash = await sha256(`${user}:${pass}`);
-      return hash === ADMIN_HASH;
-    }
-
-    let isAdmin = sessionStorage.getItem("sfx_admin") === "1";
-    let lastFocused = null;
-    let currentProfileId = null;
-    let activeRankingKey = "goals";
-    let pendingContributions = [];
-
-    // ---------------------------------------------------------------
-    // Storage
-    // ---------------------------------------------------------------
-    const LS_KEYS = { players:"sfx_players_v1", games:"sfx_games_v1" };
-
-    function loadPlayers(){
-      try{ const raw = localStorage.getItem(LS_KEYS.players); return raw ? JSON.parse(raw) : structuredClone(DEFAULT_PLAYERS); }
-      catch(e){ return structuredClone(DEFAULT_PLAYERS); }
-    }
-    function savePlayers(){ try{ localStorage.setItem(LS_KEYS.players, JSON.stringify(players)); }catch(e){} }
-
-    function loadGames(){
-      let list;
-      try{ const raw = localStorage.getItem(LS_KEYS.games); list = raw ? JSON.parse(raw) : structuredClone(DEFAULT_GAMES); }
-      catch(e){ list = []; }
-      // Migrate any older entries that used the generic scoreFor/scoreAgainst fields.
-      list = list.map(g => {
-        if (g.shirtsScore === undefined && g.scoreFor !== undefined){
-          return { ...g, shirtsScore: g.scoreAgainst || 0, jerseysScore: g.scoreFor || 0 };
-        }
-        return g;
-      });
-      list.sort((a, b) => b.date.localeCompare(a.date));
-      return list;
-    }
-    function saveGames(){ try{ localStorage.setItem(LS_KEYS.games, JSON.stringify(games)); }catch(e){} }
-
-    let players = loadPlayers();
-    let games = loadGames();
-
-    function uid(){ return crypto.randomUUID ? crypto.randomUUID() : "g_" + Date.now() + "_" + Math.random().toString(36).slice(2); }
-    function initials(name){ return name.split(" ").filter(Boolean).map(w => w[0]).slice(0,2).join("").toUpperCase(); }
-    function escapeAttr(str){ return String(str).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
-    function formatDate(iso){
-      const d = new Date(iso + "T00:00:00");
-      if (isNaN(d)) return iso;
-      return d.toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
-    }
-
-    // Resolve the "real" result of a game, accounting for penalty shootouts.
-    // A shootoutWinner field on the game overrides a tied scoreline.
-    function gameWinner(g){
-      if (g.shirtsScore === g.jerseysScore && g.shootoutWinner){ return g.shootoutWinner; }
-      if (g.jerseysScore > g.shirtsScore) return "jerseys";
-      if (g.shirtsScore > g.jerseysScore) return "shirts";
-      return "draw";
-    }
-
-    function avatarMarkup(player, sizeClass){
-      const isShirts = player.team === "shirts";
-      const bg = isShirts ? "var(--bib-light)" : "var(--bib-dark)";
-      const fg = isShirts ? "var(--ink)" : "var(--paper)";
-      return `<span class="avatar ${sizeClass}">
-        <img src="${player.picture}" alt="" aria-hidden="true"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <span class="avatar-fallback" style="background:${bg}; color:${fg};">${initials(player.name)}</span>
-      </span>`;
-    }
-
-    // ---------------------------------------------------------------
-    // Roster / leaders / rankings
-    // ---------------------------------------------------------------
-    function renderRoster(containerId, team){
-      const container = document.getElementById(containerId);
-      const list = Object.entries(players).filter(([, p]) => p.team === team);
-      container.innerHTML = list.map(([id, p], i) => `
-        <button class="roster-card" data-id="${id}">
-          <span class="roster-number">${String(i + 1).padStart(2, "0")}</span>
-          ${avatarMarkup(p, "avatar-lg")}
-          <span class="roster-name">${p.name}</span>
-          <span class="roster-stats">
-            <span><b>${p.goals}</b>Goals</span>
-            <span><b>${p.assists}</b>Assists</span>
-            <span><b>${p.saves}</b>Saves</span>
-            <span><b>${p.fights}</b>Fights</span>
-          </span>
-        </button>
-      `).join("");
-      container.querySelectorAll(".roster-card").forEach(btn => {
-        btn.addEventListener("click", () => showPlayerProfile(btn.dataset.id));
-      });
-    }
-
-    function renderRosterActions(){
-      const s = document.getElementById("shirtsActions");
-      const j = document.getElementById("jerseysActions");
-      s.innerHTML = isAdmin ? `<button class="btn btn-small" id="addShirtsBtn">+ Add player</button>` : "";
-      j.innerHTML = isAdmin ? `<button class="btn btn-small" id="addJerseysBtn">+ Add player</button>` : "";
-      if (isAdmin){
-        document.getElementById("addShirtsBtn").addEventListener("click", () => addNewPlayer("shirts"));
-        document.getElementById("addJerseysBtn").addEventListener("click", () => addNewPlayer("jerseys"));
-      }
-    }
-
-    function addNewPlayer(team){
-      const id = "player_" + Date.now().toString(36);
-      players[id] = {
-        name:"New Player", picture:"", team,
-        goals:"0", assists:"0", saves:"0", cleanSheets:"0", fights:"0",
-        overall:"50", speed:"50", strength:"50", technique:"50", kicking:"50", goalie:"50",
-        strengths:[], weaknesses:[]
-      };
-      savePlayers();
-      refreshAll();
-      showPlayerProfile(id);
-      renderProfileEdit(id);
-    }
-
-    function renderLeaders(){
-      const stats = [
-        { key:"goals", label:"Top Scorer", unit:"goals" },
-        { key:"assists", label:"Top Playmaker", unit:"assists" },
-        { key:"saves", label:"Top Keeper", unit:"saves" }
-      ];
-      const list = Object.values(players);
-      document.getElementById("leaders-list").innerHTML = stats.map(s => {
-        const top = list.reduce((best, p) => (parseInt(p[s.key]) || 0) > (parseInt(best[s.key]) || 0) ? p : best, list[0]);
-        const value = parseInt(top[s.key]) || 0;
-        const body = value > 0
-          ? `${avatarMarkup(top, "avatar-sm")}<span class="leader-name">${top.name}</span>`
-          : `<span class="leader-name leader-empty">No games logged yet</span>`;
-        return `<div class="leader">
-          <span class="leader-label">${s.label}</span>
-          <div class="leader-player">${body}</div>
-          <span class="leader-value">${value}<span class="leader-unit">${s.unit}</span></span>
-        </div>`;
-      }).join("");
-    }
-
-    function renderRankingTabs(){
-      const wrap = document.getElementById("ranking-tabs");
-      wrap.innerHTML = rankingStats.map((s, i) =>
-        `<button class="ranking-tab${i === 0 ? " active" : ""}" data-key="${s.key}">${s.label}</button>`
-      ).join("");
-      wrap.querySelectorAll(".ranking-tab").forEach(btn => {
-        btn.addEventListener("click", () => showRanking(btn.dataset.key, btn));
-      });
-    }
-
-    function showRanking(key, btn){
-      activeRankingKey = key;
-      document.querySelectorAll(".ranking-tab").forEach(t => t.classList.remove("active"));
-      (btn || document.querySelector(`.ranking-tab[data-key="${key}"]`))?.classList.add("active");
-
-      const rows = Object.values(players)
-        .map(p => ({ name:p.name, picture:p.picture, team:p.team, value: parseInt(p[key]) || 0 }))
-        .sort((a, b) => b.value - a.value);
-
-      document.getElementById("ranking-tbody").innerHTML = rows.map((p, i) => `
-        <tr>
-          <td class="rank-number">${String(i + 1).padStart(2, "0")}</td>
-          <td><div class="player-info">${avatarMarkup(p, "avatar-xs")}<span>${p.name}</span></div></td>
-          <td class="value-cell">${p.value}</td>
-        </tr>
-      `).join("");
-    }
-    function refreshRanking(){ showRanking(activeRankingKey); }
-
-    // ---------------------------------------------------------------
-    // All-time score
-    // ---------------------------------------------------------------
-    function computeAllTime(){
-      let shirtsWins = 0, jerseysWins = 0, draws = 0;
-      games.forEach(g => {
-        const w = gameWinner(g);
-        if (w === "jerseys") jerseysWins++;
-        else if (w === "shirts") shirtsWins++;
-        else draws++;
-      });
-      return { shirtsWins, jerseysWins, draws };
-    }
-
-    function renderAllTimeScore(){
-      const el = document.getElementById("allTimeScore");
-      if (games.length === 0){
-        el.innerHTML = "";
-        return;
-      }
-      const { shirtsWins, jerseysWins, draws } = computeAllTime();
-      el.innerHTML = `
-        <div class="all-time-card">
-          <span class="all-time-kicker">All-Time Score</span>
-          <div class="all-time-inner">
-            <div class="all-time-side shirts">
-              <span class="all-time-team">Shirts</span>
-              <span class="all-time-value">${shirtsWins}</span>
-              <span class="all-time-sub">win${shirtsWins === 1 ? "" : "s"}</span>
-            </div>
-            <span class="all-time-sep">–</span>
-            <div class="all-time-side jerseys">
-              <span class="all-time-team">Jerseys</span>
-              <span class="all-time-value">${jerseysWins}</span>
-              <span class="all-time-sub">win${jerseysWins === 1 ? "" : "s"}</span>
-            </div>
-          </div>
-        </div>
-        ${draws > 0 ? `<p style="text-align:center; margin:-32px 0 44px; color:var(--muted); font-size:.8rem; font-family:var(--font-mono);">${draws} draw${draws === 1 ? "" : "s"}</p>` : ""}
-      `;
-    }
-
-    // ---------------------------------------------------------------
-    // Game log
-    // ---------------------------------------------------------------
-    function renderGameLog(){
-      const actions = document.getElementById("gameLogActions");
-      actions.innerHTML = isAdmin ? `<button class="btn btn-primary btn-small" id="openGameFormBtn">+ Log a game</button>` : "";
-      if (isAdmin) document.getElementById("openGameFormBtn").addEventListener("click", openGameForm);
-
-      const panel = document.getElementById("gameLogPanel");
-      if (games.length === 0){
-        panel.innerHTML = `<p class="empty-state">No games logged yet. ${isAdmin ? "Use \u201cLog a game\u201d above to add the first one." : "Check back after the next session."}</p>`;
-        return;
-      }
-
-      panel.innerHTML = games.map(g => {
-        const winner = gameWinner(g);
-        const winClass = winner === "draw" ? "draw" : `win-${winner}`;
-        const onPens = g.shirtsScore === g.jerseysScore && g.shootoutWinner;
-        const badgeText = winner === "draw" ? "Draw" : (winner === "jerseys" ? "Jerseys win" : "Shirts win") + (onPens ? " (pens)" : "");
-
-        const groups = STAT_ORDER.map(stat => {
-          const rows = g.contributions.filter(c => c.stat === stat);
-          if (!rows.length) return "";
-          const color = STAT_COLORS[stat];
-          return `
-            <div class="log-stat-group">
-              <span class="log-stat-group-label" style="color:${color};">
-                <span class="dot" style="background:${color};"></span>${STAT_LABELS_PLURAL[stat]}
-              </span>
-              <div class="log-chip-row">
-                ${rows.map(c => `
-                  <span class="log-chip">
-                    <span class="qty" style="background:${color};">${c.qty}</span>
-                    ${players[c.playerId] ? players[c.playerId].name : "Former player"}
-                  </span>
-                `).join("")}
-              </div>
-            </div>`;
-        }).join("");
-
-        return `
-        <div class="log-entry ${winClass}" data-id="${g.id}">
-          <button class="log-summary" type="button" aria-expanded="false">
-            <div class="log-summary-left">
-              <span class="log-date">${formatDate(g.date)}</span>
-              <span><span class="log-badge ${winner}">${badgeText}</span>${g.note ? `<span class="log-note">${g.note}</span>` : ""}</span>
-            </div>
-            <div class="log-score-wrap">
-              <div class="log-score-big">
-                <span class="num shirts-score">${g.shirtsScore}</span>
-                <span class="sep">–</span>
-                <span class="num jerseys-score">${g.jerseysScore}</span>
-              </div>
-              ${isAdmin ? `<button class="log-delete" data-id="${g.id}" aria-label="Delete game">&times;</button>` : ""}
-              <span class="log-chevron">&#9662;</span>
-            </div>
-          </button>
-          <div class="log-details">
-            <div class="log-details-inner">
-              ${groups ? `<div class="log-stat-groups">${groups}</div>` : `<p class="empty-state" style="padding:0; border:none; margin:0; text-align:left;">No individual stats logged for this game.</p>`}
-            </div>
-          </div>
-        </div>`;
-      }).join("");
-
-      panel.querySelectorAll(".log-summary").forEach(btn => {
-        btn.addEventListener("click", e => {
-          if (e.target.closest(".log-delete")) return;
-          const entry = btn.closest(".log-entry");
-          const expanded = entry.classList.toggle("expanded");
-          btn.setAttribute("aria-expanded", String(expanded));
-        });
-      });
-      if (isAdmin){
-        panel.querySelectorAll(".log-delete").forEach(b => b.addEventListener("click", e => {
-          e.stopPropagation();
-          deleteGame(b.dataset.id);
-        }));
-      }
-    }
-
-    function openGameForm(){
-      if (!isAdmin) return;
-      pendingContributions = [];
-      document.getElementById("gameForm").reset();
-      document.getElementById("g-date").value = new Date().toISOString().slice(0, 10);
-      document.getElementById("g-player").innerHTML = Object.entries(players).map(([id, p]) => `<option value="${id}">${p.name}</option>`).join("");
-      renderPendingList();
-      openModal("gameModal");
-    }
-
-    function renderPendingList(){
-      const el = document.getElementById("pendingList");
-      if (pendingContributions.length === 0){
-        el.innerHTML = `<li style="background:none; color:var(--muted); font-style:italic;">No stats added yet.</li>`;
-        return;
-      }
-      el.innerHTML = pendingContributions.map((c, i) => `
-        <li><span>${c.qty}\u00d7 ${STAT_LABELS[c.stat]} — ${players[c.playerId].name}</span>
-        <button type="button" data-i="${i}" aria-label="Remove">&times;</button></li>
-      `).join("");
-      el.querySelectorAll("button[data-i]").forEach(b => {
-        b.addEventListener("click", () => { pendingContributions.splice(Number(b.dataset.i), 1); renderPendingList(); });
-      });
-    }
-
-    function addPendingStat(){
-      const playerId = document.getElementById("g-player").value;
-      const stat = document.getElementById("g-stat").value;
-      const qty = Math.max(1, parseInt(document.getElementById("g-qty").value) || 1);
-      if (!playerId) return;
-      pendingContributions.push({ playerId, stat, qty });
-      renderPendingList();
-    }
-
-    function submitGame(e){
-      e.preventDefault();
-      const date = document.getElementById("g-date").value || new Date().toISOString().slice(0, 10);
-      const note = document.getElementById("g-note").value.trim();
-      const shirtsScore = parseInt(document.getElementById("g-shirts").value) || 0;
-      const jerseysScore = parseInt(document.getElementById("g-jerseys").value) || 0;
-
-      pendingContributions.forEach(c => {
-        const p = players[c.playerId];
-        if (p) p[c.stat] = String((parseInt(p[c.stat]) || 0) + c.qty);
-      });
-
-      games.push({ id: uid(), date, note, shirtsScore, jerseysScore, contributions: pendingContributions.slice() });
-      games.sort((a, b) => b.date.localeCompare(a.date));
-
-      savePlayers(); saveGames();
-      refreshAll();
-      closeModal("gameModal");
-    }
-
-    function deleteGame(id){
-      if (!isAdmin) return;
-      const idx = games.findIndex(g => g.id === id);
-      if (idx === -1) return;
-      games[idx].contributions.forEach(c => {
-        const p = players[c.playerId];
-        if (p) p[c.stat] = String(Math.max(0, (parseInt(p[c.stat]) || 0) - c.qty));
-      });
-      games.splice(idx, 1);
-      savePlayers(); saveGames();
-      refreshAll();
-    }
-
-    // ---------------------------------------------------------------
-    // News
-    // ---------------------------------------------------------------
-    function newsAvatar(name){
-      // For people not (yet) in the roster — e.g. a new free-agent signing.
-      return `<span class="avatar avatar-sm">
-        <span class="avatar-fallback" style="display:flex; background:var(--surface-2); color:var(--ink-soft); border:1px dashed var(--border);">${initials(name)}</span>
-      </span>`;
-    }
-
-    function renderNews(){
-      const grid = document.getElementById("news-grid");
-      if (!grid) return;
-      grid.innerHTML = NEWS_STORIES.map(story => {
-        const rosterChips = (story.playerIds || [])
-          .filter(id => players[id])
-          .map(id => {
-            const p = players[id];
-            return `<span class="news-player-chip">
-              ${avatarMarkup(p, "avatar-sm")}
-              <span><span class="name">${p.name}</span><span class="sub">${p.team === "shirts" ? "Shirts" : "Jerseys"}</span></span>
-            </span>`;
-          }).join("");
-        const freeAgentChips = (story.freeAgents || [])
-          .map(name => `<span class="news-player-chip">
-            ${newsAvatar(name)}
-            <span><span class="name">${name}</span><span class="sub">Free agent</span></span>
-          </span>`).join("");
-        const chips = rosterChips + freeAgentChips;
-
-        return `
-        <article class="news-card">
-          <div class="news-card-bar" style="background:${story.color};"></div>
-          <div class="news-card-body">
-            <div class="news-card-top">
-              <span class="news-tag" style="background:${story.color}1a; color:${story.color};">${story.tag}</span>
-              <span class="news-date">${formatDate(story.date)}</span>
-            </div>
-            <h3 class="news-headline">${story.headline}</h3>
-            <p class="news-body">${story.body}</p>
-            ${chips ? `<div class="news-players">${chips}</div>` : ""}
-          </div>
-        </article>`;
-      }).join("");
-    }
-
-    // ---------------------------------------------------------------
-    // Navigation
-    // ---------------------------------------------------------------
-    function showSection(id, btn){
-      document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-      document.querySelectorAll(".nav-link").forEach(t => t.classList.remove("active"));
-      btn.classList.add("active");
-    }
-
-    // ---------------------------------------------------------------
-    // Player profile (view + admin edit)
-    // ---------------------------------------------------------------
-    function showPlayerProfile(id){
-      currentProfileId = id;
-      lastFocused = document.activeElement;
-      renderProfileView(id);
-      openModal("profileModal");
-      document.querySelector("#profileModal .close-btn").focus();
-    }
-
-    function renderProfileView(id){
-      const p = players[id];
-      const bibLabel = p.team === "shirts" ? "Shirts · Light bib" : "Jerseys · Dark bib";
-      document.getElementById("profile-content").innerHTML = `
-        <div class="profile-header">
-          ${avatarMarkup(p, "avatar-xl")}
-          <div><span class="profile-bib">${bibLabel}</span><h2>${p.name}</h2></div>
-        </div>
-        ${isAdmin ? `<button class="btn btn-small" id="editProfileBtn" style="margin-bottom:22px;">Edit profile</button>` : ""}
-        <div class="profile-section">
-          <h3>Match stats</h3>
-          <div class="profile-stat-row">
-            <div class="profile-stat"><span class="v">${p.goals}</span><span class="l">Goals</span></div>
-            <div class="profile-stat"><span class="v">${p.assists}</span><span class="l">Assists</span></div>
-            <div class="profile-stat"><span class="v">${p.saves}</span><span class="l">Saves</span></div>
-            <div class="profile-stat"><span class="v">${p.cleanSheets}</span><span class="l">Clean Sheets</span></div>
-            <div class="profile-stat"><span class="v">${p.fights}</span><span class="l">Fights</span></div>
-          </div>
-        </div>
-        <div class="profile-section">
-          <h3>Attributes</h3>
-          <div class="attr-list">
-            ${attrOrder.map(k => `
-              <div class="attr-row">
-                <span class="attr-label">${attrLabel(k)}</span>
-                <div class="attr-bar"><span style="width:${p[k]}%"></span></div>
-                <span class="attr-value">${p[k]}</span>
-              </div>`).join("")}
-          </div>
-        </div>
-        <div class="profile-section profile-split">
-          <div><h3>Strengths</h3><ul class="plain-list">${p.strengths.map(s => `<li>${s}</li>`).join("") || "<li>—</li>"}</ul></div>
-          <div><h3>Weaknesses</h3><ul class="plain-list">${p.weaknesses.map(s => `<li>${s}</li>`).join("") || "<li>—</li>"}</ul></div>
-        </div>
-      `;
-      if (isAdmin) document.getElementById("editProfileBtn").addEventListener("click", () => renderProfileEdit(id));
-    }
-
-    function renderProfileEdit(id){
-      const p = players[id];
-      document.getElementById("profile-content").innerHTML = `
-        <h2 style="font-family:var(--font-display); font-size:1.3rem; margin-bottom:20px;">Edit ${p.name}</h2>
-        <form id="editProfileForm">
-          <label for="f-name">Name</label>
-          <input type="text" id="f-name" value="${escapeAttr(p.name)}" required>
-
-          <div class="edit-grid">
-            <div><label for="f-team">Team</label>
-              <select id="f-team">
-                <option value="shirts" ${p.team === "shirts" ? "selected" : ""}>Shirts (light bib)</option>
-                <option value="jerseys" ${p.team === "jerseys" ? "selected" : ""}>Jerseys (dark bib)</option>
-              </select>
-            </div>
-            <div><label for="f-picture">Photo filename</label><input type="text" id="f-picture" value="${escapeAttr(p.picture)}" placeholder="e.g. Tom.JPG"></div>
-          </div>
-
-          <h3 style="margin-top:6px;">Match stats</h3>
-          <div class="edit-grid">
-            <div><label for="f-goals">Goals</label><input type="number" min="0" id="f-goals" value="${p.goals}"></div>
-            <div><label for="f-assists">Assists</label><input type="number" min="0" id="f-assists" value="${p.assists}"></div>
-            <div><label for="f-saves">Saves</label><input type="number" min="0" id="f-saves" value="${p.saves}"></div>
-            <div><label for="f-cleanSheets">Clean Sheets</label><input type="number" min="0" id="f-cleanSheets" value="${p.cleanSheets}"></div>
-            <div><label for="f-fights">Fights</label><input type="number" min="0" id="f-fights" value="${p.fights}"></div>
-          </div>
-
-          <h3>Attributes</h3>
-          <div class="edit-grid">
-            <div><label for="f-overall">Overall</label><input type="number" min="0" max="100" id="f-overall" value="${p.overall}"></div>
-            <div><label for="f-speed">Speed</label><input type="number" min="0" max="100" id="f-speed" value="${p.speed}"></div>
-            <div><label for="f-strength">Strength</label><input type="number" min="0" max="100" id="f-strength" value="${p.strength}"></div>
-            <div><label for="f-technique">Technique</label><input type="number" min="0" max="100" id="f-technique" value="${p.technique}"></div>
-            <div><label for="f-kicking">Kicking</label><input type="number" min="0" max="100" id="f-kicking" value="${p.kicking}"></div>
-            <div><label for="f-goalie">Keeper Rating</label><input type="number" min="0" max="100" id="f-goalie" value="${p.goalie}"></div>
-          </div>
-
-          <label for="f-strengths">Strengths (one per line)</label>
-          <textarea id="f-strengths" rows="2">${p.strengths.join("\n")}</textarea>
-
-          <label for="f-weaknesses">Weaknesses (one per line)</label>
-          <textarea id="f-weaknesses" rows="2">${p.weaknesses.join("\n")}</textarea>
-
-          <div style="display:flex; gap:10px; margin-top:6px;">
-            <button type="submit" class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn" id="cancelEditBtn">Cancel</button>
-          </div>
-        </form>
-      `;
-
-      document.getElementById("editProfileForm").addEventListener("submit", e => {
-        e.preventDefault();
-        p.name = document.getElementById("f-name").value.trim() || p.name;
-        p.team = document.getElementById("f-team").value;
-        p.picture = document.getElementById("f-picture").value.trim();
-        ["goals","assists","saves","cleanSheets","fights","overall","speed","strength","technique","kicking","goalie"].forEach(k => {
-          p[k] = String(Math.max(0, parseInt(document.getElementById("f-" + k).value) || 0));
-        });
-        p.strengths = document.getElementById("f-strengths").value.split("\n").map(s => s.trim()).filter(Boolean);
-        p.weaknesses = document.getElementById("f-weaknesses").value.split("\n").map(s => s.trim()).filter(Boolean);
-
-        savePlayers();
-        refreshAll();
-        renderProfileView(id);
-      });
-      document.getElementById("cancelEditBtn").addEventListener("click", () => renderProfileView(id));
-    }
-
-    // ---------------------------------------------------------------
-    // Admin nav / session
-    // ---------------------------------------------------------------
-    function renderNavAdmin(){
-      const el = document.getElementById("navAdmin");
-      el.innerHTML = isAdmin
-        ? `<span class="admin-tag">Admin: LiamSawade</span><button class="btn btn-small" id="publishBtnNav">Publish to GitHub</button><button class="btn btn-small" id="logoutBtn">Log out</button>`
-        : `<button class="btn btn-small" id="loginBtnNav">Admin</button>`;
-      if (isAdmin){
-        document.getElementById("logoutBtn").addEventListener("click", logout);
-        document.getElementById("publishBtnNav").addEventListener("click", openPublish);
-      } else {
-        document.getElementById("loginBtnNav").addEventListener("click", openLogin);
-      }
-    }
-
-    function openLogin(){
-      if (!window.crypto || !window.crypto.subtle){
-        alert("Admin login needs a secure connection (https, or localhost during testing) — it won't work when opening this file directly.");
-        return;
-      }
-      document.getElementById("loginError").hidden = true;
-      document.getElementById("loginForm").reset();
-      openModal("loginModal");
-      document.getElementById("loginUser").focus();
-    }
-
-    async function submitLogin(e){
-      e.preventDefault();
-      const user = document.getElementById("loginUser").value.trim();
-      const pass = document.getElementById("loginPass").value;
-      const ok = await checkLogin(user, pass);
-      if (ok){
-        isAdmin = true;
-        sessionStorage.setItem("sfx_admin", "1");
-        document.body.classList.add("is-admin");
-        closeModal("loginModal");
-        refreshAll();
-      } else {
-        document.getElementById("loginError").hidden = false;
-      }
-    }
-
-    function logout(){
-      isAdmin = false;
-      sessionStorage.removeItem("sfx_admin");
-      document.body.classList.remove("is-admin");
-      refreshAll();
-      if (document.getElementById("profileModal").style.display === "flex" && currentProfileId){
-        renderProfileView(currentProfileId);
-      }
-    }
-
-    // ---------------------------------------------------------------
-    // Publish to GitHub
-    //
-    // Admin edits only ever touch this browser's localStorage. To make
-    // them permanent for every visitor, this panel rewrites the two
-    // data blocks below (between the DATA:...:START / DATA:...:END
-    // markers) with the current in-memory players/games, then commits
-    // the whole file straight to the repo via the GitHub Contents API.
-    // If that fails (bad token, offline, etc.) "Copy data instead"
-    // builds the same replacement text and puts it on the clipboard so
-    // it can be pasted over the markers manually in GitHub's web editor.
-    // ---------------------------------------------------------------
-    function jsLiteral(value, indent){
-      // Pretty-printed JS object/array literal (not JSON) so the file
-      // keeps reading the same way it did by hand — quoted keys are
-      // avoided where safe, strings use double quotes.
-      const pad = "  ".repeat(indent);
-      const padIn = "  ".repeat(indent + 1);
-      if (Array.isArray(value)){
-        if (value.length === 0) return "[]";
-        const items = value.map(v => padIn + jsLiteral(v, indent + 1)).join(",\n");
-        return `[\n${items}\n${pad}]`;
-      }
-      if (value && typeof value === "object"){
-        const keys = Object.keys(value);
-        if (keys.length === 0) return "{}";
-        const items = keys.map(k => {
-          const safeKey = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(k) ? k : JSON.stringify(k);
-          return `${padIn}${safeKey}: ${jsLiteral(value[k], indent + 1)}`;
-        }).join(",\n");
-        return `{\n${items}\n${pad}}`;
-      }
-      return JSON.stringify(value);
-    }
-
-    function buildDataBlock(){
-      const playersLiteral = jsLiteral(players, 2);
-      const gamesLiteral = jsLiteral(games, 2);
-      return (
-`    // ===== DATA:PLAYERS:START =====
-    const DEFAULT_PLAYERS = ${playersLiteral};
-    // ===== DATA:PLAYERS:END =====
-
-    // ===== DATA:GAMES:START =====
-    const DEFAULT_GAMES = ${gamesLiteral};
-    // ===== DATA:GAMES:END =====`
-      );
-    }
-
-    function replaceDataMarkers(fileText){
-      const block = buildDataBlock();
-      const playersRe = /\/\/ ===== DATA:PLAYERS:START =====[\s\S]*?\/\/ ===== DATA:PLAYERS:END =====/;
-      const gamesRe = /\/\/ ===== DATA:GAMES:START =====[\s\S]*?\/\/ ===== DATA:GAMES:END =====/;
-      const playersBlock = block.slice(0, block.indexOf("// ===== DATA:GAMES:START ====="));
-      const gamesBlock = block.slice(block.indexOf("// ===== DATA:GAMES:START ====="));
-      if (!playersRe.test(fileText) || !gamesRe.test(fileText)){
-        throw new Error("Couldn't find the DATA:...:START / DATA:...:END markers in Futsul.html — has the file been edited outside this panel?");
-      }
-      return fileText.replace(playersRe, playersBlock.trimEnd()).replace(gamesRe, gamesBlock.trimEnd());
-    }
-
-    function utf8ToBase64(str){
-      return btoa(unescape(encodeURIComponent(str)));
-    }
-    function base64ToUtf8(b64){
-      return decodeURIComponent(escape(atob(b64.replace(/\n/g, ""))));
-    }
-
-    function openPublish(){
-      document.getElementById("publishStatus").hidden = true;
-      document.getElementById("publishForm").reset();
-      document.getElementById("pub-owner").value = "Liam-Gamemaker";
-      document.getElementById("pub-repo").value = "Futsul";
-      document.getElementById("pub-path").value = "Futsul.html";
-      document.getElementById("pub-branch").value = "main";
-      openModal("publishModal");
-      document.getElementById("pub-token").focus();
-    }
-
-    function setPublishStatus(msg, isError){
-      const el = document.getElementById("publishStatus");
-      el.textContent = msg;
-      el.style.color = isError ? "var(--red)" : "var(--turf)";
-      el.hidden = false;
-    }
-
-    async function submitPublish(e){
-      e.preventDefault();
-      const owner = document.getElementById("pub-owner").value.trim();
-      const repo = document.getElementById("pub-repo").value.trim();
-      const path = document.getElementById("pub-path").value.trim().replace(/^\/+/, "");
-      const branch = document.getElementById("pub-branch").value.trim();
-      const token = document.getElementById("pub-token").value.trim();
-      const btn = document.getElementById("publishNowBtn");
-
-      btn.disabled = true;
-      setPublishStatus("Publishing… fetching the current file…", false);
-      try{
-        const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
-        const headers = {
-          "Authorization": `Bearer ${token}`,
-          "Accept": "application/vnd.github+json"
-        };
-
-        const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, { headers });
-        if (!getRes.ok){
-          throw new Error(`Couldn't read the current file (${getRes.status}). Check the repo/path/branch and that the token has Contents: Read and write on this repo.`);
-        }
-        const getData = await getRes.json();
-        const currentText = base64ToUtf8(getData.content);
-
-        setPublishStatus("Publishing… updating stats and committing…", false);
-        const newText = replaceDataMarkers(currentText);
-
-        const putRes = await fetch(apiBase, {
-          method: "PUT",
-          headers: { ...headers, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: `Publish stats update — ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
-            content: utf8ToBase64(newText),
-            sha: getData.sha,
-            branch
-          })
-        });
-        if (!putRes.ok){
-          const errBody = await putRes.json().catch(() => ({}));
-          throw new Error(`GitHub rejected the commit (${putRes.status}): ${errBody.message || "unknown error"}`);
-        }
-
-        setPublishStatus("Published! GitHub Pages will rebuild the live site in a minute or two. Logging you out…", false);
-        document.getElementById("pub-token").value = "";
-        setTimeout(() => {
-          closePublish();
-          logout();
-        }, 1600);
-      } catch(err){
-        setPublishStatus(err.message || "Publish failed — try 'Copy data instead' and paste the update in manually.", true);
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    async function copyDataInstead(){
-      try{
-        await navigator.clipboard.writeText(buildDataBlock());
-        setPublishStatus("Copied! In GitHub's web editor, replace everything from \"// ===== DATA:PLAYERS:START =====\" through \"// ===== DATA:GAMES:END =====\" with what you just copied, then commit.", false);
-      } catch(err){
-        setPublishStatus("Couldn't access the clipboard in this browser — try publishing directly instead.", true);
-      }
-    }
-
-    function closePublish(){
-      document.getElementById("pub-token").value = "";
-      closeModal("publishModal");
-    }
-
-    function refreshAll(){
-      renderRoster("shirts-grid", "shirts");
-      renderRoster("jerseys-grid", "jerseys");
-      renderRosterActions();
-      renderAllTimeScore();
-      renderLeaders();
-      refreshRanking();
-      renderGameLog();
-      renderNews();
-      renderNavAdmin();
-    }
-
-    // ---------------------------------------------------------------
-    // Modal helpers
-    // ---------------------------------------------------------------
-    function openModal(id){ const m = document.getElementById(id); m.style.display = "flex"; m.setAttribute("aria-hidden", "false"); }
-    function closeModal(id){
-      const m = document.getElementById(id); m.style.display = "none"; m.setAttribute("aria-hidden", "true");
-      if (id === "profileModal" && lastFocused) lastFocused.focus();
-    }
-    window.addEventListener("keydown", e => {
-      if (e.key !== "Escape") return;
-      ["profileModal","loginModal","gameModal","publishModal"].forEach(id => { if (document.getElementById(id).style.display === "flex") closeModal(id); });
-    });
-    window.addEventListener("click", e => {
-      ["profileModal","loginModal","gameModal","publishModal"].forEach(id => { if (e.target === document.getElementById(id)) closeModal(id); });
-    });
-
-    // ---------------------------------------------------------------
-    // Init
-    // ---------------------------------------------------------------
-    document.addEventListener("DOMContentLoaded", () => {
-      if (isAdmin) document.body.classList.add("is-admin");
-
-      document.querySelectorAll(".nav-link").forEach(btn => {
-        btn.addEventListener("click", () => showSection(btn.dataset.section, btn));
-      });
-
-      document.getElementById("loginForm").addEventListener("submit", submitLogin);
-      document.getElementById("gameForm").addEventListener("submit", submitGame);
-      document.getElementById("addStatBtn").addEventListener("click", addPendingStat);
-      document.getElementById("cancelGameBtn").addEventListener("click", () => closeModal("gameModal"));
-      document.getElementById("publishForm").addEventListener("submit", submitPublish);
-      document.getElementById("copyDataBtn").addEventListener("click", copyDataInstead);
-      document.getElementById("cancelPublishBtn").addEventListener("click", closePublish);
-
-      renderRankingTabs();
-      refreshAll();
-    });
-
-    // ---------------------------------------------------------------
-    // Changing the admin password:
-    // Open this file's console (or any browser console) and run:
-    //   await crypto.subtle.digest("SHA-256", new TextEncoder().encode("NewUsername:NewPassword"))
-    //     .then(b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join(""))
-    // Paste the result in as ADMIN_HASH above, replacing the current value.
-    // ---------------------------------------------------------------
-  </script>
+<header class="site-header">
+<div class="shell header-inner">
+<a class="brand" href="#home">SFX FUTSAL</a>
+<nav class="nav" aria-label="Main navigation">
+<a href="#home" data-view="home">Home</a>
+<a href="#players" data-view="players">Players</a>
+</nav>
+</div>
+</header>
+<main class="shell">
+<section id="home" aria-labelledby="home-title">
+<span class="eyebrow">Shirts vs Jerseys</span>
+<h1 id="home-title">Shirts lead the series.</h1>
+<p class="intro">The all-time tally for SFX Futsal.</p>
+<div class="score-card" aria-label="All-time tally: Shirts 1 win, Jerseys 0 wins">
+<span class="score-label">All-time tally</span>
+<div class="team-score">
+<span class="team-name">Team Shirts</span>
+<strong class="team-wins">1</strong>
+<span class="team-unit">win</span>
+</div>
+<span class="score-divider" aria-hidden="true">–</span>
+<div class="team-score">
+<span class="team-name">Team Jerseys</span>
+<strong class="team-wins">0</strong>
+<span class="team-unit">wins</span>
+</div>
+</div>
+<div class="home-footer">
+<span>Two teams. 23 players.</span>
+<a class="button" href="#players">View players →</a>
+</div>
+</section>
+<section id="players" aria-labelledby="players-title" hidden>
+<div class="page-title">
+<span class="eyebrow">The squad</span>
+<h1 id="players-title">Players</h1>
+<p class="intro">Meet the Shirts and Jerseys players.</p>
+</div>
+<section class="team-section shirts" aria-labelledby="shirts-title">
+<div class="team-heading"><h2 id="shirts-title">Team Shirts</h2><span>11 players</span></div>
+<div class="player-grid">
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">WM</span>
+<h3 class="player-name">William McCracken</h3>
+<span class="player-overall">90 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>9</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">BM</span>
+<h3 class="player-name">Billy Moffit</h3>
+<span class="player-overall">81 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">LB</span>
+<h3 class="player-name">Leo Braybon</h3>
+<span class="player-overall">86 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>34</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">SM</span>
+<h3 class="player-name">Seb Munoz</h3>
+<span class="player-overall">94 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>6</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">DB</span>
+<h3 class="player-name">Darcy Brown</h3>
+<span class="player-overall">81 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>4</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">TW</span>
+<h3 class="player-name">Tommy Wills</h3>
+<span class="player-overall">81 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">LS</span>
+<h3 class="player-name">Liam Sawade</h3>
+<span class="player-overall">78 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>1</dd></div>
+<div><dt>Assists</dt><dd>2</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">TG</span>
+<h3 class="player-name">Tapi Gotchy</h3>
+<span class="player-overall">75 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>1</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">AB</span>
+<h3 class="player-name">Alex Bunter</h3>
+<span class="player-overall">78 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">TG</span>
+<h3 class="player-name">Tom Griffin</h3>
+<span class="player-overall">85 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">JR</span>
+<h3 class="player-name">Jack Rollenston</h3>
+<span class="player-overall">86 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>6</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>4</dd></div>
+</dl>
+</article>
+</div>
+</section>
+<section class="team-section jerseys" aria-labelledby="jerseys-title">
+<div class="team-heading"><h2 id="jerseys-title">Team Jerseys</h2><span>12 players</span></div>
+<div class="player-grid">
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">LM</span>
+<h3 class="player-name">Liam Molloy</h3>
+<span class="player-overall">93 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>10</dd></div>
+<div><dt>Assists</dt><dd>3</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">LD</span>
+<h3 class="player-name">Lucas D&#39;macio</h3>
+<span class="player-overall">91 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>4</dd></div>
+<div><dt>Assists</dt><dd>2</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">A</span>
+<h3 class="player-name">Aditya</h3>
+<span class="player-overall">66 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>9</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>5</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">WH</span>
+<h3 class="player-name">William Hunt</h3>
+<span class="player-overall">82 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">HB</span>
+<h3 class="player-name">Harry Behnke</h3>
+<span class="player-overall">94 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>2</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">LS</span>
+<h3 class="player-name">Luka Seckar</h3>
+<span class="player-overall">93 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>2</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>33</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">AM</span>
+<h3 class="player-name">Anthony Miniutti</h3>
+<span class="player-overall">92 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>1</dd></div>
+<div><dt>Assists</dt><dd>2</dd></div>
+<div><dt>Saves</dt><dd>5</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">RN</span>
+<h3 class="player-name">Rory Netting</h3>
+<span class="player-overall">81 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>1</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">A</span>
+<h3 class="player-name">AJ</h3>
+<span class="player-overall">91 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">RM</span>
+<h3 class="player-name">Riley Mcauliffe</h3>
+<span class="player-overall">73 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>1</dd></div>
+<div><dt>Assists</dt><dd>1</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">JC</span>
+<h3 class="player-name">Jigme Chopel</h3>
+<span class="player-overall">85 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>2</dd></div>
+<div><dt>Saves</dt><dd>4</dd></div>
+</dl>
+</article>
+<article class="player-card">
+<div class="player-top">
+<span class="avatar" aria-hidden="true">AF</span>
+<h3 class="player-name">Alexander Flinders</h3>
+<span class="player-overall">77 OVR</span>
+</div>
+<dl class="player-stats">
+<div><dt>Goals</dt><dd>0</dd></div>
+<div><dt>Assists</dt><dd>0</dd></div>
+<div><dt>Saves</dt><dd>0</dd></div>
+</dl>
+</article>
+</div>
+</section>
+</section>
+</main>
+<footer class="site-footer"><div class="shell">SFX Futsal · 2026</div></footer>
+<script>
+function showView() {
+const view = location.hash === '#players' ? 'players' : 'home';
+document.getElementById('home').hidden = view !== 'home';
+document.getElementById('players').hidden = view !== 'players';
+document.querySelectorAll('[data-view]').forEach(link => {
+if (link.dataset.view === view) link.setAttribute('aria-current', 'page');
+else link.removeAttribute('aria-current');
+});
+document.title = view === 'players' ? 'Players · SFX Futsal' : 'Home · SFX Futsal';
+window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', showView);
+showView();
+</script>
 </body>
 </html>
